@@ -1,0 +1,2694 @@
+<!DOCTYPE html>  
+<html lang="lo">  
+<head>  
+    <meta charset="UTF-8" />  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover" />  
+    <title>ລະບົບສົ່ງນ້ຳ 2.0</title>  
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  
+    </script>  
+    <link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap" rel="stylesheet">  
+    <style>  
+        :root {  
+            --primary: #2563eb;  
+            --success: #10b981;  
+            --danger: #ef4444;  
+            --warning: #f59e0b;  
+            --info: #06b6d4;  
+            --background: #f8fafc;  
+            --card-bg: #ffffff;  
+            --text-main: #1e293b;  
+            --text-muted: #64748b;  
+            --border: #e2e8f0;  
+            --radius: 12px;  
+            --tab-bg: #f1f5f9;  
+            --price-bg: #ecfdf5;  
+            --price-border: #a7f3d0;  
+            --price-text: #065f46;  
+            --detail-bg: #eff6ff;  
+            --detail-border: #bfdbfe;  
+            --modal-overlay: rgba(15, 23, 42, 0.6);  
+            --toast-bg: #10b981;  
+            --toast-text: #ffffff;  
+        }  
+  
+        [data-theme="dark"] {  
+            --primary: #60a5fa;  
+            --background: #0f172a;  
+            --card-bg: #1e293b;  
+            --text-main: #e2e8f0;  
+            --text-muted: #94a3b8;  
+            --border: #334155;  
+            --tab-bg: #1e293b;  
+            --price-bg: #064e3b;  
+            --price-border: #34d399;  
+            --price-text: #34d399;  
+            --detail-bg: #1a2744;  
+            --detail-border: #1e40af;  
+            --modal-overlay: rgba(0, 0, 0, 0.8);  
+            --toast-bg: #065f46;  
+        }  
+  
+        * {  
+            box-sizing: border-box;  
+            margin: 0;  
+            padding: 0;  
+        }  
+  
+        body {  
+            font-family: 'Phetsarath', 'Tahoma', sans-serif;  
+            background: var(--background);  
+            color: var(--text-main);  
+            padding: 10px;  
+            padding-bottom: 75px;  
+            line-height: 1.6;  
+            transition: background 0.3s ease, color 0.3s ease;  
+            min-height: 100vh;  
+            font-size: 16px;  
+        }  
+  
+        .container {  
+            max-width: 1400px;  
+            margin: 0 auto;  
+            background: var(--card-bg);  
+            padding: 16px;  
+            border-radius: var(--radius);  
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);  
+            transition: background 0.3s ease, box-shadow 0.3s ease;  
+        }  
+  
+        .app-header {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            flex-wrap: wrap;  
+            gap: 10px;  
+            border-bottom: 2px solid var(--border);  
+            padding-bottom: 12px;  
+            margin-bottom: 14px;  
+            transition: border-color 0.3s ease;  
+        }  
+        .app-header h2 {  
+            color: var(--primary);  
+            font-size: clamp(18px, 2.5vw, 24px);  
+            font-weight: 700;  
+            transition: color 0.3s ease;  
+        }  
+        .header-right {  
+            display: flex;  
+            align-items: center;  
+            gap: 10px;  
+            flex-wrap: wrap;  
+        }  
+  
+        .theme-toggle {  
+            background: var(--tab-bg);  
+            border: 2px solid var(--border);  
+            border-radius: 50px;  
+            padding: 6px 14px;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-size: 13px;  
+            color: var(--text-main);  
+            display: flex;  
+            align-items: center;  
+            gap: 6px;  
+            transition: all 0.3s ease;  
+            width: auto;  
+            font-family: 'Phetsarath', sans-serif;  
+            box-shadow: none;  
+        }  
+        .theme-toggle:hover {  
+            transform: scale(1.02);  
+            opacity: 1;  
+        }  
+  
+        .help-btn {  
+            background: var(--info);  
+            color: white;  
+            width: auto;  
+            padding: 6px 14px;  
+            font-size: 13px;  
+            border-radius: 6px;  
+            border: none;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-family: 'Phetsarath', sans-serif;  
+            transition: 0.2s;  
+        }  
+        .help-btn:hover {  
+            opacity: 0.9;  
+        }  
+  
+        .bottom-nav {  
+            position: fixed;  
+            bottom: 0;  
+            left: 0;  
+            right: 0;  
+            background: var(--card-bg);  
+            display: flex;  
+            justify-content: space-around;  
+            padding: 8px 0 env(safe-area-inset-bottom, 10px);  
+            border-top: 2px solid var(--border);  
+            z-index: 100;  
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);  
+            transition: background 0.3s ease, border-color 0.3s ease;  
+        }  
+        .bottom-nav-btn {  
+            background: transparent;  
+            border: none;  
+            display: flex;  
+            flex-direction: column;  
+            align-items: center;  
+            padding: 4px 12px;  
+            color: var(--text-muted);  
+            font-family: 'Phetsarath', sans-serif;  
+            width: auto;  
+            box-shadow: none;  
+            font-size: 12px;  
+            transition: color 0.3s ease;  
+            cursor: pointer;  
+        }  
+        .bottom-nav-btn .icon {  
+            font-size: 22px;  
+        }  
+        .bottom-nav-btn .label {  
+            font-size: 10px;  
+            margin-top: 2px;  
+        }  
+        .bottom-nav-btn.active {  
+            color: var(--primary);  
+        }  
+        .bottom-nav-btn:active {  
+            transform: scale(0.95);  
+        }  
+  
+        .page-indicator {  
+            display: flex;  
+            align-items: center;  
+            gap: 8px;  
+            padding: 8px 12px;  
+            background: var(--tab-bg);  
+            border-radius: 8px;  
+            margin-bottom: 12px;  
+            font-size: 14px;  
+            font-weight: 700;  
+            color: var(--primary);  
+            transition: background 0.3s ease;  
+        }  
+  
+        .tab-content {  
+            display: none;  
+            animation: fadeIn 0.3s ease;  
+        }  
+        .tab-content.active {  
+            display: block;  
+        }  
+  
+        @keyframes fadeIn {  
+            from {  
+                opacity: 0;  
+                transform: translateY(5px);  
+            }  
+            to {  
+                opacity: 1;  
+                transform: translateY(0);  
+            }  
+        }  
+  
+        .grid-2,  
+        .grid-3,  
+        .grid-4,  
+        .grid-5,  
+        .grid-6 {  
+            display: grid;  
+            gap: 12px;  
+        }  
+        @media(min-width: 768px) {  
+            .grid-2 {  
+                grid-template-columns: repeat(2, 1fr);  
+            }  
+            .grid-3 {  
+                grid-template-columns: repeat(3, 1fr);  
+            }  
+            .grid-4 {  
+                grid-template-columns: repeat(4, 1fr);  
+            }  
+            .grid-5 {  
+                grid-template-columns: repeat(5, 1fr);  
+            }  
+            .grid-6 {  
+                grid-template-columns: repeat(6, 1fr);  
+            }  
+        }  
+        @media(max-width: 480px) {  
+            .grid-2,  
+            .grid-3,  
+            .grid-4,  
+            .grid-5,  
+            .grid-6 {  
+                grid-template-columns: 1fr 1fr;  
+                gap: 8px;  
+            }  
+        }  
+  
+        .form-group {  
+            margin-bottom: 12px;  
+        }  
+        label {  
+            display: block;  
+            font-weight: 700;  
+            font-size: 14px;  
+            margin-bottom: 4px;  
+            color: var(--text-main);  
+            transition: color 0.3s ease;  
+        }  
+        .label-hint {  
+            font-size: 12px;  
+            font-weight: 400;  
+            color: var(--text-muted);  
+            margin-left: 4px;  
+        }  
+        input,  
+        select,  
+        textarea {  
+            width: 100%;  
+            padding: 12px 14px;  
+            border: 2px solid var(--border);  
+            border-radius: 8px;  
+            font-size: 15px;  
+            font-family: 'Phetsarath', sans-serif;  
+            background: var(--card-bg);  
+            color: var(--text-main);  
+            transition: all 0.3s ease;  
+        }  
+        input:focus,  
+        select:focus,  
+        textarea:focus {  
+            border-color: var(--primary);  
+            outline: none;  
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);  
+        }  
+  
+        button {  
+            background: var(--success);  
+            color: white;  
+            padding: 12px 18px;  
+            border: none;  
+            border-radius: 8px;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-family: 'Phetsarath', sans-serif;  
+            width: 100%;  
+            font-size: 15px;  
+            transition: all 0.2s;  
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  
+        }  
+        button:hover {  
+            opacity: 0.9;  
+            transform: translateY(-1px);  
+        }  
+        button:disabled {  
+            opacity: 0.5;  
+            cursor: not-allowed;  
+            transform: none;  
+        }  
+        button:active {  
+            transform: scale(0.97);  
+        }  
+        .btn-sm {  
+            padding: 6px 12px;  
+            font-size: 12px;  
+            width: auto;  
+            border-radius: 6px;  
+            min-width: 32px;  
+        }  
+        .btn-location {  
+            background: var(--primary);  
+            padding: 8px 14px;  
+            font-size: 13px;  
+            white-space: nowrap;  
+            width: auto;  
+        }  
+        .btn-danger {  
+            background: var(--danger);  
+        }  
+        .btn-warning {  
+            background: var(--warning);  
+            color: #fff;  
+        }  
+        .btn-secondary {  
+            background: var(--text-muted);  
+        }  
+        .btn-primary {  
+            background: var(--primary);  
+        }  
+        .btn-info {  
+            background: var(--info);  
+        }  
+  
+        .flex-row {  
+            display: flex;  
+            gap: 6px;  
+            align-items: center;  
+            flex-wrap: wrap;  
+        }  
+  
+        .stock-section {  
+            background: #fef3c7;  
+            padding: 14px;  
+            border-radius: var(--radius);  
+            border: 1px solid #fde68a;  
+            margin-bottom: 14px;  
+            transition: all 0.3s ease;  
+        }  
+        [data-theme="dark"] .stock-section {  
+            background: #2d1f0a;  
+            border-color: #78350f;  
+        }  
+        .stock-section h3 {  
+            color: #b45309;  
+            margin-bottom: 10px;  
+            font-size: 15px;  
+        }  
+        [data-theme="dark"] .stock-section h3 {  
+            color: #fbbf24;  
+        }  
+        .stock-section h4 {  
+            color: #b45309;  
+            font-size: 13px;  
+            margin: 10px 0 6px;  
+        }  
+        [data-theme="dark"] .stock-section h4 {  
+            color: #fbbf24;  
+        }  
+        .stock-card {  
+            background: var(--card-bg);  
+            padding: 10px;  
+            border-radius: 8px;  
+            border: 1px solid var(--border);  
+            text-align: center;  
+            transition: all 0.3s ease;  
+        }  
+        .stock-card h5 {  
+            margin-bottom: 2px;  
+            font-size: 11px;  
+            color: var(--text-muted);  
+        }  
+        .stock-card p {  
+            font-weight: 700;  
+            font-size: 16px;  
+            color: var(--text-main);  
+        }  
+        .low-stock {  
+            color: var(--danger) !important;  
+            animation: blink 1s infinite;  
+        }  
+        .success-stock {  
+            color: var(--success) !important;  
+        }  
+  
+        @keyframes blink {  
+            0%,  
+            100% {  
+                opacity: 1;  
+            }  
+            50% {  
+                opacity: 0.4;  
+            }  
+        }  
+  
+        .summary-box {  
+            display: grid;  
+            grid-template-columns: repeat(2, 1fr);  
+            gap: 10px;  
+            margin: 12px 0;  
+        }  
+        @media(min-width: 768px) {  
+            .summary-box {  
+                grid-template-columns: repeat(5, 1fr);  
+            }  
+        }  
+        .card {  
+            background: var(--card-bg);  
+            padding: 10px;  
+            border-radius: var(--radius);  
+            text-align: center;  
+            border: 1px solid var(--border);  
+            border-left: 4px solid var(--primary);  
+            transition: all 0.3s ease;  
+        }  
+        .card.success {  
+            border-left-color: var(--success);  
+        }  
+        .card.info {  
+            border-left-color: var(--info);  
+        }  
+        .card.danger {  
+            border-left-color: var(--danger);  
+        }  
+        .card.warning {  
+            border-left-color: var(--warning);  
+        }  
+        .card h4 {  
+            margin-bottom: 2px;  
+            font-size: 11px;  
+            color: var(--text-muted);  
+        }  
+        .card p {  
+            font-size: 15px;  
+            font-weight: 700;  
+            color: var(--text-main);  
+        }  
+  
+        .table-responsive {  
+            overflow-x: auto;  
+            margin-top: 10px;  
+            border-radius: var(--radius);  
+            border: 1px solid var(--border);  
+            -webkit-overflow-scrolling: touch;  
+            transition: border-color 0.3s ease;  
+        }  
+        table {  
+            width: 100%;  
+            border-collapse: collapse;  
+            min-width: 650px;  
+            font-size: 13px;  
+            background: var(--card-bg);  
+        }  
+        th,  
+        td {  
+            padding: 8px 10px;  
+            text-align: center;  
+            border-bottom: 1px solid var(--border);  
+            color: var(--text-main);  
+            transition: color 0.3s ease, border-color 0.3s ease;  
+        }  
+        th {  
+            background: var(--tab-bg);  
+            color: var(--text-main);  
+            font-weight: 700;  
+            white-space: nowrap;  
+            font-size: 12px;  
+            transition: background 0.3s ease;  
+        }  
+        tbody tr:hover {  
+            background: var(--tab-bg);  
+        }  
+  
+        .calendar-container {  
+            background: var(--card-bg);  
+            padding: 12px;  
+            border-radius: var(--radius);  
+            border: 1px solid var(--border);  
+            margin-bottom: 12px;  
+            transition: all 0.3s ease;  
+        }  
+        .calendar-header {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            margin-bottom: 8px;  
+        }  
+        .calendar-header h4 {  
+            font-size: 15px;  
+            color: var(--primary);  
+        }  
+        .calendar-nav-btn {  
+            background: var(--tab-bg);  
+            border: 1px solid var(--border);  
+            border-radius: 6px;  
+            padding: 4px 12px;  
+            cursor: pointer;  
+            font-size: 16px;  
+            color: var(--text-main);  
+            width: auto;  
+            box-shadow: none;  
+        }  
+        .calendar-grid {  
+            display: grid;  
+            grid-template-columns: repeat(7, 1fr);  
+            gap: 3px;  
+            text-align: center;  
+        }  
+        .calendar-grid .day-name {  
+            font-weight: 700;  
+            font-size: 11px;  
+            color: var(--text-muted);  
+            padding: 4px 0;  
+        }  
+        .calendar-day {  
+            padding: 4px 2px;  
+            border-radius: 6px;  
+            cursor: pointer;  
+            font-size: 12px;  
+            font-weight: 700;  
+            transition: all 0.2s;  
+            border: 2px solid transparent;  
+            min-height: 44px;  
+            display: flex;  
+            flex-direction: column;  
+            align-items: center;  
+            justify-content: center;  
+        }  
+        .calendar-day:hover {  
+            background: var(--tab-bg);  
+        }  
+        .calendar-day.today {  
+            border-color: var(--primary);  
+        }  
+        .calendar-day.has-order {  
+            background: var(--price-bg);  
+            color: var(--price-text);  
+        }  
+        .calendar-day .day-number {  
+            font-size: 13px;  
+        }  
+        .calendar-day .day-amount {  
+            font-size: 8px;  
+            font-weight: 400;  
+            color: var(--text-muted);  
+        }  
+        .calendar-day.has-order .day-amount {  
+            color: var(--price-text);  
+        }  
+  
+        .badge {  
+            padding: 3px 8px;  
+            border-radius: 20px;  
+            color: white;  
+            font-weight: 700;  
+            font-size: 11px;  
+            display: inline-block;  
+        }  
+        .badge-cash {  
+            background: var(--success);  
+        }  
+        .badge-transfer {  
+            background: var(--info);  
+        }  
+        .badge-credit {  
+            background: var(--warning);  
+            color: #1e293b;  
+        }  
+        .badge-success {  
+            background: var(--success);  
+        }  
+        .badge-warning {  
+            background: var(--warning);  
+        }  
+  
+        .price-display {  
+            background: var(--price-bg);  
+            padding: 10px;  
+            border-radius: 8px;  
+            border: 2px solid var(--price-border);  
+            transition: all 0.3s ease;  
+        }  
+        .price-display input {  
+            font-size: 20px !important;  
+            font-weight: 700;  
+            color: var(--price-text);  
+            background: transparent;  
+            border: none;  
+            text-align: center;  
+            padding: 4px;  
+        }  
+  
+        .payment-reminder {  
+            background: #fef3c7;  
+            padding: 10px 14px;  
+            border-radius: 8px;  
+            margin: 10px 0;  
+            border-left: 4px solid var(--warning);  
+            display: none;  
+        }  
+        [data-theme="dark"] .payment-reminder {  
+            background: #2d1f0a;  
+            border-left-color: #fbbf24;  
+        }  
+        .payment-reminder p {  
+            color: #92400e;  
+            font-weight: 700;  
+            font-size: 13px;  
+        }  
+        [data-theme="dark"] .payment-reminder p {  
+            color: #fbbf24;  
+        }  
+        .payment-reminder .sub {  
+            font-size: 12px;  
+            color: #78350f;  
+            font-weight: 400;  
+        }  
+        [data-theme="dark"] .payment-reminder .sub {  
+            color: #fcd34d;  
+        }  
+  
+        .order-item {  
+            display: flex;  
+            gap: 8px;  
+            align-items: center;  
+            margin-bottom: 8px;  
+            flex-wrap: wrap;  
+        }  
+        .order-item select {  
+            flex: 2;  
+            min-width: 100px;  
+            padding: 8px 10px;  
+            font-size: 13px;  
+        }  
+        .order-item input[type="number"] {  
+            flex: 1;  
+            min-width: 60px;  
+            width: auto;  
+            padding: 8px 10px;  
+            font-size: 13px;  
+        }  
+        .order-item .btn-sm {  
+            flex: 0;  
+        }  
+  
+        .photo-upload {  
+            display: flex;  
+            gap: 8px;  
+            align-items: center;  
+            flex-wrap: wrap;  
+        }  
+        .photo-upload input[type="file"] {  
+            flex: 1;  
+            padding: 6px 8px;  
+            font-size: 12px;  
+            color: var(--text-main);  
+        }  
+        .btn-camera {  
+            background: var(--info);  
+            padding: 8px 14px;  
+            font-size: 12px;  
+            width: auto;  
+            white-space: nowrap;  
+            color: white;  
+            border-radius: 6px;  
+        }  
+        .photo-preview {  
+            width: 55px;  
+            height: 55px;  
+            object-fit: cover;  
+            border-radius: 8px;  
+            border: 2px solid var(--border);  
+            display: none;  
+            margin-top: 4px;  
+        }  
+        .photo-preview.show {  
+            display: block;  
+        }  
+  
+        .modal-overlay,  
+        #loginOverlay {  
+            display: none;  
+            position: fixed;  
+            top: 0;  
+            left: 0;  
+            width: 100%;  
+            height: 100%;  
+            background: var(--modal-overlay);  
+            backdrop-filter: blur(4px);  
+            z-index: 9999;  
+            align-items: center;  
+            justify-content: center;  
+        }  
+        .modal-overlay.show,  
+        #loginOverlay.show {  
+            display: flex;  
+        }  
+  
+        .modal-box,  
+        .login-box {  
+            background: var(--card-bg);  
+            padding: 24px;  
+            border-radius: 14px;  
+            max-width: 420px;  
+            width: 90%;  
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);  
+            animation: scaleUp 0.25s ease;  
+            transition: background 0.3s ease;  
+        }  
+        .customer-modal-box {  
+            background: var(--card-bg);  
+            padding: 24px;  
+            border-radius: 14px;  
+            max-width: 600px;  
+            width: 90%;  
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);  
+            animation: scaleUp 0.25s ease;  
+            max-height: 90vh;  
+            overflow-y: auto;  
+            transition: background 0.3s ease;  
+        }  
+  
+        @keyframes scaleUp {  
+            from {  
+                transform: scale(0.9);  
+                opacity: 0;  
+            }  
+            to {  
+                transform: scale(1);  
+                opacity: 1;  
+            }  
+        }  
+  
+        .toast {  
+            position: fixed;  
+            top: 16px;  
+            right: 16px;  
+            left: 16px;  
+            background: var(--toast-bg);  
+            color: var(--toast-text);  
+            padding: 12px 20px;  
+            border-radius: 10px;  
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);  
+            z-index: 10000;  
+            display: none;  
+            font-weight: 700;  
+            font-size: 14px;  
+            max-width: 420px;  
+            margin: 0 auto;  
+            text-align: center;  
+            transition: background 0.3s ease, color 0.3s ease;  
+        }  
+        .toast.error {  
+            background: var(--danger);  
+        }  
+        .toast.warning {  
+            background: var(--warning);  
+            color: var(--text-main);  
+        }  
+        .toast.info {  
+            background: var(--info);  
+        }  
+  
+        .customer-detail {  
+            background: var(--detail-bg);  
+            border: 1px solid var(--detail-border);  
+            border-radius: 8px;  
+            padding: 12px;  
+            margin: 10px 0;  
+            display: none;  
+            transition: all 0.3s ease;  
+        }  
+        .customer-detail.show {  
+            display: block;  
+        }  
+        .customer-detail .info-grid {  
+            display: grid;  
+            grid-template-columns: 1fr 1fr;  
+            gap: 4px 12px;  
+            font-size: 13px;  
+        }  
+        .customer-detail .info-grid .label {  
+            color: var(--text-muted);  
+        }  
+        .customer-detail .info-grid span {  
+            font-weight: 600;  
+        }  
+  
+        .help-content {  
+            line-height: 1.8;  
+        }  
+        .help-content .step {  
+            display: flex;  
+            gap: 10px;  
+            align-items: flex-start;  
+            padding: 6px 0;  
+            border-bottom: 1px solid var(--border);  
+        }  
+        .help-content .step .num {  
+            background: var(--primary);  
+            color: white;  
+            border-radius: 50%;  
+            width: 28px;  
+            height: 28px;  
+            display: flex;  
+            align-items: center;  
+            justify-content: center;  
+            font-weight: 700;  
+            font-size: 14px;  
+            flex-shrink: 0;  
+        }  
+  
+        .spinner {  
+            display: inline-block;  
+            width: 16px;  
+            height: 16px;  
+            border: 3px solid rgba(255, 255, 255, 0.3);  
+            border-radius: 50%;  
+            border-top-color: #fff;  
+            animation: spin 0.8s linear infinite;  
+        }  
+        @keyframes spin {  
+            to {  
+                transform: rotate(360deg);  
+            }  
+        }  
+  
+        .no-data {  
+            text-align: center;  
+            padding: 25px;  
+            color: var(--text-muted);  
+            font-size: 13px;  
+        }  
+  
+        @media(max-width: 480px) {  
+            body {  
+                padding: 6px;  
+                padding-bottom: 70px;  
+                font-size: 15px;  
+            }  
+            .container {  
+                padding: 10px;  
+            }  
+            .app-header h2 {  
+                font-size: 16px;  
+            }  
+            .bottom-nav-btn .icon {  
+                font-size: 18px;  
+            }  
+            .bottom-nav-btn .label {  
+                font-size: 9px;  
+            }  
+            .bottom-nav-btn {  
+                padding: 2px 6px;  
+            }  
+            .card p {  
+                font-size: 13px;  
+            }  
+            .stock-card p {  
+                font-size: 13px;  
+            }  
+            .price-display input {  
+                font-size: 16px !important;  
+            }  
+            .theme-toggle {  
+                padding: 4px 10px;  
+                font-size: 11px;  
+            }  
+            .order-item {  
+                flex-direction: column;  
+                align-items: stretch;  
+            }  
+            .order-item select,  
+            .order-item input {  
+                width: 100%;  
+            }  
+            .photo-upload {  
+                flex-direction: column;  
+            }  
+            .photo-upload input[type="file"] {  
+                width: 100%;  
+            }  
+            .btn-camera {  
+                width: 100%;  
+            }  
+            .calendar-day {  
+                min-height: 36px;  
+                font-size: 11px;  
+                padding: 2px 1px;  
+            }  
+            .calendar-day .day-number {  
+                font-size: 11px;  
+            }  
+            .calendar-day .day-amount {  
+                font-size: 7px;  
+            }  
+        }  
+  
+        @media(min-width: 1200px) {  
+            .container {  
+                padding: 24px;  
+            }  
+            button {  
+                font-size: 16px;  
+                padding: 14px 22px;  
+            }  
+        }  
+  
+        ::-webkit-scrollbar {  
+            width: 5px;  
+            height: 5px;  
+        }  
+        ::-webkit-scrollbar-track {  
+            background: var(--tab-bg);  
+            border-radius: 10px;  
+        }  
+        ::-webkit-scrollbar-thumb {  
+            background: var(--text-muted);  
+            border-radius: 10px;  
+        }  
+    </style>  
+</head>  
+<body>  
+  
+    <div id="toast" class="toast"></div>  
+  
+    <!-- ===== CONFIRM MODAL ===== -->  
+    <div id="confirmModal" class="modal-overlay">  
+        <div class="modal-box">  
+            <h3 style="color:var(--danger); margin-bottom: 8px; font-size:18px;">⚠️ ຢືນຢັນການລຶບ</h3>  
+            <p id="confirmMessage" style="margin-bottom: 16px; color: var(--text-muted); font-size:15px;">ທ່ານຕ້ອງການລຶບລາຍການນີ້ແທ້ບໍ?</p>  
+            <div style="display:flex; gap:8px;">  
+                <button onclick="closeConfirmModal()" class="btn-secondary" style="flex:1;">ຍົກເລີກ</button>  
+                <button id="confirmDeleteBtn" class="btn-danger" style="flex:1;">ຢືນຢັນ</button>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- ===== HELP MODAL ===== -->  
+    <div id="helpModal" class="modal-overlay">  
+        <div class="modal-box" style="max-width:480px;">  
+            <h3 style="color:var(--primary); margin-bottom:12px; font-size:18px;">📖 ຄູ່ມືການໃຊ້ງານ</h3>  
+            <div class="help-content">  
+                <div class="step">  
+                    <span class="num">1</span>  
+                    <div><strong>ບັນທຶກການຂາຍ</strong><br><span style="font-size:13px; color:var(--text-muted);">ກົດ "ບັນທຶກ" ດ້ານລຸ່ມ → ໃສ່ຊື່ລູກຄ້າ → ເລືອກສິນຄ້າ → ໃສ່ຈຳນວນ → ກົດ "💾 ບັນທຶກ"</span></div>  
+                </div>  
+                <div class="step">  
+                    <span class="num">2</span>  
+                    <div><strong>ເບິ່ງປະຫວັດ</strong><br><span style="font-size:13px; color:var(--text-muted);">ກົດ "ປະຫວັດ" ດ້ານລຸ່ມ → ກົດວັນທີໃນປະຕິທິນ ເພື່ອເບິ່ງຍອດຂາຍມື້ນັ້ນ</span></div>  
+                </div>  
+                <div class="step">  
+                    <span class="num">3</span>  
+                    <div><strong>ລາຍງານ</strong><br><span style="font-size:13px; color:var(--text-muted);">ກົດ "ລາຍງານ" ດ້ານລຸ່ມ → ເລືອກປີ ເພື່ອເບິ່ງຍອດຂາຍລາຍເດືອນ</span></div>  
+                </div>  
+                <div class="step">  
+                    <span class="num">4</span>  
+                    <div><strong>ຈັດການລູກຄ້າ</strong><br><span style="font-size:13px; color:var(--text-muted);">ກົດ "ລູກຄ້າ" ດ້ານລຸ່ມ → ເພີ່ມ/ແກ້ໄຂ/ລຶບ ຂໍ້ມູນລູກຄ້າ</span></div>  
+                </div>  
+                <div class="step" style="border-bottom:none;">  
+                    <span class="num">💡</span>  
+                    <div><strong>ເຄັດລັບ</strong><br><span style="font-size:13px; color:var(--text-muted);">ພິມຊື່ລູກຄ້າ ລະບົບຈະຄົ້ນຫາໃຫ້ອັດຕະໂນມັດ! ຖ້າຍັງບໍ່ມີ, ລະບົບຈະສ້າງໃໝ່ໃຫ້</span></div>  
+                </div>  
+            </div>  
+            <button onclick="closeHelpModal()" class="btn-secondary" style="margin-top:12px;">ປິດ</button>  
+        </div>  
+    </div>  
+  
+    <!-- ===== CUSTOMER MODAL ===== -->  
+    <div id="customerModal" class="modal-overlay">  
+        <div class="customer-modal-box">  
+            <h3 id="customerModalTitle" style="color:var(--primary); margin-bottom:12px; font-size:17px;">👥 ເພີ່ມ / ແກ້ໄຂລູກຄ້າ</h3>  
+            <form id="customerFormModal" onsubmit="saveCustomerFromModal(event)">  
+                <input type="hidden" id="modalCustId" />  
+                <div class="form-group">  
+                    <label>ຊື່ລູກຄ້າ <span style="color:var(--danger);">*</span></label>  
+                    <input type="text" id="modalCustName" required placeholder="ພິມຊື່ ແລະ ນາມສະກຸນ..." />  
+                </div>  
+                <div class="grid-2">  
+                    <div class="form-group">  
+                        <label>ເບີໂທ</label>  
+                        <input type="text" id="modalCustPhone" placeholder="020 xxxxxxxx" />  
+                    </div>  
+                    <div class="form-group">  
+                        <label>ບ້ານ</label>  
+                        <input type="text" id="modalCustVillage" placeholder="ຊື່ບ້ານ..." />  
+                    </div>  
+                </div>  
+                <div class="grid-2">  
+                    <div class="form-group">  
+                        <label>ເມືອງ</label>  
+                        <input type="text" id="modalCustDistrict" placeholder="ຊື່ເມືອງ..." />  
+                    </div>  
+                    <div class="form-group">  
+                        <label>ແຂວງ</label>  
+                        <input type="text" id="modalCustProvince" placeholder="ຊື່ແຂວງ..." />  
+                    </div>  
+                </div>  
+                <div class="form-group">  
+                    <label>📷 ຮູບລູກຄ້າ</label>  
+                    <div class="photo-upload">  
+                        <input type="file" id="modalCustomerPhoto" accept="image/*" capture="environment" onchange="handleModalPhoto(event)" />  
+                        <button type="button" class="btn-camera" onclick="openModalCamera()">📸 ຖ່າຍຮູບ</button>  
+                    </div>  
+                    <img id="modalPhotoPreview" class="photo-preview" />  
+                </div>  
+                <div class="form-group">  
+                    <label>📍 Google Maps URL</label>  
+                    <div class="flex-row">  
+                        <input type="url" id="modalCustMapUrl" placeholder="https://maps.google.com/?q=..." />  
+                        <button type="button" class="btn-location" onclick="getCurrentLocationForModal()">📍 ດຶງ GPS</button>  
+                    </div>  
+                </div>  
+                <div style="display:flex; gap:8px; margin-top:14px;">  
+                    <button type="button" onclick="closeCustomerModal()" class="btn-secondary" style="flex:1;">ຍົກເລີກ</button>  
+                    <button type="submit" id="saveCustModalBtn" style="flex:2;">💾 ບັນທຶກ</button>  
+                </div>  
+            </form>  
+        </div>  
+    </div>  
+  
+    <!-- ===== PRODUCT MODAL ===== -->  
+    <div id="productModal" class="modal-overlay">  
+        <div class="modal-box">  
+            <h3 style="color:var(--primary); margin-bottom:10px; font-size:17px;">📦 ຈັດການສິນຄ້າ</h3>  
+            <div id="productList" style="max-height:300px; overflow-y:auto;"></div>  
+            <div style="display:flex; gap:8px; margin-top:10px;">  
+                <button onclick="addNewProduct()" class="btn-primary" style="flex:1;">➕ ເພີ່ມ</button>  
+                <button onclick="closeProductModal()" class="btn-secondary" style="flex:1;">ປິດ</button>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <!-- ===== LOGIN OVERLAY ===== -->  
+    <div id="loginOverlay" class="show">  
+        <div class="login-box">  
+            <h2 style="color:var(--primary); margin-bottom:16px; text-align:center; font-size:22px;">🔐 ເຂົ້າສູ່ລະບົບ</h2>  
+            <div class="form-group"><label>ອີເມວ</label><input type="email" id="loginEmail" placeholder="your@email.com" /></div>  
+            <div class="form-group"><label>ລະຫັດຜ່ານ</label><input type="password" id="loginPassword" placeholder="••••••••" /></div>  
+            <button onclick="login()" id="loginBtn" style="margin-top:4px;">ເຂົ້າສູ່ລະບົບ</button>  
+            <div id="loginError" style="color:var(--danger); font-size:13px; margin-top:8px; text-align:center; font-weight:700;"></div>  
+        </div>  
+    </div>  
+  
+    <!-- ===== MAIN CONTAINER ===== -->  
+    <div class="container" id="appContainer" style="display:none;">  
+  
+        <div class="app-header">  
+            <h2>💧 ສົ່ງນ້ຳ 2.0</h2>  
+            <div class="header-right">  
+                <button class="help-btn" onclick="openHelpModal()">❓ ຊ່ວຍເຫຼືອ</button>  
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">  
+                    <span class="icon" id="themeIcon">🌙</span>  
+                    <span class="label" id="themeLabel">ກາງຄືນ</span>  
+                </button>  
+                <span id="userDisplay" style="font-weight:700; color:var(--primary);"></span>  
+                <button onclick="logout()" class="btn-secondary btn-sm">ອອກ</button>  
+            </div>  
+        </div>  
+  
+        <!-- ===== PAGE INDICATOR ===== -->  
+        <div class="page-indicator" id="pageIndicator">  
+            <span>📍 ທ່ານຢູ່: </span>  
+            <span id="pageName">ບັນທຶກການຂາຍ</span>  
+        </div>  
+  
+        <!-- ===== BOTTOM NAVIGATION ===== -->  
+        <div class="bottom-nav">  
+            <button class="bottom-nav-btn active" onclick="switchTab('tab-order', this)">  
+                <span class="icon">📦</span>  
+                <span class="label">ບັນທຶກ</span>  
+            </button>  
+            <button class="bottom-nav-btn" onclick="switchTab('tab-history', this)">  
+                <span class="icon">📋</span>  
+                <span class="label">ປະຫວັດ</span>  
+            </button>  
+            <button class="bottom-nav-btn" onclick="switchTab('tab-monthly', this)">  
+                <span class="icon">📊</span>  
+                <span class="label">ລາຍງານ</span>  
+            </button>  
+            <button class="bottom-nav-btn" onclick="switchTab('tab-customers', this)">  
+                <span class="icon">👥</span>  
+                <span class="label">ລູກຄ້າ</span>  
+            </button>  
+        </div>  
+  
+        <!-- TAB 1: ORDER FORM -->  
+        <div id="tab-order" class="tab-content active">  
+            <div class="stock-section">  
+                <h3>🚚 ປ້ອນນ້ຳຂຶ້ນລົດ (ປະຈຳວັນ)</h3>  
+                <div class="grid-5">  
+                    <div class="form-group"><label>ຖັງ 18.9L</label><input type="number" id="loadTank" value="0" min="0" oninput="saveStockLoad()" /></div>  
+                    <div class="form-group"><label>250ml</label><input type="number" id="loadPack250" value="0" min="0" oninput="saveStockLoad()" /></div>  
+                    <div class="form-group"><label>600ml</label><input type="number" id="loadPack600" value="0" min="0" oninput="saveStockLoad()" /></div>  
+                    <div class="form-group"><label>2000ml</label><input type="number" id="loadPack2000" value="0" min="0" oninput="saveStockLoad()" /></div>  
+                    <div class="form-group"><label>ນ້ຳດ່າງ</label><input type="number" id="loadAlkaline" value="0" min="0" oninput="saveStockLoad()" /></div>  
+                </div>  
+                <h4>📊 ຍອດຄົງເຫຼືອ</h4>  
+                <div class="grid-5" id="stockRemaining">  
+                    <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p>0</p></div>  
+                    <div class="stock-card"><h5>250ml</h5><p>0</p></div>  
+                    <div class="stock-card"><h5>600ml</h5><p>0</p></div>  
+                    <div class="stock-card"><h5>2000ml</h5><p>0</p></div>  
+                    <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p>0</p></div>  
+                </div>  
+            </div>  
+  
+            <h3 style="color:var(--primary); margin-bottom:12px; font-size:17px;">📝 ບັນທຶກການຂາຍ</h3>  
+  
+            <div style="background:#dbeafe; padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:13px; color:var(--text-main);">  
+                💡 <strong>ຄຳແນະນຳ:</strong> ພິມຊື່ລູກຄ້າ ລະບົບຈະຄົ້ນຫາໃຫ້ອັດຕະໂນມັດ. ຖ້າຍັງບໍ່ມີ, ກົດ "➕ ລູກຄ້າ" ເພື່ອເພີ່ມໃໝ່  
+            </div>  
+  
+            <form id="waterForm">  
+                <div class="grid-3">  
+                    <div class="form-group">  
+                        <label>📅 ວັນທີ</label>  
+                        <input type="date" id="orderDate" required onchange="loadStockLoad()" />  
+                    </div>  
+                    <div class="form-group">  
+                        <label>👤 ຊື່ລູກຄ້າ <span class="label-hint">(ພິມຄົ້ນຫາ)</span></label>  
+                        <input type="text" id="customerName" list="customerList" placeholder="ພິມຊື່ລູກຄ້າ..." required oninput="onCustomerNameInput()" />  
+                        <datalist id="customerList"></datalist>  
+                    </div>  
+                    <div class="form-group">  
+                        <label>💳 ການຊຳລະ</label>  
+                        <select id="paymentMethod" onchange="showPaymentReminder()">  
+                            <option value="ເງິນສົດ">💵 ເງິນສົດ</option>  
+                            <option value="ເງິນໂອນ">🏦 ເງິນໂອນ</option>  
+                            <option value="ຕິດໜີ້">📝 ຕິດໜີ້</option>  
+                        </select>  
+                    </div>  
+                </div>  
+  
+                <div class="payment-reminder" id="paymentReminder">  
+                    <p>⚠️ ເຕືອນ: ຊຳລະເປັນ <span id="paymentTypeDisplay">ເງິນສົດ</span></p>  
+                    <p class="sub">ກວດສອບກ່ອນບັນທຶກ!</p>  
+                </div>  
+  
+                <div class="form-group">  
+                    <label>📦 ລາຍການສິນຄ້າ <span class="label-hint">(ກົດ ➕ ເພື່ອເພີ່ມຫຼາຍລາຍການ)</span></label>  
+                    <div id="orderItems">  
+                        <div class="order-item">  
+                            <select class="product-select" onchange="calculateTotal()">  
+                                <option value="ນ້ຳຖັງ 18,9 ລິດ" data-price="28000" data-type="tank">ຖັງ 28,000 ກີບ</option>  
+                                <option value="ນ້ຳຕຸກຈິວ 250ml" data-price="41000" data-type="pack">250ml 41,000 ກີບ</option>  
+                                <option value="ນ້ຳຕຸກກາງ 600ml" data-price="41000" data-type="pack">600ml 41,000 ກີບ</option>  
+                                <option value="ນ້ຳຕຸກໃຫຍ່ 2000ml" data-price="51000" data-type="pack">2000ml 51,000 ກີບ</option>  
+                                <option value="ນ້ຳດ່າງ" data-price="88000" data-type="pack">ນ້ຳດ່າງ 88,000 ກີບ</option>  
+                            </select>  
+                            <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />  
+                            <button type="button" onclick="removeOrderItem(this)" class="btn-sm btn-danger" title="ລຶບລາຍການນີ້">✕</button>  
+                        </div>  
+                    </div>  
+                    <button type="button" onclick="addOrderItem()" class="btn-sm btn-primary" style="margin-top:6px; width:auto;">➕ ເພີ່ມສິນຄ້າ</button>  
+                </div>  
+  
+                <div class="grid-3">  
+                    <div class="form-group">  
+                        <label>📦 ຖັງເປົ່າທີ່ລູກຄ້າຄືນ</label>  
+                        <input type="number" id="qtyReturn" min="0" value="0" oninput="calculateTotal()" />  
+                    </div>  
+                    <div class="form-group">  
+                        <label><input type="checkbox" id="isNewCustomer" onchange="toggleDeposit()" /> 🆕 ລູກຄ້າໃໝ່ (ຊື້ຖັງຄັ້ງທຳອິດ)</label>  
+                        <input type="number" id="depositPrice" min="0" value="0" disabled oninput="calculateTotal()" style="margin-top:4px;" />  
+                    </div>  
+                    <div class="form-group">  
+                        <label>📝 ໝາຍເຫດ (ຖ້າມີ)</label>  
+                        <input type="text" id="orderNote" placeholder="ລາຍລະອຽດ..." />  
+                    </div>  
+                </div>  
+  
+                <div id="customerDetail" class="customer-detail"></div>  
+  
+                <div class="grid-3" style="align-items:end;">  
+                    <div class="form-group price-display">  
+                        <label style="color:var(--price-text); font-size:13px;">💰 ຍອດເງິນລວມ</label>  
+                        <input type="text" id="totalPrice" readonly value="0 ກີບ" />  
+                    </div>  
+                    <div class="form-group">  
+                        <label>📌 ສະຖານະການສົ່ງ</label>  
+                        <select id="deliveryStatus">  
+                            <option value="ສົ່ງສຳເລັດ">✅ ສົ່ງສຳເລັດ</option>  
+                            <option value="ບໍ່ຢູ່ບ້ານ">🏠 ບໍ່ຢູ່ບ້ານ</option>  
+                            <option value="ຍົກເລີກ">❌ ຍົກເລີກ</option>  
+                        </select>  
+                    </div>  
+                    <div class="form-group">  
+                        <label>⏰ ເວລາສົ່ງ</label>  
+                        <input type="datetime-local" id="deliveryTime" />  
+                    </div>  
+                </div>  
+  
+                <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">  
+                    <button type="submit" id="submitOrderBtn" style="flex:2; min-width:140px;">💾 ບັນທຶກ</button>  
+                    <button type="button" onclick="openCustomerModalForAdd()" class="btn-primary" style="flex:1; min-width:100px;">➕ ລູກຄ້າ</button>  
+                    <button type="button" onclick="openProductModal()" class="btn-warning" style="flex:1; min-width:100px;">📦 ສິນຄ້າ</button>  
+                </div>  
+            </form>  
+        </div>  
+  
+        <!-- TAB 2: HISTORY -->  
+        <div id="tab-history" class="tab-content">  
+            <div style="background:var(--tab-bg); padding:12px; border-radius:8px; margin-bottom:10px; transition: background 0.3s ease;">  
+                <div class="grid-3" style="margin-bottom:10px;">  
+                    <div class="card success">  
+                        <h4>📅 ວັນທີ</h4>  
+                        <p id="dailySummaryDate">-</p>  
+                    </div>  
+                    <div class="card info">  
+                        <h4>📦 ລາຍການ</h4>  
+                        <p id="dailySummaryCount">0</p>  
+                    </div>  
+                    <div class="card warning">  
+                        <h4>💰 ຍອດເງິນ</h4>  
+                        <p id="dailySummaryTotal">0 ກີບ</p>  
+                    </div>  
+                </div>  
+                <div class="grid-3">  
+                    <div class="form-group" style="margin-bottom:0;">  
+                        <label>📅 ວັນທີ</label>  
+                        <input type="date" id="filterDate" onchange="loadOrders()" />  
+                    </div>  
+                    <div class="form-group" style="margin-bottom:0;">  
+                        <label>🔍 ຄົ້ນຫາ</label>  
+                        <input type="text" id="searchInput" placeholder="ຊື່ລູກຄ້າ..." onkeyup="loadOrders()" />  
+                    </div>  
+                    <div class="form-group" style="margin-bottom:0;">  
+                        <label>⏳ ຊ່ວງ</label>  
+                        <select id="periodFilter" onchange="loadOrders()">  
+                            <option value="today">ມື້ນີ້</option>  
+                            <option value="week">7 ວັນ</option>  
+                            <option value="month">30 ວັນ</option>  
+                            <option value="all" selected>ທຸກວັນ</option>  
+                        </select>  
+                    </div>  
+                </div>  
+            </div>  
+  
+            <div class="calendar-container">  
+                <div class="calendar-header">  
+                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">◀</button>  
+                    <h4 id="calendarTitle">ສິງຫາ 2024</h4>  
+                    <button class="calendar-nav-btn" onclick="changeMonth(1)">▶</button>  
+                </div>  
+                <div class="calendar-grid" id="calendarGrid"></div>  
+                <p style="font-size:11px; color:var(--text-muted); margin-top:6px; text-align:center;">💡 ກົດທີ່ມື້ໃນປະຕິທິນ ເພື່ອເບິ່ງຍອດຂາຍມື້ນັ້ນ</p>  
+            </div>  
+  
+            <div class="summary-box">  
+                <div class="card success"><h4>ຍອດຂາຍນ້ຳ</h4><p id="sumWaterSales">0 ກີບ</p></div>  
+                <div class="card info"><h4>ຍອດຈຳຕຸກ</h4><p id="sumDepositSales">0 ກີບ</p></div>  
+                <div class="card warning"><h4>ລວມຮັບ</h4><p id="sumGrandTotal">0 ກີບ</p></div>  
+                <div class="card danger"><h4>ຄ້າງຖັງ</h4><p id="sumBottleBalance">0</p></div>  
+                <div class="card"><h4>ລາຍການ</h4><p id="sumOrdersCount">0</p></div>  
+            </div>  
+  
+            <div class="table-responsive">  
+                <table>  
+                    <thead>  
+                        <tr>  
+                            <th>ວັນທີ</th><th>ເວລາ</th><th>ລູກຄ້າ</th><th>ສິນຄ້າ</th><th>ສົ່ງ</th><th>ຄືນ</th><th>ຍອດ</th><th>ຊຳລະ</th><th>ສະຖານະ</th><th>ຈັດການ</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody id="orderTableBody"></tbody>  
+                </table>  
+            </div>  
+            <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">  
+                <button onclick="exportExcel()" class="btn-sm btn-primary" style="width:auto; padding:8px 16px;">📊 ດາວໂຫລດ Excel</button>  
+                <button onclick="sendWhatsApp()" class="btn-sm" style="width:auto; padding:8px 16px; background:#25D366;">💬 ສົ່ງ WhatsApp</button>  
+                <button onclick="window.print()" class="btn-sm btn-secondary" style="width:auto; padding:8px 16px;">🖨️ ພິມ</button>  
+            </div>  
+        </div>  
+  
+        <!-- TAB 3: MONTHLY REPORT -->  
+        <div id="tab-monthly" class="tab-content">  
+            <h3 style="color:var(--primary); margin-bottom:12px; font-size:17px;">📈 ລາຍງານຍອດຂາຍລາຍເດືອນ</h3>  
+            <div class="form-group" style="max-width:200px; margin-bottom:12px;">  
+                <label>ເລືອກປີ</label><select id="reportYear" onchange="loadMonthlyReport()"></select>  
+            </div>  
+            <div class="table-responsive">  
+                <table>  
+                    <thead><tr><th>ເດືອນ</th><th>ລາຍການ</th><th>ຍອດຂາຍ</th><th>ຈຳຕຸກ</th><th>ລວມ</th></tr></thead>  
+                    <tbody id="monthlyTableBody"></tbody>  
+                </table>  
+            </div>  
+            <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">  
+                <button onclick="exportExcelMonthly()" class="btn-sm btn-primary" style="width:auto; padding:8px 16px;">📊 ດາວໂຫລດ Excel</button>  
+            </div>  
+        </div>  
+  
+        <!-- TAB 4: CUSTOMERS -->  
+        <div id="tab-customers" class="tab-content">  
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">  
+                <h3 style="color:var(--primary); font-size:17px;">👥 ຈັດການລູກຄ້າ</h3>  
+                <button onclick="openCustomerModalForAdd()" class="btn-sm btn-primary" style="width:auto; padding:8px 16px;">➕ ເພີ່ມ</button>  
+            </div>  
+            <div style="background:var(--tab-bg); padding:12px; border-radius:8px; margin-bottom:12px;">  
+                <div class="form-group" style="margin-bottom:0;">  
+                    <label>🔍 ຄົ້ນຫາຊື່ລູກຄ້າ</label>  
+                    <input type="text" id="customerSearchInput" placeholder="ພິມຊື່ລູກຄ້າ..." onkeyup="loadAllCustomers()" />  
+                </div>  
+            </div>  
+            <div class="table-responsive">  
+                <table>  
+                    <thead>  
+                        <tr>  
+                            <th>ຊື່</th><th>ເບີ</th><th>ບ້ານ</th><th>ເມືອງ</th><th>ແຂວງ</th><th>ຮູບ</th><th>ແຜນທີ່</th><th>ສັ່ງ</th><th>ຍອດໃຊ້</th><th>ຈັດການ</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody id="customerTableBody"></tbody>  
+                </table>  
+            </div>  
+        </div>  
+    </div>  
+  
+    <script>  
+        // ============================================================  
+        //  SUPABASE CONFIG  
+        // ============================================================  
+        const SUPABASE_URL = 'https://mwczsgwgjhtfjbuhaudz.supabase.co';  
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13Y3pzZ3dnamh0ZmpidWhhdWR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxOTc4MjAsImV4cCI6MjEwMTc3MzgyMH0.S2ZF1VLOtslbagebkWNLNVT5CxLA-NiMSXcxFrn1uMg';  
+  
+        const { createClient } = supabase;  
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);  
+  
+        // ============================================================  
+        //  GLOBAL VARIABLES  
+        // ============================================================  
+        let currentUser = null;  
+        let currentCustomerId = null;  
+        let deleteTargetId = null;  
+        let deleteTargetType = null;  
+        let editingOrderId = null;  
+        let modalImageFile = null;  
+        const DEPOSIT_PRICE = 50000;  
+  
+        let calendarYear = new Date().getFullYear();  
+        let calendarMonth = new Date().getMonth();  
+  
+        let products = [  
+            { name: 'ນ້ຳຖັງ 18,9 ລິດ', price: 28000, type: 'tank' },  
+            { name: 'ນ້ຳຕຸກຈິວ 250ml', price: 41000, type: 'pack' },  
+            { name: 'ນ້ຳຕຸກກາງ 600ml', price: 41000, type: 'pack' },  
+            { name: 'ນ້ຳຕຸກໃຫຍ່ 2000ml', price: 51000, type: 'pack' },  
+            { name: 'ນ້ຳດ່າງ', price: 88000, type: 'pack' }  
+        ];  
+  
+        // ============================================================  
+        //  TOAST  
+        // ============================================================  
+        function showToast(msg, type = 'success') {  
+            const toast = document.getElementById('toast');  
+            toast.textContent = msg;  
+            toast.className = 'toast';  
+            if (type === 'error') toast.classList.add('error');  
+            else if (type === 'warning') toast.classList.add('warning');  
+            else if (type === 'info') toast.classList.add('info');  
+            toast.style.display = 'block';  
+            clearTimeout(toast._timeout);  
+            toast._timeout = setTimeout(() => { toast.style.display = 'none'; }, 3500);  
+        }  
+  
+        // ============================================================  
+        //  LOADING  
+        // ============================================================  
+        function setLoading(btn, loading) {  
+            if (loading) {  
+                btn._origText = btn.innerHTML;  
+                btn.innerHTML = '<span class="spinner"></span> ກຳລັງ...';  
+                btn.disabled = true;  
+            } else {  
+                btn.innerHTML = btn._origText || 'ບັນທຶກ';  
+                btn.disabled = false;  
+            }  
+        }  
+  
+        // ============================================================  
+        //  CONFIRM MODAL  
+        // ============================================================  
+        function openConfirmModal(message, targetId, targetType) {  
+            document.getElementById('confirmMessage').textContent = message;  
+            deleteTargetId = targetId;  
+            deleteTargetType = targetType;  
+            document.getElementById('confirmModal').classList.add('show');  
+        }  
+  
+        function closeConfirmModal() {  
+            document.getElementById('confirmModal').classList.remove('show');  
+            deleteTargetId = null;  
+            deleteTargetType = null;  
+        }  
+  
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {  
+            if (deleteTargetType === 'customer') {  
+                await confirmDeleteCustomer(deleteTargetId);  
+            } else if (deleteTargetType === 'order') {  
+                await confirmDeleteOrder(deleteTargetId);  
+            }  
+            closeConfirmModal();  
+        });  
+  
+        // ============================================================  
+        //  HELP MODAL  
+        // ============================================================  
+        function openHelpModal() {  
+            document.getElementById('helpModal').classList.add('show');  
+        }  
+  
+        function closeHelpModal() {  
+            document.getElementById('helpModal').classList.remove('show');  
+        }  
+  
+        // ============================================================  
+        //  THEME  
+        // ============================================================  
+        function toggleTheme() {  
+            const html = document.documentElement;  
+            const currentTheme = html.getAttribute('data-theme');  
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';  
+            html.setAttribute('data-theme', newTheme);  
+            localStorage.setItem('theme', newTheme);  
+            updateThemeUI(newTheme);  
+        }  
+  
+        function updateThemeUI(theme) {  
+            const icon = document.getElementById('themeIcon');  
+            const label = document.getElementById('themeLabel');  
+            if (theme === 'dark') {  
+                icon.textContent = '☀️';  
+                label.textContent = 'ກາງເວັນ';  
+            } else {  
+                icon.textContent = '🌙';  
+                label.textContent = 'ກາງຄືນ';  
+            }  
+        }  
+  
+        function loadThemePreference() {  
+            const savedTheme = localStorage.getItem('theme');  
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;  
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');  
+            document.documentElement.setAttribute('data-theme', theme);  
+            updateThemeUI(theme);  
+        }  
+  
+        // ============================================================  
+        //  TAB SWITCHING  
+        // ============================================================  
+        const pageNames = {  
+            'tab-order': 'ບັນທຶກການຂາຍ',  
+            'tab-history': 'ປະຫວັດການຂາຍ',  
+            'tab-monthly': 'ລາຍງານຍອດຂາຍ',  
+            'tab-customers': 'ຈັດການລູກຄ້າ'  
+        };  
+  
+        function switchTab(tabId, btn) {  
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));  
+            document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));  
+            document.getElementById(tabId).classList.add('active');  
+            btn.classList.add('active');  
+            document.getElementById('pageName').textContent = pageNames[tabId] || tabId;  
+            if (tabId === 'tab-monthly') loadMonthlyReport();  
+            if (tabId === 'tab-customers') loadAllCustomers();  
+            if (tabId === 'tab-history') {  
+                loadOrders();  
+                loadCalendar(calendarYear, calendarMonth);  
+            }  
+        }  
+  
+        // ============================================================  
+        //  PAYMENT REMINDER  
+        // ============================================================  
+        function showPaymentReminder() {  
+            const method = document.getElementById('paymentMethod').value;  
+            const reminder = document.getElementById('paymentReminder');  
+            const display = document.getElementById('paymentTypeDisplay');  
+            display.textContent = method;  
+            reminder.style.display = 'block';  
+            clearTimeout(window._reminderTimeout);  
+            window._reminderTimeout = setTimeout(() => {  
+                reminder.style.display = 'none';  
+            }, 5000);  
+        }  
+  
+        // ============================================================  
+        //  ORDER ITEMS  
+        // ============================================================  
+        function addOrderItem() {  
+            const container = document.getElementById('orderItems');  
+            const item = document.createElement('div');  
+            item.className = 'order-item';  
+            item.innerHTML = `  
+                    <select class="product-select" onchange="calculateTotal()">  
+                        ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}  
+                    </select>  
+                    <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />  
+                    <button type="button" onclick="removeOrderItem(this)" class="btn-sm btn-danger" title="ລຶບລາຍການນີ້">✕</button>  
+                `;  
+            container.appendChild(item);  
+            calculateTotal();  
+        }  
+  
+        function removeOrderItem(btn) {  
+            const container = document.getElementById('orderItems');  
+            if (container.children.length > 1) {  
+                btn.parentElement.remove();  
+                calculateTotal();  
+            } else {  
+                showToast('ຕ້ອງມີຢ່າງນ້ອຍ 1 ລາຍການ', 'warning');  
+            }  
+        }  
+  
+        // ============================================================  
+        //  CALCULATE TOTAL  
+        // ============================================================  
+        function calculateTotal() {  
+            const items = document.querySelectorAll('.order-item');  
+            let total = 0;  
+            let hasTank = false;  
+  
+            items.forEach(item => {  
+                const select = item.querySelector('.product-select');  
+                const qty = parseInt(item.querySelector('.qty-input').value) || 0;  
+                const price = parseInt(select.options[select.selectedIndex].dataset.price) || 0;  
+                const type = select.options[select.selectedIndex].dataset.type || 'pack';  
+                if (type === 'tank') hasTank = true;  
+                total += price * qty;  
+            });  
+  
+            const deposit = parseFloat(document.getElementById('depositPrice').value) || 0;  
+            total += deposit;  
+  
+            document.getElementById('totalPrice').value = total.toLocaleString() + ' ກີບ';  
+  
+            document.getElementById('qtyReturn').disabled = !hasTank;  
+            if (!hasTank) {  
+                document.getElementById('qtyReturn').value = 0;  
+                document.getElementById('isNewCustomer').checked = false;  
+                document.getElementById('depositPrice').value = 0;  
+                document.getElementById('depositPrice').disabled = true;  
+            }  
+  
+            return total;  
+        }  
+  
+        // ============================================================  
+        //  TOGGLE DEPOSIT  
+        // ============================================================  
+        function toggleDeposit() {  
+            const checked = document.getElementById('isNewCustomer').checked;  
+            const input = document.getElementById('depositPrice');  
+            if (checked) {  
+                input.disabled = false;  
+                let totalTanks = 0;  
+                document.querySelectorAll('.order-item').forEach(item => {  
+                    const select = item.querySelector('.product-select');  
+                    const type = select.options[select.selectedIndex].dataset.type || 'pack';  
+                    if (type === 'tank') {  
+                        totalTanks += parseInt(item.querySelector('.qty-input').value) || 0;  
+                    }  
+                });  
+                input.value = totalTanks * DEPOSIT_PRICE;  
+            } else {  
+                input.disabled = true;  
+                input.value = 0;  
+            }  
+            calculateTotal();  
+        }  
+  
+        // ============================================================  
+        //  CUSTOMER MODAL PHOTO  
+        // ============================================================  
+        function openModalCamera() {  
+            document.getElementById('modalCustomerPhoto').click();  
+        }  
+  
+        function handleModalPhoto(event) {  
+            const file = event.target.files[0];  
+            if (!file) { showToast('ກະລຸນາເລືອກຮູບ', 'warning'); return; }  
+            if (file.size > 5 * 1024 * 1024) { showToast('ຮູບໃຫຍ່ເກີນໄປ (ສູງສຸດ 5MB)', 'error'); return; }  
+            modalImageFile = file;  
+            const reader = new FileReader();  
+            reader.onload = (e) => {  
+                const img = document.getElementById('modalPhotoPreview');  
+                img.src = e.target.result;  
+                img.classList.add('show');  
+                showToast('✅ ເລືອກຮູບສຳເລັດ', 'success');  
+            };  
+            reader.readAsDataURL(file);  
+        }  
+  
+        async function uploadModalImage() {  
+            if (!modalImageFile) return null;  
+            try {  
+                const ext = modalImageFile.name.split('.').pop();  
+                const fileName = `customer_${Date.now()}.${ext}`;  
+                const { error } = await supabaseClient.storage.from('customer-images').upload(fileName, modalImageFile);  
+                if (error) throw error;  
+                const { data } = supabaseClient.storage.from('customer-images').getPublicUrl(fileName);  
+                return data.publicUrl;  
+            } catch (err) {  
+                console.error('Upload error:', err);  
+                return null;  
+            }  
+        }  
+  
+        // ============================================================  
+        //  CUSTOMER MODAL  
+        // ============================================================  
+        function openCustomerModalForAdd() {  
+            document.getElementById('modalCustId').value = '';  
+            document.getElementById('modalCustName').value = '';  
+            document.getElementById('modalCustPhone').value = '';  
+            document.getElementById('modalCustVillage').value = '';  
+            document.getElementById('modalCustDistrict').value = '';  
+            document.getElementById('modalCustProvince').value = '';  
+            document.getElementById('modalCustMapUrl').value = '';  
+            document.getElementById('modalPhotoPreview').classList.remove('show');  
+            modalImageFile = null;  
+            document.getElementById('customerModalTitle').textContent = '➕ ເພີ່ມລູກຄ້າໃໝ່';  
+            document.getElementById('customerModal').classList.add('show');  
+        }  
+  
+        async function editCustomer(id) {  
+            if (!await checkSession()) return;  
+            const { data } = await supabaseClient.from('customers').select('*').eq('id', id).single();  
+            if (!data) { showToast('ບໍ່ພົບຂໍ້ມູນ', 'error'); return; }  
+  
+            document.getElementById('modalCustId').value = data.id;  
+            document.getElementById('modalCustName').value = data.name || '';  
+            document.getElementById('modalCustPhone').value = data.phone || '';  
+            document.getElementById('modalCustVillage').value = data.village || '';  
+            document.getElementById('modalCustDistrict').value = data.district || '';  
+            document.getElementById('modalCustProvince').value = data.province || '';  
+            document.getElementById('modalCustMapUrl').value = data.map_url || '';  
+            if (data.image_url) {  
+                const img = document.getElementById('modalPhotoPreview');  
+                img.src = data.image_url;  
+                img.classList.add('show');  
+            }  
+            document.getElementById('customerModalTitle').textContent = '✏️ ແກ້ໄຂ: ' + data.name;  
+            document.getElementById('customerModal').classList.add('show');  
+        }  
+  
+        function closeCustomerModal() {  
+            document.getElementById('customerModal').classList.remove('show');  
+        }  
+  
+        async function getCurrentLocationForModal() {  
+            if (!navigator.geolocation) {  
+                showToast('ອຸປະກອນບໍ່ຮອງຮັບ GPS', 'error');  
+                return;  
+            }  
+            showToast('⏳ ກຳລັງຊອກຫາ...', 'info');  
+            navigator.geolocation.getCurrentPosition(  
+                (position) => {  
+                    const { latitude, longitude } = position.coords;  
+                    const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;  
+                    document.getElementById('modalCustMapUrl').value = mapUrl;  
+                    showToast('✅ ໄດ້ຕຳແໜ່ງແລ້ວ', 'success');  
+                },  
+                (error) => {  
+                    showToast('ບໍ່ສາມາດຊອກຫາ GPS ໄດ້', 'error');  
+                }, { enableHighAccuracy: true, timeout: 15000 }  
+            );  
+        }  
+  
+        async function saveCustomerFromModal(e) {  
+            e.preventDefault();  
+            if (!await checkSession()) return;  
+  
+            const id = document.getElementById('modalCustId').value;  
+            const name = document.getElementById('modalCustName').value.trim();  
+            if (!name) { showToast('ກະລຸນາໃສ່ຊື່ລູກຄ້າ', 'error'); return; }  
+  
+            const btn = document.getElementById('saveCustModalBtn');  
+            setLoading(btn, true);  
+  
+            try {  
+                const customerData = {  
+                    name,  
+                    phone: document.getElementById('modalCustPhone').value.trim(),  
+                    village: document.getElementById('modalCustVillage').value.trim(),  
+                    district: document.getElementById('modalCustDistrict').value.trim(),  
+                    province: document.getElementById('modalCustProvince').value.trim(),  
+                    map_url: document.getElementById('modalCustMapUrl').value.trim(),  
+                    updated_at: new Date().toISOString()  
+                };  
+  
+                if (modalImageFile) {  
+                    const imageUrl = await uploadModalImage();  
+                    if (imageUrl) customerData.image_url = imageUrl;  
+                }  
+  
+                if (id) {  
+                    await supabaseClient.from('customers').update(customerData).eq('id', id);  
+                    showToast('✅ ອັບເດດສຳເລັດ', 'success');  
+                } else {  
+                    customerData.created_at = new Date().toISOString();  
+                    await supabaseClient.from('customers').insert([customerData]);  
+                    showToast('✅ ເພີ່ມສຳເລັດ', 'success');  
+                }  
+  
+                closeCustomerModal();  
+                await loadAllCustomers();  
+                await loadCustomersList();  
+            } catch (err) {  
+                showToast('❌ ' + err.message, 'error');  
+            }  
+            setLoading(btn, false);  
+        }  
+  
+        // ============================================================  
+        //  PRODUCT MODAL  
+        // ============================================================  
+        function openProductModal() {  
+            renderProductList();  
+            document.getElementById('productModal').classList.add('show');  
+        }  
+  
+        function closeProductModal() {  
+            document.getElementById('productModal').classList.remove('show');  
+        }  
+  
+        function renderProductList() {  
+            const container = document.getElementById('productList');  
+            container.innerHTML = products.map((p, i) => `  
+                    <div style="display:flex; gap:6px; align-items:center; padding:8px; border-bottom:1px solid var(--border);">  
+                        <span style="flex:2; font-weight:700; font-size:14px;">${p.name}</span>  
+                        <input type="number" value="${p.price}" onchange="updateProductPrice(${i}, this.value)" style="flex:1; width:80px; padding:6px 8px; font-size:13px; border:1px solid var(--border); border-radius:4px;" />  
+                        <button onclick="removeProduct(${i})" class="btn-sm btn-danger">✕</button>  
+                    </div>  
+                `).join('');  
+        }  
+  
+        function updateProductPrice(index, newPrice) {  
+            products[index].price = parseInt(newPrice) || 0;  
+            updateProductDropdowns();  
+            showToast('✅ ອັບເດດລາຄາສຳເລັດ', 'success');  
+        }  
+  
+        function addNewProduct() {  
+            const name = prompt('ໃສ່ຊື່ສິນຄ້າໃໝ່:');  
+            if (!name) return;  
+            const price = prompt('ໃສ່ລາຄາ (ກີບ):');  
+            if (!price) return;  
+            const type = confirm('ເປັນຖັງນ້ຳບໍ?') ? 'tank' : 'pack';  
+            products.push({ name, price: parseInt(price), type });  
+            updateProductDropdowns();  
+            renderProductList();  
+            showToast('✅ ເພີ່ມສິນຄ້າສຳເລັດ', 'success');  
+        }  
+  
+        function removeProduct(index) {  
+            if (products.length <= 1) { showToast('ຕ້ອງມີຢ່າງນ້ອຍ 1 ສິນຄ້າ', 'warning'); return; }  
+            if (confirm('ຕ້ອງການລຶບສິນຄ້ານີ້ບໍ?')) {  
+                products.splice(index, 1);  
+                updateProductDropdowns();  
+                renderProductList();  
+                showToast('ລຶບສຳເລັດ', 'success');  
+            }  
+        }  
+  
+        function updateProductDropdowns() {  
+            document.querySelectorAll('.product-select').forEach(select => {  
+                const currentVal = select.value;  
+                select.innerHTML = products.map(p =>  
+                    `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`  
+                ).join('');  
+                select.value = currentVal;  
+            });  
+        }  
+  
+        // ============================================================  
+        //  CALENDAR  
+        // ============================================================  
+        async function loadCalendar(year, month) {  
+            const firstDay = new Date(year, month, 1).getDay();  
+            const daysInMonth = new Date(year, month + 1, 0).getDate();  
+            const today = new Date().toLocaleDateString('fr-CA');  
+  
+            const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`;  
+            const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;  
+  
+            const { data: orders } = await supabaseClient  
+                .from('orders')  
+                .select('date, price')  
+                .gte('date', startDate)  
+                .lte('date', endDate);  
+  
+            const dailyTotals = {};  
+            if (orders) {  
+                orders.forEach(o => {  
+                    if (!dailyTotals[o.date]) dailyTotals[o.date] = 0;  
+                    dailyTotals[o.date] += o.price || 0;  
+                });  
+            }  
+  
+            const monthNames = ['ມັງກອນ', 'ກຸມພາ', 'ມີນາ', 'ເມສາ', 'ພຶດສະພາ', 'ມິຖຸນາ',  
+                'ກໍລະກົດ', 'ສິງຫາ', 'ກັນຍາ', 'ຕຸລາ', 'ພະຈິກ', 'ທັນວາ'  
+            ];  
+            document.getElementById('calendarTitle').textContent = `${monthNames[month]} ${year}`;  
+  
+            const grid = document.getElementById('calendarGrid');  
+            grid.innerHTML = '';  
+  
+            ['ອາ', 'ຈ', 'ອ', 'ພ', 'ພຫ', 'ສ', 'ສ'].forEach(day => {  
+                const div = document.createElement('div');  
+                div.className = 'day-name';  
+                div.textContent = day;  
+                grid.appendChild(div);  
+            });  
+  
+            for (let i = 0; i < firstDay; i++) {  
+                const div = document.createElement('div');  
+                grid.appendChild(div);  
+            }  
+  
+            for (let day = 1; day <= daysInMonth; day++) {  
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;  
+                const total = dailyTotals[dateStr] || 0;  
+                const isToday = dateStr === today;  
+  
+                const div = document.createElement('div');  
+                div.className = 'calendar-day';  
+                if (isToday) div.classList.add('today');  
+                if (total > 0) div.classList.add('has-order');  
+  
+                div.innerHTML = `  
+                        <div class="day-number">${day}</div>  
+                        ${total > 0 ? `<div class="day-amount">${total.toLocaleString()}</div>` : ''}  
+                    `;  
+  
+                div.onclick = () => {  
+                    document.getElementById('filterDate').value = dateStr;  
+                    loadOrders();  
+                    loadDailySummary(dateStr);  
+                    switchTab('tab-history', document.querySelectorAll('.bottom-nav-btn')[1]);  
+                };  
+  
+                grid.appendChild(div);  
+            }  
+        }  
+  
+        function changeMonth(delta) {  
+            calendarMonth += delta;  
+            if (calendarMonth < 0) { calendarMonth = 11;  
+                calendarYear--; }  
+            if (calendarMonth > 11) { calendarMonth = 0;  
+                calendarYear++; }  
+            loadCalendar(calendarYear, calendarMonth);  
+        }  
+  
+        // ============================================================  
+        //  DAILY SUMMARY  
+        // ============================================================  
+        async function loadDailySummary(date) {  
+            if (!date) {  
+                date = new Date().toLocaleDateString('fr-CA');  
+            }  
+            const { data: orders } = await supabaseClient  
+                .from('orders')  
+                .select('*')  
+                .eq('date', date);  
+  
+            const totalOrders = orders ? orders.length : 0;  
+            const totalAmount = orders ? orders.reduce((sum, o) => sum + (o.price || 0), 0) : 0;  
+  
+            document.getElementById('dailySummaryDate').textContent = date;  
+            document.getElementById('dailySummaryCount').textContent = totalOrders + ' ລາຍການ';  
+            document.getElementById('dailySummaryTotal').textContent = totalAmount.toLocaleString() + ' ກີບ';  
+        }  
+  
+        // ============================================================  
+        //  AUTH  
+        // ============================================================  
+        async function checkSession() {  
+            try {  
+                const { data: { session }, error } = await supabaseClient.auth.getSession();  
+                if (error || !session) {  
+                    const { data: refreshData, error: refreshError } = await supabaseClient.auth.refreshSession();  
+                    if (refreshError || !refreshData.session) {  
+                        logout();  
+                        return false;  
+                    }  
+                    currentUser = refreshData.session.user;  
+                    return true;  
+                }  
+                currentUser = session.user;  
+                return true;  
+            } catch (err) {  
+                return false;  
+            }  
+        }  
+  
+        async function login() {  
+            const email = document.getElementById('loginEmail').value.trim();  
+            const password = document.getElementById('loginPassword').value.trim();  
+            const btn = document.getElementById('loginBtn');  
+            setLoading(btn, true);  
+            document.getElementById('loginError').textContent = '';  
+  
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });  
+            setLoading(btn, false);  
+  
+            if (error) {  
+                document.getElementById('loginError').textContent = '❌ ' + error.message;  
+                return;  
+            }  
+            currentUser = data.user;  
+            await initApp();  
+        }  
+  
+        async function logout() {  
+            await supabaseClient.auth.signOut();  
+            localStorage.clear();  
+            sessionStorage.clear();  
+            document.getElementById('loginOverlay').classList.add('show');  
+            document.getElementById('appContainer').style.display = 'none';  
+            showToast('ອອກຈາກລະບົບແລ້ວ', 'info');  
+        }  
+  
+        // ============================================================  
+        //  ⭐ INIT APP - ປັບປຸງການຣີເຊັດຄ່າເມື່ອປ່ຽນວັນທີ  
+        // ============================================================  
+        async function initApp() {  
+            if (!await checkSession()) return;  
+            document.getElementById('loginOverlay').classList.remove('show');  
+            document.getElementById('appContainer').style.display = 'block';  
+            document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;  
+  
+            const today = new Date().toLocaleDateString('fr-CA');  
+            document.getElementById('orderDate').value = today;  
+            document.getElementById('filterDate').value = today;  
+  
+            // ===== Event Listener ສຳລັບປ່ຽນວັນທີ =====  
+            document.getElementById('orderDate').addEventListener('change', function() {  
+                loadStockLoad();  
+            });  
+  
+            const yearSelect = document.getElementById('reportYear');  
+            const currentYear = new Date().getFullYear();  
+            yearSelect.innerHTML = '';  
+            for (let y = currentYear; y >= 2020; y--) {  
+                const opt = document.createElement('option');  
+                opt.value = y;  
+                opt.textContent = y;  
+                yearSelect.appendChild(opt);  
+            }  
+            yearSelect.value = currentYear;  
+  
+            handleProductChange();  
+            await loadStockLoad();  
+            await loadOrders();  
+            await loadCustomersList();  
+            showToast('ເຂົ້າສູ່ລະບົບສຳເລັດ', 'success');  
+        }  
+  
+        // ============================================================  
+        //  ⭐ STOCK LOAD - ຣີເຊັດເປັນ 0 ເມື່ອບໍ່ມີຂໍ້ມູນ  
+        // ============================================================  
+        async function loadStockLoad() {  
+            if (!await checkSession()) return;  
+            const date = document.getElementById('orderDate').value;  
+            if (!date) return;  
+  
+            const { data, error } = await supabaseClient  
+                .from('daily_stocks')  
+                .select('*')  
+                .eq('date', date)  
+                .maybeSingle();  
+  
+            if (error) {  
+                console.error('Load stock error:', error);  
+                return;  
+            }  
+  
+            if (data) {  
+                // ຖ້າມີຂໍ້ມູນ, ສະແດງຄ່າເກົ່າ  
+                document.getElementById('loadTank').value = data.tank || 0;  
+                document.getElementById('loadPack250').value = data.pack250 || 0;  
+                document.getElementById('loadPack600').value = data.pack600 || 0;  
+                document.getElementById('loadPack2000').value = data.pack2000 || 0;  
+                document.getElementById('loadAlkaline').value = data.alkaline || 0;  
+            } else {  
+                // ຖ້າບໍ່ມີຂໍ້ມູນ (ວັນທີໃໝ່), ຣີເຊັດເປັນ 0  
+                document.getElementById('loadTank').value = 0;  
+                document.getElementById('loadPack250').value = 0;  
+                document.getElementById('loadPack600').value = 0;  
+                document.getElementById('loadPack2000').value = 0;  
+                document.getElementById('loadAlkaline').value = 0;  
+  
+                // ບັນທຶກຄ່າ 0 ໃສ່ຖານຂໍ້ມູນ  
+                await saveStockLoad();  
+            }  
+  
+            await calculateStockRemaining();  
+        }  
+  
+        // ============================================================  
+        //  STOCK MANAGEMENT  
+        // ============================================================  
+        async function saveStockLoad() {  
+            calculateStockRemaining();  
+            clearTimeout(window._stockTimeout);  
+            window._stockTimeout = setTimeout(async () => {  
+                if (!await checkSession()) return;  
+                const date = document.getElementById('orderDate').value;  
+                if (!date) return;  
+                const stockData = {  
+                    date,  
+                    tank: parseInt(document.getElementById('loadTank').value) || 0,  
+                    pack250: parseInt(document.getElementById('loadPack250').value) || 0,  
+                    pack600: parseInt(document.getElementById('loadPack600').value) || 0,  
+                    pack2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
+                    alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0,  
+                    updated_at: new Date().toISOString()  
+                };  
+                await supabaseClient.from('daily_stocks').upsert(stockData, { onConflict: 'date' });  
+            }, 500);  
+        }  
+  
+        async function calculateStockRemaining() {  
+            const date = document.getElementById('orderDate').value;  
+            if (!date) return;  
+  
+            const load = {  
+                tank: parseInt(document.getElementById('loadTank').value) || 0,  
+                p250: parseInt(document.getElementById('loadPack250').value) || 0,  
+                p600: parseInt(document.getElementById('loadPack600').value) || 0,  
+                p2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
+                alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0  
+            };  
+  
+            const { data: orders } = await supabaseClient.from('orders').select('*').eq('date', date);  
+            let sold = { tank: 0, p250: 0, p600: 0, p2000: 0, alkaline: 0 };  
+  
+            if (orders) {  
+                orders.forEach(o => {  
+                    if (o.product && o.product.includes('ຖັງ')) {  
+                        sold.tank += o.sent || 0;  
+                    } else if (o.product && o.product.includes('250ml')) sold.p250 += o.sent || 0;  
+                    else if (o.product && o.product.includes('600ml')) sold.p600 += o.sent || 0;  
+                    else if (o.product && o.product.includes('2000ml')) sold.p2000 += o.sent || 0;  
+                    else if (o.product && o.product.includes('ດ່າງ')) sold.alkaline += o.sent || 0;  
+                });  
+            }  
+  
+            const remain = {  
+                tank: Math.max(0, load.tank - sold.tank),  
+                p250: Math.max(0, load.p250 - sold.p250),  
+                p600: Math.max(0, load.p600 - sold.p600),  
+                p2000: Math.max(0, load.p2000 - sold.p2000),  
+                alkaline: Math.max(0, load.alkaline - sold.alkaline)  
+            };  
+  
+            const getClass = (val) => val <= 0 ? 'low-stock' : 'success-stock';  
+  
+            document.getElementById('stockRemaining').innerHTML = `  
+                    <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p class="${getClass(remain.tank)}">${remain.tank}</p></div>  
+                    <div class="stock-card"><h5>250ml</h5><p class="${getClass(remain.p250)}">${remain.p250}</p></div>  
+                    <div class="stock-card"><h5>600ml</h5><p class="${getClass(remain.p600)}">${remain.p600}</p></div>  
+                    <div class="stock-card"><h5>2000ml</h5><p class="${getClass(remain.p2000)}">${remain.p2000}</p></div>  
+                    <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p class="${getClass(remain.alkaline)}">${remain.alkaline}</p></div>  
+                `;  
+        }  
+  
+        // ============================================================  
+        //  CUSTOMER MANAGEMENT  
+        // ============================================================  
+        async function onCustomerNameInput() {  
+            const name = document.getElementById('customerName').value.trim();  
+            const detailDiv = document.getElementById('customerDetail');  
+            if (!name) {  
+                detailDiv.classList.remove('show');  
+                currentCustomerId = null;  
+                return;  
+            }  
+            const { data } = await supabaseClient.from('customers').select('*').ilike('name', name).maybeSingle();  
+            if (!data) {  
+                detailDiv.classList.remove('show');  
+                currentCustomerId = null;  
+                return;  
+            }  
+            currentCustomerId = data.id;  
+  
+            let photoHtml = '-';  
+            if (data.image_url) {  
+                photoHtml =  
+                    `<img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />`;  
+            }  
+  
+            detailDiv.innerHTML = `  
+                    <div class="info-grid">  
+                        <span class="label">📞 ເບີໂທ:</span><span>${data.phone || '-'}</span>  
+                        <span class="label">🏠 ບ້ານ:</span><span>${data.village || '-'}</span>  
+                        <span class="label">🏛️ ເມືອງ:</span><span>${data.district || '-'}</span>  
+                        <span class="label">🗺️ ແຂວງ:</span><span>${data.province || '-'}</span>  
+                        <span class="label">📷 ຮູບ:</span><span>${photoHtml}</span>  
+                        <span class="label">📦 ສັ່ງ:</span><span>${data.total_orders || 0}</span>  
+                        <span class="label">💰 ຍອດໃຊ້:</span><span style="color:var(--success); font-weight:700;">${(data.total_spent || 0).toLocaleString()} ກີບ</span>  
+                    </div>  
+                `;  
+            detailDiv.classList.add('show');  
+        }  
+  
+        async function loadCustomersList() {  
+            const { data } = await supabaseClient.from('customers').select('name').order('name');  
+            if (!data) return;  
+            const datalist = document.getElementById('customerList');  
+            datalist.innerHTML = '';  
+            data.forEach(c => {  
+                const opt = document.createElement('option');  
+                opt.value = c.name;  
+                datalist.appendChild(opt);  
+            });  
+        }  
+  
+        // ============================================================  
+        //  MAIN SUBMIT  
+        // ============================================================  
+        document.getElementById('waterForm').addEventListener('submit', async function(e) {  
+            e.preventDefault();  
+            if (!await checkSession()) return;  
+  
+            const name = document.getElementById('customerName').value.trim();  
+            if (!name) {  
+                showToast('⚠️ ກະລຸນາໃສ່ຊື່ລູກຄ້າ', 'warning');  
+                return;  
+            }  
+  
+            const currentDate = document.getElementById('orderDate').value;  
+  
+            if (!confirm('ທ່ານຕ້ອງການບັນທຶກຄຳສັ່ງນີ້ແທ້ບໍ?')) {  
+                return;  
+            }  
+  
+            const btn = document.getElementById('submitOrderBtn');  
+            setLoading(btn, true);  
+  
+            try {  
+                let customerId = currentCustomerId;  
+  
+                if (!customerId) {  
+                    const { data: existing } = await supabaseClient  
+                        .from('customers')  
+                        .select('id, name')  
+                        .ilike('name', name)  
+                        .maybeSingle();  
+  
+                    if (existing) {  
+                        customerId = existing.id;  
+                    } else {  
+                        const { data: newCust, error: insertError } = await supabaseClient  
+                            .from('customers')  
+                            .insert([{  
+                                name: name,  
+                                created_at: new Date().toISOString(),  
+                                total_orders: 0,  
+                                total_spent: 0  
+                            }])  
+                            .select();  
+  
+                        if (insertError) {  
+                            console.error('❌ ສ້າງລູກຄ້າບໍ່ສຳເລັດ:', insertError);  
+                            showToast('❌ ສ້າງລູກຄ້າບໍ່ສຳເລັດ', 'error');  
+                            setLoading(btn, false);  
+                            return;  
+                        }  
+  
+                        if (newCust && newCust.length > 0) {  
+                            customerId = newCust[0].id;  
+                            showToast('✅ ເພີ່ມລູກຄ້າໃໝ່: ' + name, 'success');  
+                        } else {  
+                            showToast('❌ ສ້າງລູກຄ້າບໍ່ສຳເລັດ', 'error');  
+                            setLoading(btn, false);  
+                            return;  
+                        }  
+                    }  
+                }  
+  
+                currentCustomerId = customerId;  
+  
+                const items = document.querySelectorAll('.order-item');  
+                let totalWaterSales = 0;  
+                let totalSent = 0;  
+                let productNames = [];  
+                let isTank = false;  
+  
+                items.forEach(item => {  
+                    const select = item.querySelector('.product-select');  
+                    const qty = parseInt(item.querySelector('.qty-input').value) || 0;  
+                    const price = parseInt(select.options[select.selectedIndex].dataset.price) || 0;  
+                    const name2 = select.value;  
+                    const type = select.options[select.selectedIndex].dataset.type || 'pack';  
+                    if (type === 'tank') isTank = true;  
+                    totalWaterSales += price * qty;  
+                    totalSent += qty;  
+                    productNames.push(`${name2} x${qty}`);  
+                });  
+  
+                const returnQty = isTank ? (parseInt(document.getElementById('qtyReturn').value) || 0) : 0;  
+                const isNew = document.getElementById('isNewCustomer').checked;  
+                const deposit = isNew ? (parseFloat(document.getElementById('depositPrice').value) || 0) : 0;  
+                const total = totalWaterSales + deposit;  
+  
+                const orderData = {  
+                    date: currentDate,  
+                    delivery_time: document.getElementById('deliveryTime').value || new Date().toISOString(),  
+                    customer_id: customerId,  
+                    customer_name: name,  
+                    product: productNames.join(' | '),  
+                    category: isTank ? 'tank' : 'pack',  
+                    is_new_customer: isNew,  
+                    sent: totalSent,  
+                    return_qty: returnQty,  
+                    balance: isTank ? totalSent - returnQty : 0,  
+                    water_sales: totalWaterSales,  
+                    deposit: deposit,  
+                    price: total,  
+                    payment: document.getElementById('paymentMethod').value,  
+                    delivery_status: document.getElementById('deliveryStatus').value,  
+                    note: document.getElementById('orderNote').value.trim()  
+                };  
+  
+                console.log('📝 ຂໍ້ມູນທີ່ຈະບັນທຶກ:', orderData);  
+  
+                let result;  
+                if (editingOrderId) {  
+                    result = await supabaseClient.from('orders').update(orderData).eq('id', editingOrderId);  
+                    if (result.error) throw result.error;  
+                    showToast('✅ ແກ້ໄຂສຳເລັດ', 'success');  
+                    editingOrderId = null;  
+                    document.getElementById('submitOrderBtn').innerHTML = '💾 ບັນທຶກ';  
+                } else {  
+                    result = await supabaseClient.from('orders').insert([orderData]);  
+                    if (result.error) throw result.error;  
+                    showToast('✅ ບັນທຶກສຳເລັດ', 'success');  
+                }  
+  
+                console.log('✅ ບັນທຶກສຳເລັດ!');  
+  
+                try {  
+                    const { data: custData } = await supabaseClient  
+                        .from('customers')  
+                        .select('total_orders, total_spent')  
+                        .eq('id', customerId)  
+                        .single();  
+  
+                    if (custData) {  
+                        const newOrders = (custData.total_orders || 0) + 1;  
+                        const newSpent = (custData.total_spent || 0) + total;  
+  
+                        await supabaseClient  
+                            .from('customers')  
+                            .update({  
+                                total_orders: newOrders,  
+                                total_spent: newSpent,  
+                                updated_at: new Date().toISOString()  
+                            })  
+                            .eq('id', customerId);  
+                    }  
+                } catch (updateErr) {  
+                    console.warn('⚠️ ອັບເດດຍອດລູກຄ້າບໍ່ສຳເລັດ:', updateErr);  
+                }  
+  
+                // ຣີເຊັດຟອມ  
+                document.getElementById('customerName').value = '';  
+                document.getElementById('qtyReturn').value = '0';  
+                document.getElementById('isNewCustomer').checked = false;  
+                document.getElementById('depositPrice').value = '0';  
+                document.getElementById('depositPrice').disabled = true;  
+                document.getElementById('orderNote').value = '';  
+                document.getElementById('totalPrice').value = '0 ກີບ';  
+                document.getElementById('customerDetail').classList.remove('show');  
+                document.getElementById('paymentReminder').style.display = 'none';  
+                currentCustomerId = null;  
+  
+                const container = document.getElementById('orderItems');  
+                container.innerHTML = `  
+                        <div class="order-item">  
+                            <select class="product-select" onchange="calculateTotal()">  
+                                ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}  
+                            </select>  
+                            <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />  
+                            <button type="button" onclick="removeOrderItem(this)" class="btn-sm btn-danger">✕</button>  
+                        </div>  
+                    `;  
+                calculateTotal();  
+  
+                // ໂຫຼດຂໍ້ມູນໃໝ່  
+                document.getElementById('filterDate').value = currentDate;  
+                await loadStockLoad();  
+                await loadOrders();  
+                await loadCustomersList();  
+                await loadAllCustomers();  
+                await loadDailySummary(currentDate);  
+                await loadCalendar(calendarYear, calendarMonth);  
+  
+                console.log('✅ ໂຫຼດຂໍ້ມູນໃໝ່ສຳເລັດ!');  
+  
+            } catch (err) {  
+                console.error('❌ Error:', err);  
+                showToast('❌ ' + err.message, 'error');  
+            }  
+            setLoading(btn, false);  
+        });  
+  
+        // ============================================================  
+        //  EDIT ORDER  
+        // ============================================================  
+        async function editOrder(id) {  
+            if (!await checkSession()) return;  
+            const { data } = await supabaseClient.from('orders').select('*').eq('id', id).single();  
+            if (!data) { showToast('ບໍ່ພົບຂໍ້ມູນ', 'error'); return; }  
+  
+            editingOrderId = data.id;  
+            document.getElementById('orderDate').value = data.date;  
+            document.getElementById('customerName').value = data.customer_name;  
+            document.getElementById('paymentMethod').value = data.payment;  
+            document.getElementById('qtyReturn').value = data.return_qty || 0;  
+            document.getElementById('isNewCustomer').checked = data.is_new_customer || false;  
+            document.getElementById('depositPrice').value = data.deposit || 0;  
+            document.getElementById('orderNote').value = data.note || '';  
+            document.getElementById('deliveryStatus').value = data.delivery_status || 'ສົ່ງສຳເລັດ';  
+            document.getElementById('deliveryTime').value = data.delivery_time || '';  
+  
+            const container = document.getElementById('orderItems');  
+            container.innerHTML = '';  
+            const products2 = data.product ? data.product.split(' | ') : [];  
+            if (products2.length === 0) {  
+                addOrderItem();  
+            } else {  
+                products2.forEach(p => {  
+                    const match = p.match(/(.+?) x(\d+)/);  
+                    if (match) {  
+                        const [_, name2, qty] = match;  
+                        const item = document.createElement('div');  
+                        item.className = 'order-item';  
+                        item.innerHTML = `  
+                                <select class="product-select" onchange="calculateTotal()">  
+                                    ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}  
+                                </select>  
+                                <input type="number" class="qty-input" value="${qty}" min="1" onchange="calculateTotal()" />  
+                                <button type="button" onclick="removeOrderItem(this)" class="btn-sm btn-danger">✕</button>  
+                            `;  
+                        const select = item.querySelector('.product-select');  
+                        select.value = name2.trim();  
+                        container.appendChild(item);  
+                    }  
+                });  
+            }  
+  
+            toggleDeposit();  
+            calculateTotal();  
+            await onCustomerNameInput();  
+  
+            document.getElementById('submitOrderBtn').innerHTML = '💾 ບັນທຶກການແກ້ໄຂ';  
+            switchTab('tab-order', document.querySelectorAll('.bottom-nav-btn')[0]);  
+            showToast('🔄 ກຳລັງແກ້ໄຂ ID: ' + id, 'warning');  
+        }  
+  
+        // ============================================================  
+        //  LOAD ORDERS  
+        // ============================================================  
+        async function loadOrders() {  
+            if (!await checkSession()) return;  
+            const filterDate = document.getElementById('filterDate').value;  
+            const search = document.getElementById('searchInput').value.trim();  
+            const period = document.getElementById('periodFilter').value;  
+  
+            let query = supabaseClient.from('orders').select('*').order('date', { ascending: false });  
+            const todayStr = new Date().toLocaleDateString('fr-CA');  
+  
+            if (period === 'today') query = query.eq('date', todayStr);  
+            else if (period === 'week') {  
+                const weekAgo = new Date();  
+                weekAgo.setDate(weekAgo.getDate() - 7);  
+                query = query.gte('date', weekAgo.toLocaleDateString('fr-CA'));  
+            } else if (period === 'month') {  
+                const monthAgo = new Date();  
+                monthAgo.setDate(monthAgo.getDate() - 30);  
+                query = query.gte('date', monthAgo.toLocaleDateString('fr-CA'));  
+            } else if (filterDate && period === 'all') {  
+                query = query.eq('date', filterDate);  
+            }  
+  
+            if (search) query = query.ilike('customer_name', `%${search}%`);  
+  
+            const { data: orders } = await query;  
+            const tbody = document.getElementById('orderTableBody');  
+            tbody.innerHTML = '';  
+            let totalWater = 0,  
+                totalDeposit = 0,  
+                grandTotal = 0,  
+                totalBalance = 0;  
+  
+            if (!orders || orders.length === 0) {  
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">📭 ບໍ່ມີຂໍ້ມູນ</td></tr>';  
+            } else {  
+                orders.forEach(o => {  
+                    totalWater += o.water_sales || 0;  
+                    totalDeposit += o.deposit || 0;  
+                    grandTotal += o.price || 0;  
+                    if (o.category === 'tank') totalBalance += o.balance || 0;  
+  
+                    const paymentBadge = o.payment === 'ເງິນສົດ' ? 'badge-cash' : o.payment === 'ເງິນໂອນ' ?  
+                        'badge-transfer' : 'badge-credit';  
+  
+                    const statusBadge = o.delivery_status === 'ສົ່ງສຳເລັດ' ? 'badge-success' :  
+                        o.delivery_status === 'ບໍ່ຢູ່ບ້ານ' ? 'badge-warning' : 'badge-danger';  
+  
+                    const time = o.delivery_time ? new Date(o.delivery_time).toLocaleTimeString('lo-LA', { hour: '2-digit',  
+                        minute: '2-digit' }) : '-';  
+  
+                    tbody.innerHTML += `  
+                            <tr>  
+                                <td>${o.date}</td>  
+                                <td>${time}</td>  
+                                <td><strong>${o.customer_name}</strong></td>  
+                                <td style="font-size:10px;">${o.product}</td>  
+                                <td>${o.sent}</td>  
+                                <td>${o.return_qty || 0}</td>  
+                                <td style="font-weight:700; color:var(--primary);">${(o.water_sales || 0).toLocaleString()}</td>  
+                                <td><span class="badge ${paymentBadge}">${o.payment}</span></td>  
+                                <td><span class="badge ${statusBadge}">${o.delivery_status || 'ສົ່ງສຳເລັດ'}</span></td>  
+                                <td>  
+                                    <button onclick="editOrder(${o.id})" class="btn-sm" style="background:var(--info);" title="ແກ້ໄຂ">✏️</button>  
+                                    <button onclick="deleteOrder(${o.id})" class="btn-sm btn-danger" title="ລຶບ">🗑️</button>  
+                                </td>  
+                            </tr>  
+                        `;  
+                });  
+            }  
+  
+            document.getElementById('sumWaterSales').textContent = totalWater.toLocaleString() + ' ກີບ';  
+            document.getElementById('sumDepositSales').textContent = totalDeposit.toLocaleString() + ' ກີບ';  
+            document.getElementById('sumGrandTotal').textContent = grandTotal.toLocaleString() + ' ກີບ';  
+            document.getElementById('sumBottleBalance').textContent = totalBalance.toLocaleString() + ' ໜ່ວຍ';  
+            document.getElementById('sumOrdersCount').textContent = orders ? orders.length : 0;  
+  
+            const activeDate = document.getElementById('filterDate').value || todayStr;  
+            await loadDailySummary(activeDate);  
+        }  
+  
+        // ============================================================  
+        //  MONTHLY REPORT  
+        // ============================================================  
+        async function loadMonthlyReport() {  
+            if (!await checkSession()) return;  
+            const year = document.getElementById('reportYear').value;  
+            const { data: orders } = await supabaseClient.from('orders').select('*');  
+            const months = ['ມັງກອນ', 'ກຸມພາ', 'ມີນາ', 'ເມສາ', 'ພຶດສະພາ', 'ມິຖຸນາ', 'ກໍລະກົດ', 'ສິງຫາ', 'ກັນຍາ',  
+                'ຕຸລາ', 'ພະຈິກ', 'ທັນວາ'  
+            ];  
+            const tbody = document.getElementById('monthlyTableBody');  
+            tbody.innerHTML = '';  
+            let grandTotalYear = 0,  
+                grandOrdersYear = 0;  
+  
+            for (let i = 0; i < 12; i++) {  
+                const prefix = `${year}-${String(i + 1).padStart(2, '0')}`;  
+                const filtered = (orders || []).filter(o => o.date && o.date.startsWith(prefix));  
+                const water = filtered.reduce((s, o) => s + (o.water_sales || 0), 0);  
+                const deposit = filtered.reduce((s, o) => s + (o.deposit || 0), 0);  
+                const total = water + deposit;  
+                grandTotalYear += total;  
+                grandOrdersYear += filtered.length;  
+                tbody.innerHTML += `  
+                        <tr>  
+                            <td style="font-weight:700; background:var(--tab-bg);">${months[i]}</td>  
+                            <td>${filtered.length}</td>  
+                            <td style="color:var(--success); font-weight:700;">${water.toLocaleString()}</td>  
+                            <td style="color:var(--info); font-weight:700;">${deposit.toLocaleString()}</td>  
+                            <td style="font-weight:700; color:var(--primary);">${total.toLocaleString()}</td>  
+                        </tr>  
+                    `;  
+            }  
+  
+            tbody.innerHTML += `  
+                    <tr style="font-weight:700; background:var(--detail-bg); border-top:2px solid var(--primary);">  
+                        <td>📊 ລວມປີ ${year}</td>  
+                        <td>${grandOrdersYear}</td>  
+                        <td style="color:var(--success);">${(orders || []).filter(o => o.date && o.date.startsWith(year)).reduce((s,o) => s + (o.water_sales || 0), 0).toLocaleString()}</td>  
+                        <td style="color:var(--info);">${(orders || []).filter(o => o.date && o.date.startsWith(year)).reduce((s,o) => s + (o.deposit || 0), 0).toLocaleString()}</td>  
+                        <td style="color:var(--primary); font-size:16px;">${grandTotalYear.toLocaleString()}</td>  
+                    </tr>  
+                `;  
+        }  
+  
+        // ============================================================  
+        //  LOAD ALL CUSTOMERS  
+        // ============================================================  
+        async function loadAllCustomers() {  
+            if (!await checkSession()) return;  
+            const search = document.getElementById('customerSearchInput').value.trim();  
+            let query = supabaseClient.from('customers').select('*').order('name');  
+            if (search) query = query.ilike('name', `%${search}%`);  
+  
+            const { data } = await query;  
+            const tbody = document.getElementById('customerTableBody');  
+            tbody.innerHTML = '';  
+            if (!data || data.length === 0) {  
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">📭 ບໍ່ມີລູກຄ້າ</td></tr>';  
+                return;  
+            }  
+  
+            data.forEach(c => {  
+                let photoHtml = '-';  
+                if (c.image_url) {  
+                    photoHtml =  
+                        `<img src="${c.image_url}" style="width:35px;height:35px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />`;  
+                }  
+                let mapHtml = '-';  
+                if (c.map_url) {  
+                    mapHtml =  
+                        `<a href="${c.map_url}" target="_blank" class="btn-map-view" style="background:var(--info); color:white; padding:4px 8px; border-radius:4px; text-decoration:none; font-size:11px;">🗺️</a>`;  
+                }  
+  
+                tbody.innerHTML += `  
+                        <tr>  
+                            <td><strong>${c.name}</strong></td>  
+                            <td>${c.phone || '-'}</td>  
+                            <td>${c.village || '-'}</td>  
+                            <td>${c.district || '-'}</td>  
+                            <td>${c.province || '-'}</td>  
+                            <td>${photoHtml}</td>  
+                            <td>${mapHtml}</td>  
+                            <td>${c.total_orders || 0}</td>  
+                            <td style="font-weight:700; color:var(--success);">${(c.total_spent || 0).toLocaleString()}</td>  
+                            <td>  
+                                <button onclick="editCustomer(${c.id})" class="btn-sm" style="background:var(--info);" title="ແກ້ໄຂ">✏️</button>  
+                                <button onclick="deleteCustomer(${c.id})" class="btn-sm btn-danger" title="ລຶບ">🗑️</button>  
+                            </td>  
+                        </tr>  
+                    `;  
+            });  
+        }  
+  
+        function deleteCustomer(id) {  
+            openConfirmModal('ຕ້ອງການລຶບລູກຄ້ານີ້ແທ້ບໍ?', id, 'customer');  
+        }  
+  
+        async function confirmDeleteCustomer(id) {  
+            try {  
+                await supabaseClient.from('customers').delete().eq('id', id);  
+                showToast('ລຶບສຳເລັດ', 'success');  
+                await loadAllCustomers();  
+                await loadCustomersList();  
+            } catch (err) {  
+                showToast('ລຶບບໍ່ສຳເລັດ: ' + err.message, 'error');  
+            }  
+        }  
+  
+        function deleteOrder(id) {  
+            openConfirmModal('ຕ້ອງການລຶບຄຳສັ່ງນີ້ແທ້ບໍ?', id, 'order');  
+        }  
+  
+        async function confirmDeleteOrder(id) {  
+            try {  
+                await supabaseClient.from('orders').delete().eq('id', id);  
+                showToast('ລຶບສຳເລັດ', 'success');  
+                await loadStockLoad();  
+                await loadOrders();  
+            } catch (err) {  
+                showToast('ລຶບບໍ່ສຳເລັດ: ' + err.message, 'error');  
+            }  
+        }  
+  
+        // ============================================================  
+        //  EXPORT EXCEL  
+        // ============================================================  
+        function exportExcel() {  
+            const table = document.getElementById('orderTableBody');  
+            if (table.children.length === 0 || table.children[0].classList.contains('no-data')) {  
+                showToast('ບໍ່ມີຂໍ້ມູນສຳລັບດາວໂຫລດ', 'warning');  
+                return;  
+            }  
+  
+            let csv = 'ວັນທີ,ເວລາ,ລູກຄ້າ,ສິນຄ້າ,ສົ່ງ,ຄືນ,ຍອດນ້ຳ,ຈຳຕຸກ,ລວມ,ຊຳລະ,ສະຖານະ\n';  
+            const rows = table.querySelectorAll('tr');  
+            rows.forEach(row => {  
+                const cells = row.querySelectorAll('td');  
+                if (cells.length > 0) {  
+                    const rowData = [];  
+                    cells.forEach((cell, i) => {  
+                        if (i === 6 || i === 7 || i === 8) {  
+                            const text = cell.textContent.replace(/,/g, '').replace(' ກີບ', '').trim();  
+                            rowData.push(text);  
+                        } else {  
+                            rowData.push(cell.textContent.trim());  
+                        }  
+                    });  
+                    csv += rowData.join(',') + '\n';  
+                }  
+            });  
+  
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });  
+            const link = document.createElement('a');  
+            link.href = URL.createObjectURL(blob);  
+            link.download = `ລາຍງານ_${new Date().toLocaleDateString('fr-CA')}.csv`;  
+            link.click();  
+            showToast('✅ ດາວໂຫລດສຳເລັດ', 'success');  
+        }  
+  
+        function exportExcelMonthly() {  
+            const table = document.getElementById('monthlyTableBody');  
+            if (table.children.length === 0) {  
+                showToast('ບໍ່ມີຂໍ້ມູນ', 'warning');  
+                return;  
+            }  
+  
+            let csv = 'ເດືອນ,ຈຳນວນ,ຍອດຂາຍ,ຈຳຕຸກ,ລວມ\n';  
+            const rows = table.querySelectorAll('tr');  
+            rows.forEach(row => {  
+                const cells = row.querySelectorAll('td');  
+                if (cells.length > 0) {  
+                    const rowData = [];  
+                    cells.forEach(cell => {  
+                        rowData.push(cell.textContent.replace(/,/g, '').trim());  
+                    });  
+                    csv += rowData.join(',') + '\n';  
+                }  
+            });  
+  
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });  
+            const link = document.createElement('a');  
+            link.href = URL.createObjectURL(blob);  
+            link.download = `ລາຍງານເດືອນ_${new Date().toLocaleDateString('fr-CA')}.csv`;  
+            link.click();  
+            showToast('✅ ດາວໂຫລດສຳເລັດ', 'success');  
+        }  
+  
+        // ============================================================  
+        //  SEND WHATSAPP  
+        // ============================================================  
+        function sendWhatsApp() {  
+            const message = encodeURIComponent(  
+                `📊 ລາຍງານການຂາຍ\nວັນທີ: ${new Date().toLocaleDateString('lo-LA')}\n\n` +  
+                `ຍອດຂາຍນ້ຳ: ${document.getElementById('sumWaterSales').textContent}\n` +  
+                `ຍອດຈຳຕຸກ: ${document.getElementById('sumDepositSales').textContent}\n` +  
+                `ລວມທັງໝົດ: ${document.getElementById('sumGrandTotal').textContent}\n` +  
+                `ລາຍການ: ${document.getElementById('sumOrdersCount').textContent}`  
+            );  
+            window.open(`https://wa.me/?text=${message}`, '_blank');  
+        }  
+  
+        // ============================================================  
+        //  INIT  
+        // ============================================================  
+        window.addEventListener('load', async function() {  
+            loadThemePreference();  
+  
+            const { data: { session } } = await supabaseClient.auth.getSession();  
+            if (session) {  
+                await initApp();  
+            } else {  
+                document.getElementById('loginOverlay').classList.add('show');  
+            }  
+  
+            document.getElementById('loginPassword').addEventListener('keypress', function(e) {  
+                if (e.key === 'Enter') login();  
+            });  
+            document.getElementById('loginEmail').addEventListener('keypress', function(e) {  
+                if (e.key === 'Enter') login();  
+            });  
+        });  
+    </script>  
+</body>  
+</html>  
