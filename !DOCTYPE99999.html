@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8" />  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover" />  
-    <title>ລະບົບສົ່ງນ້ຳ 3.1</title>  
+    <title>ລະບົບສົ່ງນ້ຳ 3.2</title>  
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  
     </script>  
     <link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap" rel="stylesheet">  
@@ -198,7 +198,7 @@
         .btn-map-open {  
             background: #34a853;  
             color: white;  
-            padding: 6px 12px;  
+            padding: 4px 12px;  
             border-radius: 6px;  
             border: none;  
             cursor: pointer;  
@@ -209,6 +209,24 @@
         }  
   
         .btn-map-open:hover {  
+            opacity: 0.9;  
+            transform: translateY(-1px);  
+        }  
+  
+        .btn-photo-view {  
+            background: #8b5cf6;  
+            color: white;  
+            padding: 4px 12px;  
+            border-radius: 6px;  
+            border: none;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-family: 'Phetsarath', sans-serif;  
+            font-size: 12px;  
+            transition: var(--transition);  
+        }  
+  
+        .btn-photo-view:hover {  
             opacity: 0.9;  
             transform: translateY(-1px);  
         }  
@@ -814,6 +832,14 @@
             border-color: var(--primary);  
         }  
   
+        .photo-btn-group {  
+            display: flex;  
+            align-items: center;  
+            gap: 4px;  
+            justify-content: center;  
+            flex-wrap: wrap;  
+        }  
+  
         /* ===== MODAL ===== */  
         .modal-overlay {  
             display: none;  
@@ -1319,7 +1345,7 @@
         <div class="app-header">  
             <div class="logo">  
                 <span style="font-size:28px;">💧</span>  
-                <h2>ສົ່ງນ້ຳ 3.1</h2>  
+                <h2>ສົ່ງນ້ຳ 3.2</h2>  
             </div>  
             <div class="header-right">  
                 <button class="btn btn-refresh btn-sm" onclick="refreshAllData()" title="ຣີເຟຣຊຂໍ້ມູນ">  
@@ -2451,188 +2477,8 @@
         }  
   
         // ============================================================  
-        //  INIT APP  
+        //  ⭐ CUSTOMER DETAIL WITH PHOTO BUTTON  
         // ============================================================  
-        async function initApp() {  
-            if (!await checkSession()) {  
-                document.getElementById('loginOverlay').classList.remove('hidden');  
-                return;  
-            }  
-  
-            document.getElementById('loginOverlay').classList.add('hidden');  
-            document.getElementById('appContainer').style.display = 'block';  
-            document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;  
-  
-            // Load provinces  
-            loadProvinces();  
-  
-            const today = new Date().toLocaleDateString('fr-CA');  
-            document.getElementById('orderDate').value = today;  
-            document.getElementById('filterDate').value = today;  
-            document.getElementById('stockDateDisplay').textContent = today;  
-  
-            // Set default delivery time  
-            const now = new Date();  
-            const localStr = now.getFullYear() + '-' +  
-                String(now.getMonth() + 1).padStart(2, '0') + '-' +  
-                String(now.getDate()).padStart(2, '0') + 'T' +  
-                String(now.getHours()).padStart(2, '0') + ':' +  
-                String(now.getMinutes()).padStart(2, '0');  
-            document.getElementById('deliveryTime').value = localStr;  
-  
-            // Set report year  
-            const yearSelect = document.getElementById('reportYear');  
-            const currentYear = new Date().getFullYear();  
-            yearSelect.innerHTML = '';  
-            for (let y = currentYear; y >= 2020; y--) {  
-                const opt = document.createElement('option');  
-                opt.value = y;  
-                opt.textContent = y;  
-                yearSelect.appendChild(opt);  
-            }  
-            yearSelect.value = currentYear;  
-  
-            // Load all data  
-            await Promise.all([  
-                loadStockLoad(),  
-                loadOrders(),  
-                loadCustomersList(),  
-                loadAllCustomers(),  
-                loadDailySummary(today),  
-                loadCalendar(calendarYear, calendarMonth),  
-                loadMonthlyReport()  
-            ]);  
-  
-            // Update product dropdowns  
-            updateProductDropdowns();  
-  
-            showToast('ເຂົ້າສູ່ລະບົບສຳເລັດ', 'success');  
-        }  
-  
-        // ============================================================  
-        //  STOCK MANAGEMENT  
-        // ============================================================  
-        async function loadStockLoad() {  
-            if (!await checkSession()) return;  
-            const date = document.getElementById('orderDate').value;  
-            if (!date) return;  
-  
-            const { data, error } = await supabaseClient  
-                .from('daily_stocks')  
-                .select('*')  
-                .eq('date', date)  
-                .maybeSingle();  
-  
-            if (error) {  
-                console.error('Load stock error:', error);  
-                return;  
-            }  
-  
-            if (data) {  
-                document.getElementById('loadTank').value = data.tank || 0;  
-                document.getElementById('loadPack250').value = data.pack250 || 0;  
-                document.getElementById('loadPack600').value = data.pack600 || 0;  
-                document.getElementById('loadPack2000').value = data.pack2000 || 0;  
-                document.getElementById('loadAlkaline').value = data.alkaline || 0;  
-            } else {  
-                document.getElementById('loadTank').value = 0;  
-                document.getElementById('loadPack250').value = 0;  
-                document.getElementById('loadPack600').value = 0;  
-                document.getElementById('loadPack2000').value = 0;  
-                document.getElementById('loadAlkaline').value = 0;  
-                await saveStockLoad();  
-            }  
-  
-            await calculateStockRemaining();  
-        }  
-  
-        async function saveStockLoad() {  
-            calculateStockRemaining();  
-            clearTimeout(window._stockTimeout);  
-            window._stockTimeout = setTimeout(async () => {  
-                if (!await checkSession()) return;  
-                const date = document.getElementById('orderDate').value;  
-                if (!date) return;  
-                const stockData = {  
-                    date,  
-                    tank: parseInt(document.getElementById('loadTank').value) || 0,  
-                    pack250: parseInt(document.getElementById('loadPack250').value) || 0,  
-                    pack600: parseInt(document.getElementById('loadPack600').value) || 0,  
-                    pack2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
-                    alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0,  
-                    updated_at: new Date().toISOString()  
-                };  
-                await supabaseClient.from('daily_stocks').upsert(stockData, { onConflict: 'date' });  
-            }, 500);  
-        }  
-  
-        async function calculateStockRemaining() {  
-            const date = document.getElementById('orderDate').value;  
-            if (!date) return;  
-  
-            const load = {  
-                tank: parseInt(document.getElementById('loadTank').value) || 0,  
-                p250: parseInt(document.getElementById('loadPack250').value) || 0,  
-                p600: parseInt(document.getElementById('loadPack600').value) || 0,  
-                p2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
-                alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0  
-            };  
-  
-            const { data: orders } = await supabaseClient.from('orders').select('*').eq('date', date);  
-            let sold = { tank: 0, p250: 0, p600: 0, p2000: 0, alkaline: 0 };  
-  
-            if (orders) {  
-                orders.forEach(o => {  
-                    if (o.product && o.product.includes('ຖັງ')) {  
-                        sold.tank += o.sent || 0;  
-                    } else if (o.product && o.product.includes('250ml')) sold.p250 += o.sent || 0;  
-                    else if (o.product && o.product.includes('600ml')) sold.p600 += o.sent || 0;  
-                    else if (o.product && o.product.includes('2000ml')) sold.p2000 += o.sent || 0;  
-                    else if (o.product && o.product.includes('ດ່າງ')) sold.alkaline += o.sent || 0;  
-                });  
-            }  
-  
-            const remain = {  
-                tank: Math.max(0, load.tank - sold.tank),  
-                p250: Math.max(0, load.p250 - sold.p250),  
-                p600: Math.max(0, load.p600 - sold.p600),  
-                p2000: Math.max(0, load.p2000 - sold.p2000),  
-                alkaline: Math.max(0, load.alkaline - sold.alkaline)  
-            };  
-  
-            const getClass = (val) => val <= 0 ? 'low-stock' : 'success-stock';  
-  
-            document.getElementById('stockRemaining').innerHTML = `  
-                <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p class="${getClass(remain.tank)}">${remain.tank}</p></div>  
-                <div class="stock-card"><h5>250ml</h5><p class="${getClass(remain.p250)}">${remain.p250}</p></div>  
-                <div class="stock-card"><h5>600ml</h5><p class="${getClass(remain.p600)}">${remain.p600}</p></div>  
-                <div class="stock-card"><h5>2000ml</h5><p class="${getClass(remain.p2000)}">${remain.p2000}</p></div>  
-                <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p class="${getClass(remain.alkaline)}">${remain.alkaline}</p></div>  
-            `;  
-        }  
-  
-        // ============================================================  
-        //  CUSTOMER MANAGEMENT  
-        // ============================================================  
-        async function filterCustomerList(keyword) {  
-            if (keyword.length < 1) return;  
-            const { data } = await supabaseClient  
-                .from('customers')  
-                .select('name')  
-                .ilike('name', `%${keyword}%`)  
-                .limit(20);  
-  
-            const datalist = document.getElementById('customerList');  
-            datalist.innerHTML = '';  
-            if (data) {  
-                data.forEach(c => {  
-                    const opt = document.createElement('option');  
-                    opt.value = c.name;  
-                    datalist.appendChild(opt);  
-                });  
-            }  
-        }  
-  
         async function onCustomerNameInput() {  
             const name = document.getElementById('customerName').value.trim();  
             const detailDiv = document.getElementById('customerDetail');  
@@ -2654,16 +2500,27 @@
   
             currentCustomerId = data.id;  
   
+            // ===== ສ່ວນຮູບ =====  
             let photoHtml = '-';  
             if (data.image_url) {  
-                photoHtml =  
-                    `<img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;" onclick="window.open('${data.image_url}','_blank')" />`;  
+                photoHtml = `  
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">  
+                        <img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;" onclick="window.open('${data.image_url}','_blank')" />  
+                        <button onclick="window.open('${data.image_url}','_blank')" class="btn-photo-view" style="padding:2px 10px; font-size:11px;">  
+                            📷 ເບິ່ງ  
+                        </button>  
+                    </div>  
+                `;  
             }  
   
+            // ===== ສ່ວນແຜນທີ່ =====  
             let mapHtml = '-';  
             if (data.map_url) {  
-                mapHtml =  
-                    `<button onclick="window.open('${data.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️ ເປີດ</button>`;  
+                mapHtml = `  
+                    <button onclick="window.open('${data.map_url}','_blank')" class="btn-map-open" style="padding:2px 10px; font-size:11px;">  
+                        🗺️ ເປີດ  
+                    </button>  
+                `;  
             }  
   
             detailDiv.innerHTML = `  
@@ -2682,6 +2539,25 @@
                 </div>  
             `;  
             detailDiv.classList.add('show');  
+        }  
+  
+        async function filterCustomerList(keyword) {  
+            if (keyword.length < 1) return;  
+            const { data } = await supabaseClient  
+                .from('customers')  
+                .select('name')  
+                .ilike('name', `%${keyword}%`)  
+                .limit(20);  
+  
+            const datalist = document.getElementById('customerList');  
+            datalist.innerHTML = '';  
+            if (data) {  
+                data.forEach(c => {  
+                    const opt = document.createElement('option');  
+                    opt.value = c.name;  
+                    datalist.appendChild(opt);  
+                });  
+            }  
         }  
   
         async function loadCustomersList() {  
@@ -3058,7 +2934,7 @@
         }  
   
         // ============================================================  
-        //  LOAD ALL CUSTOMERS  
+        //  ⭐ LOAD ALL CUSTOMERS WITH PHOTO BUTTON  
         // ============================================================  
         async function loadAllCustomers() {  
             if (!await checkSession()) return;  
@@ -3075,16 +2951,23 @@
             }  
   
             data.forEach(c => {  
+                // ===== ສ່ວນຮູບ =====  
                 let photoHtml = '-';  
                 if (c.image_url) {  
-                    photoHtml =  
-                        `<img src="${c.image_url}" class="customer-photo" onclick="window.open('${c.image_url}','_blank')" />`;  
+                    photoHtml = `  
+                        <div class="photo-btn-group">  
+                            <img src="${c.image_url}" class="customer-photo" onclick="window.open('${c.image_url}','_blank')" />  
+                            <button onclick="window.open('${c.image_url}','_blank')" class="btn-photo-view" style="padding:2px 8px; font-size:10px;">📷</button>  
+                        </div>  
+                    `;  
                 }  
   
+                // ===== ສ່ວນແຜນທີ່ =====  
                 let mapHtml = '-';  
                 if (c.map_url) {  
-                    mapHtml =  
-                        `<button onclick="window.open('${c.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️</button>`;  
+                    mapHtml = `  
+                        <button onclick="window.open('${c.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️</button>  
+                    `;  
                 }  
   
                 tbody.innerHTML += `  
@@ -3135,6 +3018,108 @@
             } catch (err) {  
                 showToast('ລຶບບໍ່ສຳເລັດ: ' + err.message, 'error');  
             }  
+        }  
+  
+        // ============================================================  
+        //  STOCK MANAGEMENT  
+        // ============================================================  
+        async function loadStockLoad() {  
+            if (!await checkSession()) return;  
+            const date = document.getElementById('orderDate').value;  
+            if (!date) return;  
+  
+            const { data, error } = await supabaseClient  
+                .from('daily_stocks')  
+                .select('*')  
+                .eq('date', date)  
+                .maybeSingle();  
+  
+            if (error) {  
+                console.error('Load stock error:', error);  
+                return;  
+            }  
+  
+            if (data) {  
+                document.getElementById('loadTank').value = data.tank || 0;  
+                document.getElementById('loadPack250').value = data.pack250 || 0;  
+                document.getElementById('loadPack600').value = data.pack600 || 0;  
+                document.getElementById('loadPack2000').value = data.pack2000 || 0;  
+                document.getElementById('loadAlkaline').value = data.alkaline || 0;  
+            } else {  
+                document.getElementById('loadTank').value = 0;  
+                document.getElementById('loadPack250').value = 0;  
+                document.getElementById('loadPack600').value = 0;  
+                document.getElementById('loadPack2000').value = 0;  
+                document.getElementById('loadAlkaline').value = 0;  
+                await saveStockLoad();  
+            }  
+  
+            await calculateStockRemaining();  
+        }  
+  
+        async function saveStockLoad() {  
+            calculateStockRemaining();  
+            clearTimeout(window._stockTimeout);  
+            window._stockTimeout = setTimeout(async () => {  
+                if (!await checkSession()) return;  
+                const date = document.getElementById('orderDate').value;  
+                if (!date) return;  
+                const stockData = {  
+                    date,  
+                    tank: parseInt(document.getElementById('loadTank').value) || 0,  
+                    pack250: parseInt(document.getElementById('loadPack250').value) || 0,  
+                    pack600: parseInt(document.getElementById('loadPack600').value) || 0,  
+                    pack2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
+                    alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0,  
+                    updated_at: new Date().toISOString()  
+                };  
+                await supabaseClient.from('daily_stocks').upsert(stockData, { onConflict: 'date' });  
+            }, 500);  
+        }  
+  
+        async function calculateStockRemaining() {  
+            const date = document.getElementById('orderDate').value;  
+            if (!date) return;  
+  
+            const load = {  
+                tank: parseInt(document.getElementById('loadTank').value) || 0,  
+                p250: parseInt(document.getElementById('loadPack250').value) || 0,  
+                p600: parseInt(document.getElementById('loadPack600').value) || 0,  
+                p2000: parseInt(document.getElementById('loadPack2000').value) || 0,  
+                alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0  
+            };  
+  
+            const { data: orders } = await supabaseClient.from('orders').select('*').eq('date', date);  
+            let sold = { tank: 0, p250: 0, p600: 0, p2000: 0, alkaline: 0 };  
+  
+            if (orders) {  
+                orders.forEach(o => {  
+                    if (o.product && o.product.includes('ຖັງ')) {  
+                        sold.tank += o.sent || 0;  
+                    } else if (o.product && o.product.includes('250ml')) sold.p250 += o.sent || 0;  
+                    else if (o.product && o.product.includes('600ml')) sold.p600 += o.sent || 0;  
+                    else if (o.product && o.product.includes('2000ml')) sold.p2000 += o.sent || 0;  
+                    else if (o.product && o.product.includes('ດ່າງ')) sold.alkaline += o.sent || 0;  
+                });  
+            }  
+  
+            const remain = {  
+                tank: Math.max(0, load.tank - sold.tank),  
+                p250: Math.max(0, load.p250 - sold.p250),  
+                p600: Math.max(0, load.p600 - sold.p600),  
+                p2000: Math.max(0, load.p2000 - sold.p2000),  
+                alkaline: Math.max(0, load.alkaline - sold.alkaline)  
+            };  
+  
+            const getClass = (val) => val <= 0 ? 'low-stock' : 'success-stock';  
+  
+            document.getElementById('stockRemaining').innerHTML = `  
+                <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p class="${getClass(remain.tank)}">${remain.tank}</p></div>  
+                <div class="stock-card"><h5>250ml</h5><p class="${getClass(remain.p250)}">${remain.p250}</p></div>  
+                <div class="stock-card"><h5>600ml</h5><p class="${getClass(remain.p600)}">${remain.p600}</p></div>  
+                <div class="stock-card"><h5>2000ml</h5><p class="${getClass(remain.p2000)}">${remain.p2000}</p></div>  
+                <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p class="${getClass(remain.alkaline)}">${remain.alkaline}</p></div>  
+            `;  
         }  
   
         // ============================================================  
@@ -3240,6 +3225,65 @@
                 if (e.key === 'Enter') login();  
             });  
         });  
+  
+        // ============================================================  
+        //  INIT APP  
+        // ============================================================  
+        async function initApp() {  
+            if (!await checkSession()) {  
+                document.getElementById('loginOverlay').classList.remove('hidden');  
+                return;  
+            }  
+  
+            document.getElementById('loginOverlay').classList.add('hidden');  
+            document.getElementById('appContainer').style.display = 'block';  
+            document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;  
+  
+            // Load provinces  
+            loadProvinces();  
+  
+            const today = new Date().toLocaleDateString('fr-CA');  
+            document.getElementById('orderDate').value = today;  
+            document.getElementById('filterDate').value = today;  
+            document.getElementById('stockDateDisplay').textContent = today;  
+  
+            // Set default delivery time  
+            const now = new Date();  
+            const localStr = now.getFullYear() + '-' +  
+                String(now.getMonth() + 1).padStart(2, '0') + '-' +  
+                String(now.getDate()).padStart(2, '0') + 'T' +  
+                String(now.getHours()).padStart(2, '0') + ':' +  
+                String(now.getMinutes()).padStart(2, '0');  
+            document.getElementById('deliveryTime').value = localStr;  
+  
+            // Set report year  
+            const yearSelect = document.getElementById('reportYear');  
+            const currentYear = new Date().getFullYear();  
+            yearSelect.innerHTML = '';  
+            for (let y = currentYear; y >= 2020; y--) {  
+                const opt = document.createElement('option');  
+                opt.value = y;  
+                opt.textContent = y;  
+                yearSelect.appendChild(opt);  
+            }  
+            yearSelect.value = currentYear;  
+  
+            // Load all data  
+            await Promise.all([  
+                loadStockLoad(),  
+                loadOrders(),  
+                loadCustomersList(),  
+                loadAllCustomers(),  
+                loadDailySummary(today),  
+                loadCalendar(calendarYear, calendarMonth),  
+                loadMonthlyReport()  
+            ]);  
+  
+            // Update product dropdowns  
+            updateProductDropdowns();  
+  
+            showToast('ເຂົ້າສູ່ລະບົບສຳເລັດ', 'success');  
+        }  
     </script>  
   
 </body>  
