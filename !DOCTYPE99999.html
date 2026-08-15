@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8" />  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover" />  
-    <title>ລະບົບສົ່ງນ້ຳ 3.0</title>  
+    <title>ລະບົບສົ່ງນ້ຳ 3.1</title>  
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  
     </script>  
     <link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap" rel="stylesheet">  
@@ -193,6 +193,24 @@
         .btn-refresh:hover {  
             background: var(--primary);  
             color: white;  
+        }  
+  
+        .btn-map-open {  
+            background: #34a853;  
+            color: white;  
+            padding: 6px 12px;  
+            border-radius: 6px;  
+            border: none;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-family: 'Phetsarath', sans-serif;  
+            font-size: 12px;  
+            transition: var(--transition);  
+        }  
+  
+        .btn-map-open:hover {  
+            opacity: 0.9;  
+            transform: translateY(-1px);  
         }  
   
         /* ===== BOTTOM NAV ===== */  
@@ -761,17 +779,39 @@
         }  
   
         .photo-preview {  
-            width: 55px;  
-            height: 55px;  
+            width: 60px;  
+            height: 60px;  
             object-fit: cover;  
             border-radius: 8px;  
             border: 2px solid var(--border);  
             display: none;  
             margin-top: 4px;  
+            cursor: pointer;  
         }  
   
         .photo-preview.show {  
             display: block;  
+        }  
+  
+        .photo-preview:hover {  
+            opacity: 0.8;  
+            transform: scale(1.05);  
+        }  
+  
+        /* Customer photo in table */  
+        .customer-photo {  
+            width: 40px;  
+            height: 40px;  
+            border-radius: 50%;  
+            object-fit: cover;  
+            border: 2px solid var(--border);  
+            cursor: pointer;  
+            transition: var(--transition);  
+        }  
+  
+        .customer-photo:hover {  
+            transform: scale(1.1);  
+            border-color: var(--primary);  
         }  
   
         /* ===== MODAL ===== */  
@@ -1208,20 +1248,24 @@
                 <div class="grid-2">  
                     <div class="form-group">  
                         <label>ເມືອງ</label>  
-                        <input type="text" id="modalCustDistrict" placeholder="ຊື່ເມືອງ..." />  
+                        <select id="modalCustDistrict">  
+                            <option value="">-- ເລືອກເມືອງ --</option>  
+                        </select>  
                     </div>  
                     <div class="form-group">  
                         <label>ແຂວງ</label>  
-                        <input type="text" id="modalCustProvince" placeholder="ຊື່ແຂວງ..." />  
+                        <select id="modalCustProvince" onchange="onProvinceChange()">  
+                            <option value="">-- ເລືອກແຂວງ --</option>  
+                        </select>  
                     </div>  
                 </div>  
                 <div class="form-group">  
                     <label>📷 ຮູບລູກຄ້າ</label>  
                     <div class="photo-upload">  
                         <input type="file" id="modalCustomerPhoto" accept="image/*" capture="environment" onchange="handleModalPhoto(event)" />  
-                        <button type="button" class="btn btn-info" onclick="openModalCamera()">📸 ຖ່າຍຮູບ</button>  
+                        <button type="button" class="btn btn-info" onclick="document.getElementById('modalCustomerPhoto').click()">📸 ຖ່າຍຮູບ</button>  
                     </div>  
-                    <img id="modalPhotoPreview" class="photo-preview" />  
+                    <img id="modalPhotoPreview" class="photo-preview" onclick="openPhotoFullscreen(this.src)" />  
                 </div>  
                 <div class="form-group">  
                     <label>📍 Google Maps URL</label>  
@@ -1229,6 +1273,7 @@
                         <input type="url" id="modalCustMapUrl" placeholder="https://maps.google.com/?q=..." />  
                         <button type="button" class="btn btn-primary" onclick="getCurrentLocationForModal()">📍 ດຶງ GPS</button>  
                     </div>  
+                    <div id="mapButtonContainer" style="margin-top:6px;"></div>  
                 </div>  
                 <div style="display:flex; gap:8px; margin-top:14px;">  
                     <button type="button" onclick="closeCustomerModal()" class="btn btn-secondary" style="flex:1;">ຍົກເລີກ</button>  
@@ -1274,7 +1319,7 @@
         <div class="app-header">  
             <div class="logo">  
                 <span style="font-size:28px;">💧</span>  
-                <h2>ສົ່ງນ້ຳ 3.0</h2>  
+                <h2>ສົ່ງນ້ຳ 3.1</h2>  
             </div>  
             <div class="header-right">  
                 <button class="btn btn-refresh btn-sm" onclick="refreshAllData()" title="ຣີເຟຣຊຂໍ້ມູນ">  
@@ -1590,6 +1635,110 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);  
   
         // ============================================================  
+        //  DATA: ເມືອງ ແລະ ແຂວງ  
+        // ============================================================  
+        const PROVINCES = [  
+            'ນະຄອນຫຼວງວຽງຈັນ',  
+            'ຫຼວງພະບາງ',  
+            'ຫຼວງນ້ຳທາ',  
+            'ອຸດົມໄຊ',  
+            'ບໍ່ແກ້ວ',  
+            'ຫົວພັນ',  
+            'ຊຽງຂວາງ',  
+            'ໄຊຍະບູລີ',  
+            'ວຽງຈັນ',  
+            'ບໍລິຄຳໄຊ',  
+            'ຄຳມ່ວນ',  
+            'ສະຫວັນນະເຂດ',  
+            'ສາລະວັນ',  
+            'ເຊກອງ',  
+            'ຈຳປາສັກ',  
+            'ອັດຕະປື',  
+            'ໄຊສົມບູນ'  
+        ];  
+  
+        const DISTRICTS_BY_PROVINCE = {  
+            'ນະຄອນຫຼວງວຽງຈັນ': [  
+                'ຈັນທະບູລີ', 'ສີໂຄດຕະບອງ', 'ໄຊເສດຖາ',  
+                'ສີສັດຕະນາກ', 'ນາຊາຍທອງ', 'ໄຊທານີ',  
+                'ຫາດຊາຍຟອງ', 'ສັງທອງ', 'ປາກງື່ມ'  
+            ],  
+            'ຫຼວງພະບາງ': [  
+                'ຫຼວງພະບາງ', 'ຊຽງເງິນ', 'ນານ',  
+                'ປາກອູ', 'ນ້ຳບາກ', 'ງອຍ',  
+                'ປັກອງ', 'ພູຄູນ'  
+            ],  
+            'ຫຼວງນ້ຳທາ': [  
+                'ນ້ຳທາ', 'ສິງ', 'ຍາງ',  
+                'ວຽງພູຄາ'  
+            ],  
+            'ອຸດົມໄຊ': [  
+                'ໄຊ', 'ຫຼາ', 'ນາໝໍ້',  
+                'ງາ', 'ປາກແບ່ງ', 'ຮຸນ'  
+            ],  
+            'ບໍ່ແກ້ວ': [  
+                'ຫ້ວຍຊາຍ', 'ຕົ້ນເຜິ້ງ', 'ເມິງ',  
+                'ປາກທາ', 'ຜາອຸດົມ'  
+            ],  
+            'ຫົວພັນ': [  
+                'ຊຳເໜືອ', 'ຊຳໃຕ້', 'ຮ້ອນ',  
+                'ອັດຕະພອນ', 'ສົບເບົາ', 'ແຊງຄອງ',  
+                'ວຽງທອງ', 'ວຽງໄຊ', 'ຄູນ'  
+            ],  
+            'ຊຽງຂວາງ': [  
+                'ໂພນສະຫວັນ', 'ປາກ', 'ຄຳ',  
+                'ໜອງແຮດ', 'ພູກູດ', 'ແທ່ນ'  
+            ],  
+            'ໄຊຍະບູລີ': [  
+                'ໄຊຍະບູລີ', 'ຄອບ', 'ຫົງສາ',  
+                'ເງິນ', 'ຊຽງຮ່ອນ', 'ພຽງ',  
+                'ປາກລາຍ', 'ແກ່ນທ້າວ', 'ບໍ່ແຕນ'  
+            ],  
+            'ວຽງຈັນ': [  
+                'ໂພນໂຮງ', 'ທຸລະຄົມ', 'ແກ້ວອຸດົມ',  
+                'ກັດ', 'ຫີນເຫີບ', 'ວັງວຽງ',  
+                'ເມືອງແກ້ວ', 'ເມືອງຄູນ', 'ເມືອງວຽງຈັນ'  
+            ],  
+            'ບໍລິຄຳໄຊ': [  
+                'ປາກຊັນ', 'ທ່າພະບາດ', 'ໝອກ',  
+                'ວຽງທອງ', 'ບໍລິຄັນ', 'ຄຳເກີດ'  
+            ],  
+            'ຄຳມ່ວນ': [  
+                'ທ່າແຂກ', 'ມະຫາໄຊ', 'ໜອງບົກ',  
+                'ຫີນບູນ', 'ຍົມມະລາດ', 'ບົວລາພາ',  
+                'ນາກາຍ'  
+            ],  
+            'ສະຫວັນນະເຂດ': [  
+                'ໄກສອນພົມວິຫານ', 'ອຸທຸມພອນ', 'ອາດສະພັງທອງ',  
+                'ພີນ', 'ຊົນບຸລີ', 'ໄຊບູລີ',  
+                'ວິລະບູລີ', 'ອາດສະພັງໃຕ້', 'ໂພນໄຊ',  
+                'ສົງຄົນ', 'ເມືອງພະລານ'  
+            ],  
+            'ສາລະວັນ': [  
+                'ສາລະວັນ', 'ຕະໂອ້ຍ', 'ຕຸ້ມລານ',  
+                'ລະຄອນເພັງ', 'ວາປີ', 'ຄົງເຊດອນ',  
+                'ສະໝວຍ'  
+            ],  
+            'ເຊກອງ': [  
+                'ລະມາມ', 'ກາລຸມ', 'ດາກຈຶງ',  
+                'ທ່າແຕງ'  
+            ],  
+            'ຈຳປາສັກ': [  
+                'ປາກເຊ', 'ຊະນະສົມບູນ', 'ບາຈຽງຈະເລີນສຸກ',  
+                'ປາກຊ່ອງ', 'ປະທຸມພອນ', 'ໂພນທອງ',  
+                'ສຸຂຸມາ', 'ມູນລະປະໂມກ', 'ໂຂງ'  
+            ],  
+            'ອັດຕະປື': [  
+                'ໄຊເສດຖາ', 'ສາມັກຄີໄຊ', 'ສະໜາມໄຊ',  
+                'ພູວົງ'  
+            ],  
+            'ໄຊສົມບູນ': [  
+                'ອານຸວົງ', 'ທ່າໂທມ', 'ລ້ອງຊານ',  
+                'ຫົມ', 'ພູຫົວດ'  
+            ]  
+        };  
+  
+        // ============================================================  
         //  GLOBAL VARIABLES  
         // ============================================================  
         let currentUser = null;  
@@ -1836,10 +1985,6 @@
         // ============================================================  
         //  CUSTOMER MODAL PHOTO  
         // ============================================================  
-        function openModalCamera() {  
-            document.getElementById('modalCustomerPhoto').click();  
-        }  
-  
         function handleModalPhoto(event) {  
             const file = event.target.files[0];  
             if (!file) { showToast('ກະລຸນາເລືອກຮູບ', 'warning'); return; }  
@@ -1853,6 +1998,12 @@
                 showToast('✅ ເລືອກຮູບສຳເລັດ', 'success');  
             };  
             reader.readAsDataURL(file);  
+        }  
+  
+        function openPhotoFullscreen(src) {  
+            if (src) {  
+                window.open(src, '_blank');  
+            }  
         }  
   
         async function uploadModalImage() {  
@@ -1871,6 +2022,35 @@
         }  
   
         // ============================================================  
+        //  PROVINCE & DISTRICT DROPDOWN  
+        // ============================================================  
+        function loadProvinces() {  
+            const select = document.getElementById('modalCustProvince');  
+            select.innerHTML = '<option value="">-- ເລືອກແຂວງ --</option>';  
+            PROVINCES.forEach(p => {  
+                const opt = document.createElement('option');  
+                opt.value = p;  
+                opt.textContent = p;  
+                select.appendChild(opt);  
+            });  
+        }  
+  
+        function onProvinceChange() {  
+            const province = document.getElementById('modalCustProvince').value;  
+            const districtSelect = document.getElementById('modalCustDistrict');  
+            districtSelect.innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';  
+  
+            if (province && DISTRICTS_BY_PROVINCE[province]) {  
+                DISTRICTS_BY_PROVINCE[province].forEach(d => {  
+                    const opt = document.createElement('option');  
+                    opt.value = d;  
+                    opt.textContent = d;  
+                    districtSelect.appendChild(opt);  
+                });  
+            }  
+        }  
+  
+        // ============================================================  
         //  CUSTOMER MODAL  
         // ============================================================  
         function openCustomerModalForAdd() {  
@@ -1878,10 +2058,11 @@
             document.getElementById('modalCustName').value = '';  
             document.getElementById('modalCustPhone').value = '';  
             document.getElementById('modalCustVillage').value = '';  
-            document.getElementById('modalCustDistrict').value = '';  
             document.getElementById('modalCustProvince').value = '';  
+            document.getElementById('modalCustDistrict').innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';  
             document.getElementById('modalCustMapUrl').value = '';  
             document.getElementById('modalPhotoPreview').classList.remove('show');  
+            document.getElementById('mapButtonContainer').innerHTML = '';  
             modalImageFile = null;  
             document.getElementById('customerModalTitle').textContent = '➕ ເພີ່ມລູກຄ້າໃໝ່';  
             document.getElementById('customerModal').classList.add('show');  
@@ -1896,20 +2077,41 @@
             document.getElementById('modalCustName').value = data.name || '';  
             document.getElementById('modalCustPhone').value = data.phone || '';  
             document.getElementById('modalCustVillage').value = data.village || '';  
-            document.getElementById('modalCustDistrict').value = data.district || '';  
             document.getElementById('modalCustProvince').value = data.province || '';  
             document.getElementById('modalCustMapUrl').value = data.map_url || '';  
+  
+            // Load districts  
+            onProvinceChange();  
+            setTimeout(() => {  
+                document.getElementById('modalCustDistrict').value = data.district || '';  
+            }, 100);  
+  
             if (data.image_url) {  
                 const img = document.getElementById('modalPhotoPreview');  
                 img.src = data.image_url;  
                 img.classList.add('show');  
             }  
+  
+            if (data.map_url) {  
+                showMapButton(data.map_url);  
+            }  
+  
             document.getElementById('customerModalTitle').textContent = '✏️ ແກ້ໄຂ: ' + data.name;  
             document.getElementById('customerModal').classList.add('show');  
         }  
   
         function closeCustomerModal() {  
             document.getElementById('customerModal').classList.remove('show');  
+            document.getElementById('mapButtonContainer').innerHTML = '';  
+        }  
+  
+        function showMapButton(url) {  
+            const container = document.getElementById('mapButtonContainer');  
+            container.innerHTML = `  
+                <button onclick="window.open('${url}','_blank')" class="btn-map-open">  
+                    🗺️ ເປີດເບິ່ງແຜນທີ່  
+                </button>  
+            `;  
         }  
   
         async function getCurrentLocationForModal() {  
@@ -1918,15 +2120,17 @@
                 return;  
             }  
             showToast('⏳ ກຳລັງຊອກຫາ...', 'info');  
+  
             navigator.geolocation.getCurrentPosition(  
                 (position) => {  
                     const { latitude, longitude } = position.coords;  
                     const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;  
                     document.getElementById('modalCustMapUrl').value = mapUrl;  
+                    showMapButton(mapUrl);  
                     showToast('✅ ໄດ້ຕຳແໜ່ງແລ້ວ', 'success');  
                 },  
                 (error) => {  
-                    showToast('ບໍ່ສາມາດຊອກຫາ GPS ໄດ້', 'error');  
+                    showToast('ບໍ່ສາມາດຊອກຫາ GPS ໄດ້: ' + error.message, 'error');  
                 }, { enableHighAccuracy: true, timeout: 15000 }  
             );  
         }  
@@ -1947,8 +2151,8 @@
                     name,  
                     phone: document.getElementById('modalCustPhone').value.trim(),  
                     village: document.getElementById('modalCustVillage').value.trim(),  
-                    district: document.getElementById('modalCustDistrict').value.trim(),  
-                    province: document.getElementById('modalCustProvince').value.trim(),  
+                    district: document.getElementById('modalCustDistrict').value,  
+                    province: document.getElementById('modalCustProvince').value,  
                     map_url: document.getElementById('modalCustMapUrl').value.trim(),  
                     updated_at: new Date().toISOString()  
                 };  
@@ -1984,7 +2188,7 @@
         }  
   
         // ============================================================  
-        //  QUICK EDIT CUSTOMER (ແກ້ໄຂລູກຄ້າທີ່ກຳລັງເລືອກ)  
+        //  QUICK EDIT CUSTOMER  
         // ============================================================  
         async function quickEditCustomer() {  
             const name = document.getElementById('customerName').value.trim();  
@@ -2057,7 +2261,6 @@
                 select.innerHTML = products.map(p =>  
                     `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`  
                 ).join('');  
-                // Try to keep selection  
                 for (let opt of select.options) {  
                     if (opt.value === currentVal) {  
                         select.value = currentVal;  
@@ -2217,7 +2420,7 @@
         }  
   
         // ============================================================  
-        //  REFRESH ALL DATA (ແກ້ໄຂບັນຫາຂໍ້ມູນຫາຍ)  
+        //  REFRESH ALL DATA  
         // ============================================================  
         async function refreshAllData() {  
             showToast('⏳ ກຳລັງຣີເຟຣຊ...', 'info');  
@@ -2259,6 +2462,9 @@
             document.getElementById('loginOverlay').classList.add('hidden');  
             document.getElementById('appContainer').style.display = 'block';  
             document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;  
+  
+            // Load provinces  
+            loadProvinces();  
   
             const today = new Date().toLocaleDateString('fr-CA');  
             document.getElementById('orderDate').value = today;  
@@ -2431,7 +2637,6 @@
             const name = document.getElementById('customerName').value.trim();  
             const detailDiv = document.getElementById('customerDetail');  
   
-            // Filter datalist  
             await filterCustomerList(name);  
   
             if (!name) {  
@@ -2452,7 +2657,13 @@
             let photoHtml = '-';  
             if (data.image_url) {  
                 photoHtml =  
-                    `<img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />`;  
+                    `<img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;" onclick="window.open('${data.image_url}','_blank')" />`;  
+            }  
+  
+            let mapHtml = '-';  
+            if (data.map_url) {  
+                mapHtml =  
+                    `<button onclick="window.open('${data.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️ ເປີດ</button>`;  
             }  
   
             detailDiv.innerHTML = `  
@@ -2462,6 +2673,7 @@
                     <span class="label">🏛️ ເມືອງ:</span><span>${data.district || '-'}</span>  
                     <span class="label">🗺️ ແຂວງ:</span><span>${data.province || '-'}</span>  
                     <span class="label">📷 ຮູບ:</span><span>${photoHtml}</span>  
+                    <span class="label">📍 ແຜນທີ່:</span><span>${mapHtml}</span>  
                     <span class="label">📦 ສັ່ງ:</span><span>${data.total_orders || 0}</span>  
                     <span class="label">💰 ຍອດໃຊ້:</span><span style="color:var(--success); font-weight:700;">${(data.total_spent || 0).toLocaleString()} ກີບ</span>  
                 </div>  
@@ -2547,7 +2759,6 @@
                 let totalSent = 0;  
                 let productNames = [];  
                 let isTank = false;  
-                let tankCount = 0;  
   
                 items.forEach(item => {  
                     const select = item.querySelector('.product-select');  
@@ -2555,10 +2766,7 @@
                     const price = parseInt(select.options[select.selectedIndex].dataset.price) || 0;  
                     const name2 = select.value;  
                     const type = select.options[select.selectedIndex].dataset.type || 'pack';  
-                    if (type === 'tank') {  
-                        isTank = true;  
-                        tankCount += qty;  
-                    }  
+                    if (type === 'tank') isTank = true;  
                     totalWaterSales += price * qty;  
                     totalSent += qty;  
                     productNames.push(`${name2} x${qty}`);  
@@ -2870,12 +3078,13 @@
                 let photoHtml = '-';  
                 if (c.image_url) {  
                     photoHtml =  
-                        `<img src="${c.image_url}" style="width:35px;height:35px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />`;  
+                        `<img src="${c.image_url}" class="customer-photo" onclick="window.open('${c.image_url}','_blank')" />`;  
                 }  
+  
                 let mapHtml = '-';  
                 if (c.map_url) {  
                     mapHtml =  
-                        `<a href="${c.map_url}" target="_blank" class="btn btn-info btn-sm" style="padding:2px 6px; text-decoration:none;">🗺️</a>`;  
+                        `<button onclick="window.open('${c.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️</button>`;  
                 }  
   
                 tbody.innerHTML += `  
