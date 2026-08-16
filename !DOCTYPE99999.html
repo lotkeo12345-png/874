@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8" />  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover" />  
-    <title>ລະບົບສົ່ງນ້ຳ 3.2</title>  
+    <title>ລະບົບສົ່ງນ້ຳ 3.3</title>  
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  
     </script>  
     <link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap" rel="stylesheet">  
@@ -840,6 +840,100 @@
             flex-wrap: wrap;  
         }  
   
+        /* ===== PAYMENT SUMMARY ===== */  
+        .payment-summary {  
+            display: grid;  
+            grid-template-columns: repeat(3, 1fr);  
+            gap: 12px;  
+            margin: 12px 0;  
+        }  
+  
+        @media(max-width: 480px) {  
+            .payment-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
+        }  
+  
+        .payment-card {  
+            padding: 12px 16px;  
+            border-radius: var(--radius);  
+            border: 2px solid var(--border);  
+            text-align: center;  
+            transition: var(--transition);  
+        }  
+  
+        .payment-card.cash {  
+            border-color: var(--success);  
+            background: #ecfdf5;  
+        }  
+  
+        .payment-card.transfer {  
+            border-color: var(--info);  
+            background: #ecfeff;  
+        }  
+  
+        .payment-card.credit {  
+            border-color: var(--warning);  
+            background: #fffbeb;  
+        }  
+  
+        [data-theme="dark"] .payment-card.cash {  
+            background: #064e3b;  
+        }  
+        [data-theme="dark"] .payment-card.transfer {  
+            background: #164e63;  
+        }  
+        [data-theme="dark"] .payment-card.credit {  
+            background: #451a03;  
+        }  
+  
+        .payment-card .icon {  
+            font-size: 24px;  
+        }  
+        .payment-card .label {  
+            font-size: 12px;  
+            color: var(--text-muted);  
+        }  
+        .payment-card .amount {  
+            font-size: 20px;  
+            font-weight: 700;  
+            color: var(--text-main);  
+        }  
+  
+        .payment-grand-total {  
+            text-align: right;  
+            font-weight: 700;  
+            font-size: 16px;  
+            color: var(--primary);  
+            margin-top: 4px;  
+        }  
+  
+        /* ===== CUSTOMER PAYMENT TABLE ===== */  
+        .customer-payment-table {  
+            width: 100%;  
+            font-size: 13px;  
+            margin-top: 10px;  
+        }  
+  
+        .customer-payment-table th {  
+            background: var(--tab-bg);  
+            padding: 8px 10px;  
+            text-align: center;  
+            font-weight: 700;  
+        }  
+  
+        .customer-payment-table td {  
+            padding: 6px 10px;  
+            text-align: center;  
+            border-bottom: 1px solid var(--border);  
+        }  
+  
+        .customer-payment-table .total-row {  
+            font-weight: 700;  
+            background: var(--detail-bg);  
+            border-top: 2px solid var(--primary);  
+        }  
+  
         /* ===== MODAL ===== */  
         .modal-overlay {  
             display: none;  
@@ -1179,6 +1273,10 @@
             .customer-detail .info-grid {  
                 grid-template-columns: 1fr;  
             }  
+  
+            .payment-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
         }  
   
         @media(min-width: 1200px) {  
@@ -1240,7 +1338,7 @@
                 </div>  
                 <div class="step">  
                     <span class="num">4</span>  
-                    <div><strong>ລາຍງານ</strong><br><span class="text-muted fs-small">ກົດ "ລາຍງານ" → ເລືອກປີ ເພື່ອເບິ່ງຍອດຂາຍລາຍເດືອນ</span></div>  
+                    <div><strong>ກວດສອບຍອດເງິນ</strong><br><span class="text-muted fs-small">ເບິ່ງຍອດເງິນສົດ, ເງິນໂອນ, ຕິດໜີ້ ແຍກຕາມປະເພດ ແລະ ຕາມລູກຄ້າ</span></div>  
                 </div>  
                 <div class="step" style="border-bottom:none;">  
                     <span class="num">💡</span>  
@@ -1345,7 +1443,7 @@
         <div class="app-header">  
             <div class="logo">  
                 <span style="font-size:28px;">💧</span>  
-                <h2>ສົ່ງນ້ຳ 3.2</h2>  
+                <h2>ສົ່ງນ້ຳ 3.3</h2>  
             </div>  
             <div class="header-right">  
                 <button class="btn btn-refresh btn-sm" onclick="refreshAllData()" title="ຣີເຟຣຊຂໍ້ມູນ">  
@@ -1581,6 +1679,50 @@
                 </div>  
                 <div class="calendar-grid" id="calendarGrid"></div>  
                 <p style="font-size:11px; color:var(--text-muted); margin-top:6px; text-align:center;">💡 ກົດທີ່ມື້ໃນປະຕິທິນ ເພື່ອເບິ່ງຍອດຂາຍມື້ນັ້ນ</p>  
+            </div>  
+  
+            <!-- ===== PAYMENT SUMMARY ===== -->  
+            <div style="margin: 12px 0;">  
+                <h3 style="color:var(--primary); margin-bottom:10px; font-size:16px;">💰 ສະຫຼຸບຍອດເງິນຕາມການຊຳລະ</h3>  
+                <div class="payment-summary" id="paymentSummary">  
+                    <div class="payment-card cash">  
+                        <div class="icon">💵</div>  
+                        <div class="label">ເງິນສົດ</div>  
+                        <div class="amount" id="totalCash">0 ກີບ</div>  
+                    </div>  
+                    <div class="payment-card transfer">  
+                        <div class="icon">🏦</div>  
+                        <div class="label">ເງິນໂອນ</div>  
+                        <div class="amount" id="totalTransfer">0 ກີບ</div>  
+                    </div>  
+                    <div class="payment-card credit">  
+                        <div class="icon">📝</div>  
+                        <div class="label">ຕິດໜີ້</div>  
+                        <div class="amount" id="totalCredit">0 ກີບ</div>  
+                    </div>  
+                </div>  
+                <div class="payment-grand-total">  
+                    📊 ລວມທັງໝົດ: <span id="grandTotalPayment">0 ກີບ</span>  
+                </div>  
+            </div>  
+  
+            <!-- ===== CUSTOMER PAYMENT DETAIL ===== -->  
+            <div style="margin-top:12px;">  
+                <h3 style="color:var(--primary); margin-bottom:10px; font-size:16px;">👤 ລາຍລະອຽດຍອດເງິນຕາມລູກຄ້າ</h3>  
+                <div class="table-responsive">  
+                    <table class="customer-payment-table">  
+                        <thead>  
+                            <tr>  
+                                <th>ຊື່ລູກຄ້າ</th>  
+                                <th>💵 ເງິນສົດ</th>  
+                                <th>🏦 ເງິນໂອນ</th>  
+                                <th>📝 ຕິດໜີ້</th>  
+                                <th>📊 ລວມ</th>  
+                            </tr>  
+                        </thead>  
+                        <tbody id="customerPaymentBody"></tbody>  
+                    </table>  
+                </div>  
             </div>  
   
             <div class="summary-box grid-5">  
@@ -2477,6 +2619,78 @@
         }  
   
         // ============================================================  
+        //  ⭐ PAYMENT SUMMARY FUNCTION  
+        // ============================================================  
+        function calculatePaymentSummary(orders) {  
+            if (!orders || orders.length === 0) {  
+                document.getElementById('totalCash').textContent = '0 ກີບ';  
+                document.getElementById('totalTransfer').textContent = '0 ກີບ';  
+                document.getElementById('totalCredit').textContent = '0 ກີບ';  
+                document.getElementById('grandTotalPayment').textContent = '0 ກີບ';  
+                document.getElementById('customerPaymentBody').innerHTML = '<tr><td colspan="5" class="no-data">📭 ບໍ່ມີຂໍ້ມູນ</td></tr>';  
+                return;  
+            }  
+  
+            let totalCash = 0;  
+            let totalTransfer = 0;  
+            let totalCredit = 0;  
+            const customerMap = {};  
+  
+            orders.forEach(o => {  
+                const payment = o.payment || 'ເງິນສົດ';  
+                const amount = o.price || 0;  
+                const customerName = o.customer_name || 'ບໍ່ລະບຸ';  
+  
+                // ລວມຕາມປະເພດການຊຳລະ  
+                if (payment === 'ເງິນສົດ') totalCash += amount;  
+                else if (payment === 'ເງິນໂອນ') totalTransfer += amount;  
+                else if (payment === 'ຕິດໜີ້') totalCredit += amount;  
+  
+                // ລວມຕາມລູກຄ້າ  
+                if (!customerMap[customerName]) {  
+                    customerMap[customerName] = { cash: 0, transfer: 0, credit: 0 };  
+                }  
+                if (payment === 'ເງິນສົດ') customerMap[customerName].cash += amount;  
+                else if (payment === 'ເງິນໂອນ') customerMap[customerName].transfer += amount;  
+                else if (payment === 'ຕິດໜີ້') customerMap[customerName].credit += amount;  
+            });  
+  
+            // ສະແດງຜົນລວມຕາມປະເພດ  
+            document.getElementById('totalCash').textContent = totalCash.toLocaleString() + ' ກີບ';  
+            document.getElementById('totalTransfer').textContent = totalTransfer.toLocaleString() + ' ກີບ';  
+            document.getElementById('totalCredit').textContent = totalCredit.toLocaleString() + ' ກີບ';  
+            document.getElementById('grandTotalPayment').textContent = (totalCash + totalTransfer + totalCredit).toLocaleString() + ' ກີບ';  
+  
+            // ສະແດງຜົນລວມຕາມລູກຄ້າ  
+            const tbody = document.getElementById('customerPaymentBody');  
+            tbody.innerHTML = '';  
+  
+            Object.keys(customerMap).sort().forEach(name => {  
+                const c = customerMap[name];  
+                const total = c.cash + c.transfer + c.credit;  
+                tbody.innerHTML += `  
+                    <tr>  
+                        <td><strong>${name}</strong></td>  
+                        <td style="color:var(--success); font-weight:600;">${c.cash.toLocaleString()}</td>  
+                        <td style="color:var(--info); font-weight:600;">${c.transfer.toLocaleString()}</td>  
+                        <td style="color:var(--warning); font-weight:600;">${c.credit.toLocaleString()}</td>  
+                        <td style="color:var(--primary); font-weight:700;">${total.toLocaleString()}</td>  
+                    </tr>  
+                `;  
+            });  
+  
+            tbody.innerHTML += `  
+                <tr class="total-row">  
+                    <td>📊 ລວມທັງໝົດ</td>  
+                    <td style="color:var(--success);">${totalCash.toLocaleString()}</td>  
+                    <td style="color:var(--info);">${totalTransfer.toLocaleString()}</td>  
+                    <td style="color:var(--warning);">${totalCredit.toLocaleString()}</td>  
+                    <td style="color:var(--primary); font-size:16px;">${(totalCash + totalTransfer + totalCredit).toLocaleString()}</td>  
+                </tr>  
+            `;  
+        }  
+  
+        // ============================================================  
         //  ⭐ CUSTOMER DETAIL WITH PHOTO BUTTON  
         // ============================================================  
         async function onCustomerNameInput() {  
@@ -2806,7 +3020,7 @@
         }  
   
         // ============================================================  
-        //  LOAD ORDERS  
+        //  ⭐ LOAD ORDERS (with payment summary)  
         // ============================================================  
         async function loadOrders() {  
             if (!await checkSession()) return;  
@@ -2886,6 +3100,9 @@
   
             const activeDate = document.getElementById('filterDate').value || todayStr;  
             await loadDailySummary(activeDate);  
+  
+            // ===== ຄິດໄລ່ຍອດເງິນຕາມການຊຳລະ =====  
+            calculatePaymentSummary(orders);  
         }  
   
         // ============================================================  
