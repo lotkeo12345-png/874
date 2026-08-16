@@ -3,7 +3,7 @@
 <head>  
     <meta charset="UTF-8" />  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes, viewport-fit=cover" />  
-    <title>ລະບົບສົ່ງນ້ຳ 3.3</title>  
+    <title>ລະບົບສົ່ງນ້ຳ 3.5</title>  
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">  
     </script>  
     <link href="https://fonts.googleapis.com/css2?family=Phetsarath:wght@400;700&display=swap" rel="stylesheet">  
@@ -15,6 +15,7 @@
             --danger: #ef4444;  
             --warning: #f59e0b;  
             --info: #06b6d4;  
+            --whatsapp: #25D366;  
             --background: #f8fafc;  
             --card-bg: #ffffff;  
             --text-main: #1e293b;  
@@ -127,6 +128,7 @@
             align-items: center;  
             gap: 6px;  
             font-size: 14px;  
+            text-decoration: none;  
         }  
   
         .btn:hover {  
@@ -195,8 +197,26 @@
             color: white;  
         }  
   
-        .btn-map-open {  
+        .btn-whatsapp {  
+            background: var(--whatsapp);  
+            color: white;  
+        }  
+  
+        .btn-whatsapp:hover {  
+            background: #1da851;  
+        }  
+  
+        .btn-call {  
             background: #34a853;  
+            color: white;  
+        }  
+  
+        .btn-call:hover {  
+            background: #2d8f47;  
+        }  
+  
+        .btn-map-open {  
+            background: #ea4335;  
             color: white;  
             padding: 4px 12px;  
             border-radius: 6px;  
@@ -698,6 +718,12 @@
         .badge-danger {  
             background: var(--danger);  
         }  
+        .badge-pending {  
+            background: var(--warning);  
+        }  
+        .badge-delivered {  
+            background: var(--success);  
+        }  
   
         /* ===== PRICE DISPLAY ===== */  
         .price-display {  
@@ -840,6 +866,21 @@
             flex-wrap: wrap;  
         }  
   
+        /* ===== CALL BUTTONS ===== */  
+        .call-btn-group {  
+            display: flex;  
+            align-items: center;  
+            gap: 4px;  
+            justify-content: center;  
+            flex-wrap: wrap;  
+        }  
+  
+        .call-btn-group .btn-sm {  
+            padding: 2px 8px;  
+            font-size: 11px;  
+            text-decoration: none;  
+        }  
+  
         /* ===== PAYMENT SUMMARY ===== */  
         .payment-summary {  
             display: grid;  
@@ -932,6 +973,200 @@
             font-weight: 700;  
             background: var(--detail-bg);  
             border-top: 2px solid var(--primary);  
+        }  
+  
+        /* ===== DELIVERY ROUTE ===== */  
+        .route-container {  
+            margin: 12px 0;  
+        }  
+  
+        .route-group {  
+            margin-bottom: 16px;  
+            border: 2px solid var(--border);  
+            border-radius: var(--radius);  
+            overflow: hidden;  
+        }  
+  
+        .route-group-header {  
+            background: var(--primary);  
+            color: white;  
+            padding: 10px 14px;  
+            font-weight: 700;  
+            font-size: 16px;  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+        }  
+  
+        .route-group-header .count {  
+            background: white;  
+            color: var(--primary);  
+            padding: 2px 12px;  
+            border-radius: 20px;  
+            font-size: 13px;  
+        }  
+  
+        .route-item {  
+            display: flex;  
+            justify-content: space-between;  
+            align-items: center;  
+            padding: 10px 14px;  
+            border-bottom: 1px solid var(--border);  
+            transition: var(--transition);  
+        }  
+  
+        .route-item:last-child {  
+            border-bottom: none;  
+        }  
+  
+        .route-item:hover {  
+            background: var(--tab-bg);  
+        }  
+  
+        .route-item .info {  
+            flex: 1;  
+        }  
+  
+        .route-item .info .name {  
+            font-weight: 700;  
+            font-size: 15px;  
+        }  
+  
+        .route-item .info .address {  
+            font-size: 12px;  
+            color: var(--text-muted);  
+        }  
+  
+        .route-item .info .product {  
+            font-size: 13px;  
+            color: var(--text-main);  
+        }  
+  
+        .route-item .actions {  
+            display: flex;  
+            gap: 6px;  
+            align-items: center;  
+        }  
+  
+        .route-item .order-number {  
+            background: var(--tab-bg);  
+            padding: 2px 10px;  
+            border-radius: 20px;  
+            font-size: 12px;  
+            font-weight: 700;  
+            color: var(--text-muted);  
+            margin-right: 8px;  
+        }  
+  
+        .route-item.delivered {  
+            opacity: 0.5;  
+            text-decoration: line-through;  
+        }  
+  
+        .route-item.delivered .info .name {  
+            color: var(--text-muted);  
+        }  
+  
+        .route-summary {  
+            display: grid;  
+            grid-template-columns: repeat(4, 1fr);  
+            gap: 12px;  
+            margin: 12px 0;  
+        }  
+  
+        @media(max-width: 480px) {  
+            .route-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
+        }  
+  
+        .route-summary-card {  
+            padding: 12px 16px;  
+            border-radius: var(--radius);  
+            border: 2px solid var(--border);  
+            text-align: center;  
+        }  
+  
+        .route-summary-card .number {  
+            font-size: 24px;  
+            font-weight: 700;  
+            color: var(--primary);  
+        }  
+  
+        .route-summary-card .label {  
+            font-size: 12px;  
+            color: var(--text-muted);  
+        }  
+  
+        .route-summary-card.total .number {  
+            color: var(--primary);  
+        }  
+        .route-summary-card.delivered .number {  
+            color: var(--success);  
+        }  
+        .route-summary-card.pending .number {  
+            color: var(--warning);  
+        }  
+        .route-summary-card.distance .number {  
+            color: var(--info);  
+        }  
+  
+        /* ===== LOCATION TRACKING ===== */  
+        .location-summary {  
+            display: grid;  
+            grid-template-columns: repeat(3, 1fr);  
+            gap: 12px;  
+            margin: 12px 0;  
+        }  
+  
+        @media(max-width: 480px) {  
+            .location-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
+        }  
+  
+        .location-card {  
+            padding: 12px 16px;  
+            border-radius: var(--radius);  
+            border: 2px solid var(--border);  
+            text-align: center;  
+            transition: var(--transition);  
+        }  
+  
+        .location-card .icon {  
+            font-size: 24px;  
+        }  
+        .location-card .label {  
+            font-size: 12px;  
+            color: var(--text-muted);  
+        }  
+        .location-card .value {  
+            font-size: 20px;  
+            font-weight: 700;  
+            color: var(--text-main);  
+        }  
+  
+        .track-btn {  
+            background: var(--info);  
+            color: white;  
+            padding: 6px 14px;  
+            border: none;  
+            border-radius: 6px;  
+            cursor: pointer;  
+            font-weight: 700;  
+            font-family: 'Phetsarath', sans-serif;  
+            font-size: 13px;  
+            transition: var(--transition);  
+        }  
+  
+        .track-btn:hover {  
+            opacity: 0.9;  
+            transform: translateY(-1px);  
+        }  
+  
+        .track-btn:disabled {  
+            opacity: 0.5;  
+            cursor: not-allowed;  
         }  
   
         /* ===== MODAL ===== */  
@@ -1277,6 +1512,24 @@
             .payment-summary {  
                 grid-template-columns: 1fr 1fr;  
             }  
+  
+            .location-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
+  
+            .route-summary {  
+                grid-template-columns: 1fr 1fr;  
+            }  
+  
+            .route-item {  
+                flex-direction: column;  
+                align-items: stretch;  
+                gap: 8px;  
+            }  
+  
+            .route-item .actions {  
+                justify-content: flex-start;  
+            }  
         }  
   
         @media(min-width: 1200px) {  
@@ -1326,19 +1579,19 @@
             <div class="help-content">  
                 <div class="step">  
                     <span class="num">1</span>  
-                    <div><strong>ບັນທຶກການຂາຍ</strong><br><span class="text-muted fs-small">ພິມຊື່ລູກຄ້າ → ລະບົບຈະຄົ້ນຫາໃຫ້ອັດຕະໂນມັດ → ເລືອກສິນຄ້າ → ກົດ "💾 ບັນທຶກ"</span></div>  
+                    <div><strong>ຈັດການລາຍການສົ່ງປະຈຳວັນ</strong><br><span class="text-muted fs-small">ໄປທີ່ແທັບ "📋 ຈັດສົ່ງ" → ກົດ "➕ ເພີ່ມລາຍການສົ່ງ" ເພື່ອປ້ອນລູກຄ້າທີ່ຈະສົ່ງມື້ນີ້</span></div>  
                 </div>  
                 <div class="step">  
                     <span class="num">2</span>  
-                    <div><strong>ເບິ່ງປະຫວັດ</strong><br><span class="text-muted fs-small">ກົດ "ປະຫວັດ" → ກົດວັນທີໃນປະຕິທິນ ຫຼື ເລືອກຊ່ວງເວລາ</span></div>  
+                    <div><strong>ຈັດລຽງເສັ້ນທາງອັດຕະໂນມັດ</strong><br><span class="text-muted fs-small">ກົດ "🔄 ຈັດລຽງເສັ້ນທາງ" ລະບົບຈະຈັດກຸ່ມຕາມເມືອງ/ບ້ານ ແລະ ລຽງລຳດັບການສົ່ງ</span></div>  
                 </div>  
                 <div class="step">  
                     <span class="num">3</span>  
-                    <div><strong>ແກ້ໄຂລູກຄ້າ</strong><br><span class="text-muted fs-small">ພິມຊື່ລູກຄ້າ → ກົດ "✏️ ແກ້ໄຂ" ເພື່ອເພີ່ມຮູບ ແລະ ທີ່ຢູ່</span></div>  
+                    <div><strong>ສົ່ງສຳເລັດ → ລົບອອກຈາກລາຍການ</strong><br><span class="text-muted fs-small">ເມື່ອສົ່ງລູກຄ້າຄົນໃດແລ້ວ, ກົດ "✅ ສົ່ງສຳເລັດ" ລາຍການຈະຖືກລົບອອກຈາກລາຍການທີ່ຍັງຄ້າງ</span></div>  
                 </div>  
                 <div class="step">  
                     <span class="num">4</span>  
-                    <div><strong>ກວດສອບຍອດເງິນ</strong><br><span class="text-muted fs-small">ເບິ່ງຍອດເງິນສົດ, ເງິນໂອນ, ຕິດໜີ້ ແຍກຕາມປະເພດ ແລະ ຕາມລູກຄ້າ</span></div>  
+                    <div><strong>ເພີ່ມລູກຄ້າໃໝ່ເຂົ້າລາຍການ</strong><br><span class="text-muted fs-small">ກົດ "➕ ເພີ່ມເຂົ້າລາຍການສົ່ງ" ເພື່ອເພີ່ມລູກຄ້ານອກເໜືອຈາກທີ່ວາງແຜນໄວ້</span></div>  
                 </div>  
                 <div class="step" style="border-bottom:none;">  
                     <span class="num">💡</span>  
@@ -1443,7 +1696,7 @@
         <div class="app-header">  
             <div class="logo">  
                 <span style="font-size:28px;">💧</span>  
-                <h2>ສົ່ງນ້ຳ 3.3</h2>  
+                <h2>ສົ່ງນ້ຳ 3.5</h2>  
             </div>  
             <div class="header-right">  
                 <button class="btn btn-refresh btn-sm" onclick="refreshAllData()" title="ຣີເຟຣຊຂໍ້ມູນ">  
@@ -1472,13 +1725,13 @@
                 <span class="icon">📦</span>  
                 <span class="label">ບັນທຶກ</span>  
             </button>  
+            <button class="bottom-nav-btn" onclick="switchTab('tab-route', this)">  
+                <span class="icon">🗺️</span>  
+                <span class="label">ຈັດສົ່ງ</span>  
+            </button>  
             <button class="bottom-nav-btn" onclick="switchTab('tab-history', this)">  
                 <span class="icon">📋</span>  
                 <span class="label">ປະຫວັດ</span>  
-            </button>  
-            <button class="bottom-nav-btn" onclick="switchTab('tab-monthly', this)">  
-                <span class="icon">📊</span>  
-                <span class="label">ລາຍງານ</span>  
             </button>  
             <button class="bottom-nav-btn" onclick="switchTab('tab-customers', this)">  
                 <span class="icon">👥</span>  
@@ -1600,8 +1853,8 @@
                         <input type="number" id="depositPrice" min="0" value="0" disabled oninput="calculateTotal()" style="margin-top:4px;" />  
                     </div>  
                     <div class="form-group">  
-                        <label>📝 ໝາຍເຫດ (ຖ້າມີ)</label>  
-                        <input type="text" id="orderNote" placeholder="ລາຍລະອຽດ..." />  
+                        <label>📝 ໝາຍເຫດ (ທີ່ຢູ່)</label>  
+                        <input type="text" id="orderNote" placeholder="ທີ່ຢູ່ ຫຼື ລາຍລະອຽດ..." />  
                     </div>  
                 </div>  
   
@@ -1631,6 +1884,58 @@
                     <button type="reset" class="btn btn-secondary" style="flex:1; min-width:80px;">🔄 ຣີເຊັດ</button>  
                 </div>  
             </form>  
+        </div>  
+  
+        <!-- ===== TAB: DELIVERY ROUTE ===== -->  
+        <div id="tab-route" class="tab-content">  
+            <div class="flex-between" style="margin-bottom:12px;">  
+                <h3 style="color:var(--primary); font-size:17px;">🗺️ ຈັດສົ່ງປະຈຳວັນ</h3>  
+                <div class="flex-row">  
+                    <button onclick="addToDeliveryRoute()" class="btn btn-primary btn-sm">  
+                        ➕ ເພີ່ມລາຍການສົ່ງ  
+                    </button>  
+                    <button onclick="sortDeliveryRoute()" class="btn btn-info btn-sm">  
+                        🔄 ຈັດລຽງເສັ້ນທາງ  
+                    </button>  
+                </div>  
+            </div>  
+  
+            <!-- Route Summary -->  
+            <div class="route-summary" id="routeSummary">  
+                <div class="route-summary-card total">  
+                    <div class="number" id="routeTotal">0</div>  
+                    <div class="label">📦 ທັງໝົດ</div>  
+                </div>  
+                <div class="route-summary-card delivered">  
+                    <div class="number" id="routeDelivered">0</div>  
+                    <div class="label">✅ ສົ່ງແລ້ວ</div>  
+                </div>  
+                <div class="route-summary-card pending">  
+                    <div class="number" id="routePending">0</div>  
+                    <div class="label">⏳ ລໍຖ້າ</div>  
+                </div>  
+                <div class="route-summary-card distance">  
+                    <div class="number" id="routeDistance">0 km</div>  
+                    <div class="label">📏 ໄລຍະທາງ</div>  
+                </div>  
+            </div>  
+  
+            <!-- Route Groups -->  
+            <div id="routeContainer" class="route-container">  
+                <div class="no-data">📭 ບໍ່ມີລາຍການຈັດສົ່ງມື້ນີ້</div>  
+            </div>  
+  
+            <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">  
+                <button onclick="markAllDelivered()" class="btn btn-success btn-sm" style="width:auto;">  
+                    ✅ ສົ່ງທັງໝົດ  
+                </button>  
+                <button onclick="exportRouteExcel()" class="btn btn-primary btn-sm" style="width:auto;">  
+                    📊 ດາວໂຫລດ Excel  
+                </button>  
+                <button onclick="printRoute()" class="btn btn-secondary btn-sm" style="width:auto;">  
+                    🖨️ ພິມ  
+                </button>  
+            </div>  
         </div>  
   
         <!-- ===== TAB 2: HISTORY ===== -->  
@@ -1750,24 +2055,6 @@
             </div>  
         </div>  
   
-        <!-- ===== TAB 3: MONTHLY ===== -->  
-        <div id="tab-monthly" class="tab-content">  
-            <h3 style="color:var(--primary); margin-bottom:12px; font-size:17px;">📈 ລາຍງານຍອດຂາຍລາຍເດືອນ</h3>  
-            <div class="form-group" style="max-width:200px; margin-bottom:12px;">  
-                <label>ເລືອກປີ</label>  
-                <select id="reportYear" onchange="loadMonthlyReport()"></select>  
-            </div>  
-            <div class="table-responsive">  
-                <table>  
-                    <thead><tr><th>ເດືອນ</th><th>ລາຍການ</th><th>ຍອດຂາຍ</th><th>ຈຳຕຸກ</th><th>ລວມ</th></tr></thead>  
-                    <tbody id="monthlyTableBody"></tbody>  
-                </table>  
-            </div>  
-            <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">  
-                <button onclick="exportExcelMonthly()" class="btn btn-primary btn-sm" style="width:auto;">📊 ດາວໂຫລດ Excel</button>  
-            </div>  
-        </div>  
-  
         <!-- ===== TAB 4: CUSTOMERS ===== -->  
         <div id="tab-customers" class="tab-content">  
             <div class="flex-between" style="margin-bottom:12px;">  
@@ -1784,7 +2071,7 @@
                 <table>  
                     <thead>  
                         <tr>  
-                            <th>ຊື່</th><th>ເບີ</th><th>ບ້ານ</th><th>ເມືອງ</th><th>ແຂວງ</th><th>ຮູບ</th><th>ແຜນທີ່</th><th>ສັ່ງ</th><th>ຍອດໃຊ້</th><th>ຈັດການ</th>  
+                            <th>ຊື່</th><th>ເບີ</th><th>ບ້ານ</th><th>ເມືອງ</th><th>ແຂວງ</th><th>ຮູບ</th><th>ແຜນທີ່</th><th>ໂທ</th><th>ສັ່ງ</th><th>ຍອດໃຊ້</th><th>ຈັດການ</th>  
                         </tr>  
                     </thead>  
                     <tbody id="customerTableBody"></tbody>  
@@ -1916,6 +2203,9 @@
         let editingOrderId = null;  
         let modalImageFile = null;  
         const DEPOSIT_PRICE = 50000;  
+        let currentLocation = null;  
+        let routeOrders = [];  
+        let currentRouteDate = new Date().toLocaleDateString('fr-CA');  
   
         let calendarYear = new Date().getFullYear();  
         let calendarMonth = new Date().getMonth();  
@@ -1927,6 +2217,330 @@
             { name: 'ນ້ຳຕຸກໃຫຍ່ 2000ml', price: 51000, type: 'pack' },  
             { name: 'ນ້ຳດ່າງ', price: 88000, type: 'pack' }  
         ];  
+  
+        // ============================================================  
+        //  UTILITY: FORMAT PHONE FOR WHATSAPP  
+        // ============================================================  
+        function formatPhoneForWhatsApp(phone) {  
+            if (!phone) return '';  
+            let formatted = phone.replace(/^0/, '856');  
+            formatted = formatted.replace(/[\s\-]/g, '');  
+            return formatted;  
+        }  
+  
+        // ============================================================  
+        //  DELIVERY ROUTE FUNCTIONS  
+        // ============================================================  
+        async function loadDeliveryRoute() {  
+            const date = currentRouteDate;  
+            const { data, error } = await supabaseClient  
+                .from('delivery_routes')  
+                .select('*')  
+                .eq('date', date)  
+                .order('route_order', { ascending: true });  
+  
+            if (error) {  
+                console.error('Error loading route:', error);  
+                return;  
+            }  
+  
+            routeOrders = data || [];  
+            renderDeliveryRoute();  
+        }  
+  
+        function renderDeliveryRoute() {  
+            const container = document.getElementById('routeContainer');  
+  
+            if (routeOrders.length === 0) {  
+                container.innerHTML = '<div class="no-data">📭 ບໍ່ມີລາຍການຈັດສົ່ງມື້ນີ້</div>';  
+                updateRouteSummary();  
+                return;  
+            }  
+  
+            // Group by district  
+            const groups = {};  
+            routeOrders.forEach(order => {  
+                const key = order.district || 'ອື່ນໆ';  
+                if (!groups[key]) groups[key] = [];  
+                groups[key].push(order);  
+            });  
+  
+            let html = '';  
+            let total = 0;  
+            let delivered = 0;  
+            let pending = 0;  
+  
+            Object.keys(groups).sort().forEach(district => {  
+                const items = groups[district];  
+                html += `  
+                    <div class="route-group">  
+                        <div class="route-group-header">  
+                            <span>🏠 ${district}</span>  
+                            <span class="count">${items.length} ລາຍການ</span>  
+                        </div>  
+                `;  
+  
+                items.forEach((order, index) => {  
+                    const isDelivered = order.status === 'delivered';  
+                    const deliveredClass = isDelivered ? 'delivered' : '';  
+                      
+                    if (isDelivered) delivered++;  
+                    else pending++;  
+                    total++;  
+  
+                    const phoneRaw = order.phone ? order.phone.replace(/[\s\-]/g, '') : '';  
+                    const waPhone = formatPhoneForWhatsApp(phoneRaw);  
+  
+                    html += `  
+                        <div class="route-item ${deliveredClass}" id="route-item-${order.id}">  
+                            <div class="info">  
+                                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">  
+                                    <span class="order-number">#${index + 1}</span>  
+                                    <span class="name">${order.customer_name}</span>  
+                                    ${order.phone ? `  
+                                        <a href="tel:${phoneRaw}" class="btn btn-call btn-sm" style="text-decoration:none; padding:2px 6px; font-size:10px;">📞</a>  
+                                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn btn-whatsapp btn-sm" style="text-decoration:none; padding:2px 6px; font-size:10px;">💬</a>  
+                                    ` : ''}  
+                                    ${order.map_url ? `  
+                                        <a href="${order.map_url}" target="_blank" class="btn-map-open" style="padding:2px 6px; font-size:10px; text-decoration:none;">🗺️</a>  
+                                    ` : ''}  
+                                </div>  
+                                <div class="address">${order.address || order.village || '-'} ${order.district ? '| ' + order.district : ''}</div>  
+                                <div class="product">📦 ${order.product || '-'} x${order.quantity || 1} | 💰 ${(order.price || 0).toLocaleString()} ກີບ</div>  
+                            </div>  
+                            <div class="actions">  
+                                ${!isDelivered ? `  
+                                    <button onclick="markDelivered('${order.id}')" class="btn btn-success btn-sm" style="padding:2px 10px;">  
+                                        ✅ ສົ່ງສຳເລັດ  
+                                    </button>  
+                                ` : `  
+                                    <span class="badge badge-delivered">✅ ສົ່ງແລ້ວ</span>  
+                                `}  
+                                <button onclick="removeFromRoute('${order.id}')" class="btn btn-danger btn-sm" style="padding:2px 8px;">  
+                                    ✕  
+                                </button>  
+                            </div>  
+                        </div>  
+                    `;  
+                });  
+  
+                html += `</div>`;  
+            });  
+  
+            container.innerHTML = html;  
+            updateRouteSummary(total, delivered, pending);  
+        }  
+  
+        function updateRouteSummary(total, delivered, pending) {  
+            const totalEl = document.getElementById('routeTotal');  
+            const deliveredEl = document.getElementById('routeDelivered');  
+            const pendingEl = document.getElementById('routePending');  
+  
+            if (total !== undefined) {  
+                totalEl.textContent = total;  
+                deliveredEl.textContent = delivered || 0;  
+                pendingEl.textContent = pending || 0;  
+            } else {  
+                const t = routeOrders.length;  
+                const d = routeOrders.filter(o => o.status === 'delivered').length;  
+                totalEl.textContent = t;  
+                deliveredEl.textContent = d;  
+                pendingEl.textContent = t - d;  
+            }  
+  
+            // Calculate distance (simple estimate based on number of orders)  
+            const dist = routeOrders.length * 1.5;  
+            document.getElementById('routeDistance').textContent = dist.toFixed(1) + ' km';  
+        }  
+  
+        async function markDelivered(id) {  
+            if (!await checkSession()) return;  
+  
+            try {  
+                const order = routeOrders.find(o => o.id === id);  
+                if (!order) return;  
+  
+                // Update status in database  
+                await supabaseClient  
+                    .from('delivery_routes')  
+                    .update({ status: 'delivered', updated_at: new Date().toISOString() })  
+                    .eq('id', id);  
+  
+                // Create actual order record  
+                await supabaseClient.from('orders').insert({  
+                    date: currentRouteDate,  
+                    delivery_time: new Date().toISOString(),  
+                    customer_id: order.customer_id,  
+                    customer_name: order.customer_name,  
+                    product: order.product || 'ນ້ຳ',  
+                    category: 'delivery',  
+                    sent: order.quantity || 1,  
+                    return_qty: 0,  
+                    balance: 0,  
+                    water_sales: order.price || 0,  
+                    deposit: 0,  
+                    price: order.price || 0,  
+                    payment: 'ເງິນສົດ',  
+                    delivery_status: 'ສົ່ງສຳເລັດ',  
+                    note: order.address || ''  
+                });  
+  
+                // Update customer stats  
+                const { data: custData } = await supabaseClient  
+                    .from('customers')  
+                    .select('total_orders, total_spent')  
+                    .eq('id', order.customer_id)  
+                    .single();  
+  
+                if (custData) {  
+                    await supabaseClient  
+                        .from('customers')  
+                        .update({  
+                            total_orders: (custData.total_orders || 0) + 1,  
+                            total_spent: (custData.total_spent || 0) + (order.price || 0),  
+                            updated_at: new Date().toISOString()  
+                        })  
+                        .eq('id', order.customer_id);  
+                }  
+  
+                // Reload route  
+                await loadDeliveryRoute();  
+                showToast(`✅ ສົ່ງ ${order.customer_name} ສຳເລັດ`, 'success');  
+  
+            } catch (err) {  
+                showToast('❌ ' + err.message, 'error');  
+            }  
+        }  
+  
+        async function removeFromRoute(id) {  
+            if (!await checkSession()) return;  
+            if (!confirm('ຕ້ອງການລຶບລາຍການນີ້ອອກຈາກລາຍການສົ່ງບໍ?')) return;  
+  
+            try {  
+                await supabaseClient  
+                    .from('delivery_routes')  
+                    .delete()  
+                    .eq('id', id);  
+  
+                await loadDeliveryRoute();  
+                showToast('🗑️ ລຶບສຳເລັດ', 'success');  
+            } catch (err) {  
+                showToast('❌ ' + err.message, 'error');  
+            }  
+        }  
+  
+        async function addToDeliveryRoute() {  
+            if (!await checkSession()) return;  
+  
+            const name = prompt('ໃສ່ຊື່ລູກຄ້າທີ່ຈະເພີ່ມເຂົ້າລາຍການສົ່ງ:');  
+            if (!name) return;  
+  
+            // Search customer  
+            const { data } = await supabaseClient  
+                .from('customers')  
+                .select('*')  
+                .ilike('name', name)  
+                .maybeSingle();  
+  
+            if (!data) {  
+                const addNew = confirm(`ບໍ່ພົບລູກຄ້າ "${name}", ຕ້ອງການສ້າງໃໝ່ບໍ?`);  
+                if (addNew) {  
+                    openCustomerModalForAdd();  
+                    document.getElementById('modalCustName').value = name;  
+                }  
+                return;  
+            }  
+  
+            const product = prompt('ສິນຄ້າ (ຕົວຢ່າງ: ຖັງ 18.9L, 600ml, ດ່າງ...):', 'ຖັງ 18.9L');  
+            if (!product) return;  
+  
+            const qty = parseInt(prompt('ຈຳນວນ:', '1')) || 1;  
+            const price = parseInt(prompt('ລາຄາ (ກີບ):', '28000')) || 28000;  
+  
+            const routeData = {  
+                date: currentRouteDate,  
+                customer_id: data.id,  
+                customer_name: data.name,  
+                village: data.village || '',  
+                district: data.district || '',  
+                province: data.province || '',  
+                address: data.village || '',  
+                phone: data.phone || '',  
+                map_url: data.map_url || '',  
+                product: product,  
+                quantity: qty,  
+                price: price * qty,  
+                status: 'pending',  
+                route_order: routeOrders.length + 1,  
+                created_at: new Date().toISOString(),  
+                updated_at: new Date().toISOString()  
+            };  
+  
+            const { error } = await supabaseClient  
+                .from('delivery_routes')  
+                .insert([routeData]);  
+  
+            if (error) {  
+                showToast('❌ ' + error.message, 'error');  
+                return;  
+            }  
+  
+            await loadDeliveryRoute();  
+            showToast(`✅ ເພີ່ມ ${data.name} ເຂົ້າລາຍການສົ່ງສຳເລັດ`, 'success');  
+        }  
+  
+        async function sortDeliveryRoute() {  
+            if (!await checkSession()) return;  
+            if (routeOrders.length === 0) {  
+                showToast('⚠️ ບໍ່ມີລາຍການທີ່ຈະຈັດລຽງ', 'warning');  
+                return;  
+            }  
+  
+            try {  
+                // Sort by district, then village, then address  
+                const sorted = [...routeOrders].sort((a, b) => {  
+                    if (a.district !== b.district) {  
+                        return (a.district || '').localeCompare(b.district || '');  
+                    }  
+                    if (a.village !== b.village) {  
+                        return (a.village || '').localeCompare(b.village || '');  
+                    }  
+                    return (a.address || '').localeCompare(b.address || '');  
+                });  
+  
+                // Update route_order in database  
+                for (let i = 0; i < sorted.length; i++) {  
+                    await supabaseClient  
+                        .from('delivery_routes')  
+                        .update({ route_order: i + 1 })  
+                        .eq('id', sorted[i].id);  
+                }  
+  
+                routeOrders = sorted;  
+                renderDeliveryRoute();  
+                showToast('✅ ຈັດລຽງເສັ້ນທາງສຳເລັດ', 'success');  
+            } catch (err) {  
+                showToast('❌ ' + err.message, 'error');  
+            }  
+        }  
+  
+        async function markAllDelivered() {  
+            if (!await checkSession()) return;  
+            const pending = routeOrders.filter(o => o.status !== 'delivered');  
+            if (pending.length === 0) {  
+                showToast('⚠️ ບໍ່ມີລາຍການທີ່ຍັງຄ້າງ', 'warning');  
+                return;  
+            }  
+  
+            if (!confirm(`ຕ້ອງການສົ່ງ ${pending.length} ລາຍການທີ່ຍັງຄ້າງທັງໝົດບໍ?`)) return;  
+  
+            for (const order of pending) {  
+                await markDelivered(order.id);  
+            }  
+  
+            await loadDeliveryRoute();  
+            showToast(`✅ ສົ່ງ ${pending.length} ລາຍການສຳເລັດ`, 'success');  
+        }  
   
         // ============================================================  
         //  TOAST  
@@ -2030,8 +2644,8 @@
         // ============================================================  
         const pageNames = {  
             'tab-order': 'ບັນທຶກການຂາຍ',  
+            'tab-route': 'ຈັດສົ່ງປະຈຳວັນ',  
             'tab-history': 'ປະຫວັດການຂາຍ',  
-            'tab-monthly': 'ລາຍງານຍອດຂາຍ',  
             'tab-customers': 'ຈັດການລູກຄ້າ'  
         };  
   
@@ -2039,10 +2653,12 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));  
             document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));  
             document.getElementById(tabId).classList.add('active');  
-            btn.classList.add('active');  
+            if (btn) btn.classList.add('active');  
             document.getElementById('pageName').textContent = pageNames[tabId] || tabId;  
   
-            if (tabId === 'tab-monthly') loadMonthlyReport();  
+            if (tabId === 'tab-route') {  
+                loadDeliveryRoute();  
+            }  
             if (tabId === 'tab-customers') loadAllCustomers();  
             if (tabId === 'tab-history') {  
                 loadOrders();  
@@ -2248,7 +2864,6 @@
             document.getElementById('modalCustProvince').value = data.province || '';  
             document.getElementById('modalCustMapUrl').value = data.map_url || '';  
   
-            // Load districts  
             onProvinceChange();  
             setTimeout(() => {  
                 document.getElementById('modalCustDistrict').value = data.district || '';  
@@ -2344,7 +2959,6 @@
                 closeCustomerModal();  
                 await loadAllCustomers();  
                 await loadCustomersList();  
-                // Refresh customer detail if name matches  
                 const currentName = document.getElementById('customerName').value.trim();  
                 if (currentName === name) {  
                     await onCustomerNameInput();  
@@ -2366,7 +2980,7 @@
             }  
             const { data } = await supabaseClient.from('customers').select('id').ilike('name', name).maybeSingle();  
             if (!data) {  
-                showToast('❌ ບໍ່ພົບລູກຄ້ານີ້, ກົດ "➕ ລູກຄ້າໃໝ່" ເພື່ອສ້າງ', 'error');  
+                showToast('❌ ບໍ່ພົບລູກຄ້ານີ້', 'error');  
                 return;  
             }  
             await editCustomer(data.id);  
@@ -2503,7 +3117,7 @@
                     document.getElementById('filterDate').value = dateStr;  
                     loadOrders();  
                     loadDailySummary(dateStr);  
-                    switchTab('tab-history', document.querySelectorAll('.bottom-nav-btn')[1]);  
+                    switchTab('tab-history', document.querySelectorAll('.bottom-nav-btn')[2]);  
                 };  
   
                 grid.appendChild(div);  
@@ -2602,7 +3216,7 @@
                     loadAllCustomers(),  
                     loadDailySummary(today),  
                     loadCalendar(calendarYear, calendarMonth),  
-                    loadMonthlyReport()  
+                    loadDeliveryRoute()  
                 ]);  
                 showToast('✅ ຣີເຟຣຊສຳເລັດ!', 'success');  
             } catch (err) {  
@@ -2619,79 +3233,7 @@
         }  
   
         // ============================================================  
-        //  ⭐ PAYMENT SUMMARY FUNCTION  
-        // ============================================================  
-        function calculatePaymentSummary(orders) {  
-            if (!orders || orders.length === 0) {  
-                document.getElementById('totalCash').textContent = '0 ກີບ';  
-                document.getElementById('totalTransfer').textContent = '0 ກີບ';  
-                document.getElementById('totalCredit').textContent = '0 ກີບ';  
-                document.getElementById('grandTotalPayment').textContent = '0 ກີບ';  
-                document.getElementById('customerPaymentBody').innerHTML = '<tr><td colspan="5" class="no-data">📭 ບໍ່ມີຂໍ້ມູນ</td></tr>';  
-                return;  
-            }  
-  
-            let totalCash = 0;  
-            let totalTransfer = 0;  
-            let totalCredit = 0;  
-            const customerMap = {};  
-  
-            orders.forEach(o => {  
-                const payment = o.payment || 'ເງິນສົດ';  
-                const amount = o.price || 0;  
-                const customerName = o.customer_name || 'ບໍ່ລະບຸ';  
-  
-                // ລວມຕາມປະເພດການຊຳລະ  
-                if (payment === 'ເງິນສົດ') totalCash += amount;  
-                else if (payment === 'ເງິນໂອນ') totalTransfer += amount;  
-                else if (payment === 'ຕິດໜີ້') totalCredit += amount;  
-  
-                // ລວມຕາມລູກຄ້າ  
-                if (!customerMap[customerName]) {  
-                    customerMap[customerName] = { cash: 0, transfer: 0, credit: 0 };  
-                }  
-                if (payment === 'ເງິນສົດ') customerMap[customerName].cash += amount;  
-                else if (payment === 'ເງິນໂອນ') customerMap[customerName].transfer += amount;  
-                else if (payment === 'ຕິດໜີ້') customerMap[customerName].credit += amount;  
-            });  
-  
-            // ສະແດງຜົນລວມຕາມປະເພດ  
-            document.getElementById('totalCash').textContent = totalCash.toLocaleString() + ' ກີບ';  
-            document.getElementById('totalTransfer').textContent = totalTransfer.toLocaleString() + ' ກີບ';  
-            document.getElementById('totalCredit').textContent = totalCredit.toLocaleString() + ' ກີບ';  
-            document.getElementById('grandTotalPayment').textContent = (totalCash + totalTransfer + totalCredit).toLocaleString() + ' ກີບ';  
-  
-            // ສະແດງຜົນລວມຕາມລູກຄ້າ  
-            const tbody = document.getElementById('customerPaymentBody');  
-            tbody.innerHTML = '';  
-  
-            Object.keys(customerMap).sort().forEach(name => {  
-                const c = customerMap[name];  
-                const total = c.cash + c.transfer + c.credit;  
-                tbody.innerHTML += `  
-                    <tr>  
-                        <td><strong>${name}</strong></td>  
-                        <td style="color:var(--success); font-weight:600;">${c.cash.toLocaleString()}</td>  
-                        <td style="color:var(--info); font-weight:600;">${c.transfer.toLocaleString()}</td>  
-                        <td style="color:var(--warning); font-weight:600;">${c.credit.toLocaleString()}</td>  
-                        <td style="color:var(--primary); font-weight:700;">${total.toLocaleString()}</td>  
-                    </tr>  
-                `;  
-            });  
-  
-            tbody.innerHTML += `  
-                <tr class="total-row">  
-                    <td>📊 ລວມທັງໝົດ</td>  
-                    <td style="color:var(--success);">${totalCash.toLocaleString()}</td>  
-                    <td style="color:var(--info);">${totalTransfer.toLocaleString()}</td>  
-                    <td style="color:var(--warning);">${totalCredit.toLocaleString()}</td>  
-                    <td style="color:var(--primary); font-size:16px;">${(totalCash + totalTransfer + totalCredit).toLocaleString()}</td>  
-                </tr>  
-            `;  
-        }  
-  
-        // ============================================================  
-        //  ⭐ CUSTOMER DETAIL WITH PHOTO BUTTON  
+        //  CUSTOMER DETAIL WITH CALL BUTTONS  
         // ============================================================  
         async function onCustomerNameInput() {  
             const name = document.getElementById('customerName').value.trim();  
@@ -2714,26 +3256,32 @@
   
             currentCustomerId = data.id;  
   
-            // ===== ສ່ວນຮູບ =====  
             let photoHtml = '-';  
             if (data.image_url) {  
                 photoHtml = `  
                     <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">  
                         <img src="${data.image_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer;" onclick="window.open('${data.image_url}','_blank')" />  
-                        <button onclick="window.open('${data.image_url}','_blank')" class="btn-photo-view" style="padding:2px 10px; font-size:11px;">  
-                            📷 ເບິ່ງ  
-                        </button>  
+                        <button onclick="window.open('${data.image_url}','_blank')" class="btn-photo-view" style="padding:2px 10px; font-size:11px;">📷 ເບິ່ງ</button>  
                     </div>  
                 `;  
             }  
   
-            // ===== ສ່ວນແຜນທີ່ =====  
             let mapHtml = '-';  
             if (data.map_url) {  
                 mapHtml = `  
-                    <button onclick="window.open('${data.map_url}','_blank')" class="btn-map-open" style="padding:2px 10px; font-size:11px;">  
-                        🗺️ ເປີດ  
-                    </button>  
+                    <button onclick="window.open('${data.map_url}','_blank')" class="btn-map-open" style="padding:2px 10px; font-size:11px;">🗺️ ເປີດ</button>  
+                `;  
+            }  
+  
+            let callHtml = '-';  
+            if (data.phone) {  
+                const phoneRaw = data.phone.replace(/[\s\-]/g, '');  
+                const waPhone = formatPhoneForWhatsApp(phoneRaw);  
+                callHtml = `  
+                    <div class="call-btn-group">  
+                        <a href="tel:${phoneRaw}" class="btn btn-call btn-sm" style="text-decoration:none; padding:2px 10px;">📞 ໂທ</a>  
+                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn btn-whatsapp btn-sm" style="text-decoration:none; padding:2px 10px;">💬 WhatsApp</a>  
+                    </div>  
                 `;  
             }  
   
@@ -2745,14 +3293,69 @@
                     <span class="label">🗺️ ແຂວງ:</span><span>${data.province || '-'}</span>  
                     <span class="label">📷 ຮູບ:</span><span>${photoHtml}</span>  
                     <span class="label">📍 ແຜນທີ່:</span><span>${mapHtml}</span>  
+                    <span class="label">📞 ຕິດຕໍ່:</span><span>${callHtml}</span>  
                     <span class="label">📦 ສັ່ງ:</span><span>${data.total_orders || 0}</span>  
                     <span class="label">💰 ຍອດໃຊ້:</span><span style="color:var(--success); font-weight:700;">${(data.total_spent || 0).toLocaleString()} ກີບ</span>  
                 </div>  
                 <div class="customer-actions">  
                     <button onclick="quickEditCustomer()" class="btn btn-info btn-sm">✏️ ແກ້ໄຂລູກຄ້ານີ້</button>  
+                    <button onclick="addToDeliveryRouteFromName()" class="btn btn-primary btn-sm">➕ ເພີ່ມເຂົ້າລາຍການສົ່ງ</button>  
                 </div>  
             `;  
             detailDiv.classList.add('show');  
+        }  
+  
+        async function addToDeliveryRouteFromName() {  
+            if (!currentCustomerId) {  
+                showToast('⚠️ ກະລຸນາເລືອກລູກຄ້າກ່ອນ', 'warning');  
+                return;  
+            }  
+  
+            const name = document.getElementById('customerName').value.trim();  
+            const { data } = await supabaseClient  
+                .from('customers')  
+                .select('*')  
+                .eq('id', currentCustomerId)  
+                .single();  
+  
+            if (!data) return;  
+  
+            const product = prompt('ສິນຄ້າ:', 'ຖັງ 18.9L');  
+            if (!product) return;  
+  
+            const qty = parseInt(prompt('ຈຳນວນ:', '1')) || 1;  
+            const price = parseInt(prompt('ລາຄາ (ກີບ):', '28000')) || 28000;  
+  
+            const routeData = {  
+                date: currentRouteDate,  
+                customer_id: data.id,  
+                customer_name: data.name,  
+                village: data.village || '',  
+                district: data.district || '',  
+                province: data.province || '',  
+                address: data.village || '',  
+                phone: data.phone || '',  
+                map_url: data.map_url || '',  
+                product: product,  
+                quantity: qty,  
+                price: price * qty,  
+                status: 'pending',  
+                route_order: routeOrders.length + 1,  
+                created_at: new Date().toISOString(),  
+                updated_at: new Date().toISOString()  
+            };  
+  
+            const { error } = await supabaseClient  
+                .from('delivery_routes')  
+                .insert([routeData]);  
+  
+            if (error) {  
+                showToast('❌ ' + error.message, 'error');  
+                return;  
+            }  
+  
+            await loadDeliveryRoute();  
+            showToast(`✅ ເພີ່ມ ${data.name} ເຂົ້າລາຍການສົ່ງສຳເລັດ`, 'success');  
         }  
   
         async function filterCustomerList(keyword) {  
@@ -3020,7 +3623,7 @@
         }  
   
         // ============================================================  
-        //  ⭐ LOAD ORDERS (with payment summary)  
+        //  LOAD ORDERS  
         // ============================================================  
         async function loadOrders() {  
             if (!await checkSession()) return;  
@@ -3100,113 +3703,11 @@
   
             const activeDate = document.getElementById('filterDate').value || todayStr;  
             await loadDailySummary(activeDate);  
-  
-            // ===== ຄິດໄລ່ຍອດເງິນຕາມການຊຳລະ =====  
-            calculatePaymentSummary(orders);  
         }  
   
         // ============================================================  
-        //  MONTHLY REPORT  
+        //  DELETE FUNCTIONS  
         // ============================================================  
-        async function loadMonthlyReport() {  
-            if (!await checkSession()) return;  
-            const year = document.getElementById('reportYear').value;  
-            const { data: orders } = await supabaseClient.from('orders').select('*');  
-            const months = ['ມັງກອນ', 'ກຸມພາ', 'ມີນາ', 'ເມສາ', 'ພຶດສະພາ', 'ມິຖຸນາ', 'ກໍລະກົດ', 'ສິງຫາ', 'ກັນຍາ',  
-                'ຕຸລາ', 'ພະຈິກ', 'ທັນວາ'  
-            ];  
-            const tbody = document.getElementById('monthlyTableBody');  
-            tbody.innerHTML = '';  
-            let grandTotalYear = 0,  
-                grandOrdersYear = 0;  
-  
-            for (let i = 0; i < 12; i++) {  
-                const prefix = `${year}-${String(i + 1).padStart(2, '0')}`;  
-                const filtered = (orders || []).filter(o => o.date && o.date.startsWith(prefix));  
-                const water = filtered.reduce((s, o) => s + (o.water_sales || 0), 0);  
-                const deposit = filtered.reduce((s, o) => s + (o.deposit || 0), 0);  
-                const total = water + deposit;  
-                grandTotalYear += total;  
-                grandOrdersYear += filtered.length;  
-                tbody.innerHTML += `  
-                    <tr>  
-                        <td style="font-weight:700; background:var(--tab-bg);">${months[i]}</td>  
-                        <td>${filtered.length}</td>  
-                        <td style="color:var(--success); font-weight:700;">${water.toLocaleString()}</td>  
-                        <td style="color:var(--info); font-weight:700;">${deposit.toLocaleString()}</td>  
-                        <td style="font-weight:700; color:var(--primary);">${total.toLocaleString()}</td>  
-                    </tr>  
-                `;  
-            }  
-  
-            tbody.innerHTML += `  
-                <tr style="font-weight:700; background:var(--detail-bg); border-top:2px solid var(--primary);">  
-                    <td>📊 ລວມປີ ${year}</td>  
-                    <td>${grandOrdersYear}</td>  
-                    <td style="color:var(--success);">${(orders || []).filter(o => o.date && o.date.startsWith(year)).reduce((s,o) => s + (o.water_sales || 0), 0).toLocaleString()}</td>  
-                    <td style="color:var(--info);">${(orders || []).filter(o => o.date && o.date.startsWith(year)).reduce((s,o) => s + (o.deposit || 0), 0).toLocaleString()}</td>  
-                    <td style="color:var(--primary); font-size:16px;">${grandTotalYear.toLocaleString()}</td>  
-                </tr>  
-            `;  
-        }  
-  
-        // ============================================================  
-        //  ⭐ LOAD ALL CUSTOMERS WITH PHOTO BUTTON  
-        // ============================================================  
-        async function loadAllCustomers() {  
-            if (!await checkSession()) return;  
-            const search = document.getElementById('customerSearchInput').value.trim();  
-            let query = supabaseClient.from('customers').select('*').order('name');  
-            if (search) query = query.ilike('name', `%${search}%`);  
-  
-            const { data } = await query;  
-            const tbody = document.getElementById('customerTableBody');  
-            tbody.innerHTML = '';  
-            if (!data || data.length === 0) {  
-                tbody.innerHTML = '<tr><td colspan="10" class="no-data">📭 ບໍ່ມີລູກຄ້າ</td></tr>';  
-                return;  
-            }  
-  
-            data.forEach(c => {  
-                // ===== ສ່ວນຮູບ =====  
-                let photoHtml = '-';  
-                if (c.image_url) {  
-                    photoHtml = `  
-                        <div class="photo-btn-group">  
-                            <img src="${c.image_url}" class="customer-photo" onclick="window.open('${c.image_url}','_blank')" />  
-                            <button onclick="window.open('${c.image_url}','_blank')" class="btn-photo-view" style="padding:2px 8px; font-size:10px;">📷</button>  
-                        </div>  
-                    `;  
-                }  
-  
-                // ===== ສ່ວນແຜນທີ່ =====  
-                let mapHtml = '-';  
-                if (c.map_url) {  
-                    mapHtml = `  
-                        <button onclick="window.open('${c.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️</button>  
-                    `;  
-                }  
-  
-                tbody.innerHTML += `  
-                    <tr>  
-                        <td><strong>${c.name}</strong></td>  
-                        <td>${c.phone || '-'}</td>  
-                        <td>${c.village || '-'}</td>  
-                        <td>${c.district || '-'}</td>  
-                        <td>${c.province || '-'}</td>  
-                        <td>${photoHtml}</td>  
-                        <td>${mapHtml}</td>  
-                        <td>${c.total_orders || 0}</td>  
-                        <td style="font-weight:700; color:var(--success);">${(c.total_spent || 0).toLocaleString()}</td>  
-                        <td>  
-                            <button onclick="editCustomer(${c.id})" class="btn btn-info btn-sm" title="ແກ້ໄຂ">✏️</button>  
-                            <button onclick="deleteCustomer(${c.id})" class="btn btn-danger btn-sm" title="ລຶບ">🗑️</button>  
-                        </td>  
-                    </tr>  
-                `;  
-            });  
-        }  
-  
         function deleteCustomer(id) {  
             openConfirmModal('ຕ້ອງການລຶບລູກຄ້ານີ້ແທ້ບໍ?', id, 'customer');  
         }  
@@ -3235,6 +3736,74 @@
             } catch (err) {  
                 showToast('ລຶບບໍ່ສຳເລັດ: ' + err.message, 'error');  
             }  
+        }  
+  
+        // ============================================================  
+        //  LOAD ALL CUSTOMERS  
+        // ============================================================  
+        async function loadAllCustomers() {  
+            if (!await checkSession()) return;  
+            const search = document.getElementById('customerSearchInput').value.trim();  
+            let query = supabaseClient.from('customers').select('*').order('name');  
+            if (search) query = query.ilike('name', `%${search}%`);  
+  
+            const { data } = await query;  
+            const tbody = document.getElementById('customerTableBody');  
+            tbody.innerHTML = '';  
+            if (!data || data.length === 0) {  
+                tbody.innerHTML = '<tr><td colspan="11" class="no-data">📭 ບໍ່ມີລູກຄ້າ</td></tr>';  
+                return;  
+            }  
+  
+            data.forEach(c => {  
+                let photoHtml = '-';  
+                if (c.image_url) {  
+                    photoHtml = `  
+                        <div class="photo-btn-group">  
+                            <img src="${c.image_url}" class="customer-photo" onclick="window.open('${c.image_url}','_blank')" />  
+                            <button onclick="window.open('${c.image_url}','_blank')" class="btn-photo-view" style="padding:2px 8px; font-size:10px;">📷</button>  
+                        </div>  
+                    `;  
+                }  
+  
+                let mapHtml = '-';  
+                if (c.map_url) {  
+                    mapHtml = `  
+                        <button onclick="window.open('${c.map_url}','_blank')" class="btn-map-open" style="padding:2px 8px; font-size:11px;">🗺️</button>  
+                    `;  
+                }  
+  
+                let callHtml = '-';  
+                if (c.phone) {  
+                    const phoneRaw = c.phone.replace(/[\s\-]/g, '');  
+                    const waPhone = formatPhoneForWhatsApp(phoneRaw);  
+                    callHtml = `  
+                        <div class="call-btn-group">  
+                            <a href="tel:${phoneRaw}" class="btn btn-call btn-sm" style="text-decoration:none; padding:2px 6px; font-size:10px;">📞</a>  
+                            <a href="https://wa.me/${waPhone}" target="_blank" class="btn btn-whatsapp btn-sm" style="text-decoration:none; padding:2px 6px; font-size:10px;">💬</a>  
+                        </div>  
+                    `;  
+                }  
+  
+                tbody.innerHTML += `  
+                    <tr>  
+                        <td><strong>${c.name}</strong></td>  
+                        <td>${c.phone || '-'}</td>  
+                        <td>${c.village || '-'}</td>  
+                        <td>${c.district || '-'}</td>  
+                        <td>${c.province || '-'}</td>  
+                        <td>${photoHtml}</td>  
+                        <td>${mapHtml}</td>  
+                        <td>${callHtml}</td>  
+                        <td>${c.total_orders || 0}</td>  
+                        <td style="font-weight:700; color:var(--success);">${(c.total_spent || 0).toLocaleString()}</td>  
+                        <td>  
+                            <button onclick="editCustomer(${c.id})" class="btn btn-info btn-sm" title="ແກ້ໄຂ">✏️</button>  
+                            <button onclick="deleteCustomer(${c.id})" class="btn btn-danger btn-sm" title="ລຶບ">🗑️</button>  
+                        </td>  
+                    </tr>  
+                `;  
+            });  
         }  
   
         // ============================================================  
@@ -3340,81 +3909,41 @@
         }  
   
         // ============================================================  
-        //  EXPORT EXCEL  
+        //  EXPORT FUNCTIONS  
         // ============================================================  
-        function exportExcel() {  
-            const table = document.getElementById('orderTableBody');  
-            if (table.children.length === 0 || table.children[0].classList.contains('no-data')) {  
-                showToast('ບໍ່ມີຂໍ້ມູນສຳລັບດາວໂຫລດ', 'warning');  
+        function exportRouteExcel() {  
+            if (routeOrders.length === 0) {  
+                showToast('⚠️ ບໍ່ມີຂໍ້ມູນສຳລັບດາວໂຫລດ', 'warning');  
                 return;  
             }  
   
-            let csv = 'ວັນທີ,ເວລາ,ລູກຄ້າ,ສິນຄ້າ,ສົ່ງ,ຄືນ,ຍອດນ້ຳ,ຈຳຕຸກ,ລວມ,ຊຳລະ,ສະຖານະ\n';  
-            const rows = table.querySelectorAll('tr');  
-            rows.forEach(row => {  
-                const cells = row.querySelectorAll('td');  
-                if (cells.length > 0) {  
-                    const rowData = [];  
-                    cells.forEach((cell, i) => {  
-                        if (i === 6 || i === 7 || i === 8) {  
-                            const text = cell.textContent.replace(/,/g, '').replace(' ກີບ', '').trim();  
-                            rowData.push(text);  
-                        } else {  
-                            rowData.push(cell.textContent.trim());  
-                        }  
-                    });  
-                    csv += rowData.join(',') + '\n';  
-                }  
+            let csv = 'ລຳດັບ,ເມືອງ,ບ້ານ,ຊື່ລູກຄ້າ,ເບີໂທ,ສິນຄ້າ,ຈຳນວນ,ລາຄາ,ສະຖານະ\n';  
+            let orderNum = 1;  
+            const groups = {};  
+            routeOrders.forEach(o => {  
+                const key = o.district || 'ອື່ນໆ';  
+                if (!groups[key]) groups[key] = [];  
+                groups[key].push(o);  
+            });  
+  
+            Object.keys(groups).sort().forEach(district => {  
+                groups[district].forEach(o => {  
+                    csv +=  
+                        `${orderNum},${district},${o.village || '-'},${o.customer_name},${o.phone || '-'},${o.product || '-'},${o.quantity || 1},${(o.price || 0).toLocaleString()},${o.status}\n`;  
+                    orderNum++;  
+                });  
             });  
   
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });  
             const link = document.createElement('a');  
             link.href = URL.createObjectURL(blob);  
-            link.download = `ລາຍງານ_${new Date().toLocaleDateString('fr-CA')}.csv`;  
+            link.download = `ລາຍການສົ່ງ_${currentRouteDate}.csv`;  
             link.click();  
             showToast('✅ ດາວໂຫລດສຳເລັດ', 'success');  
         }  
   
-        function exportExcelMonthly() {  
-            const table = document.getElementById('monthlyTableBody');  
-            if (table.children.length === 0) {  
-                showToast('ບໍ່ມີຂໍ້ມູນ', 'warning');  
-                return;  
-            }  
-  
-            let csv = 'ເດືອນ,ຈຳນວນ,ຍອດຂາຍ,ຈຳຕຸກ,ລວມ\n';  
-            const rows = table.querySelectorAll('tr');  
-            rows.forEach(row => {  
-                const cells = row.querySelectorAll('td');  
-                if (cells.length > 0) {  
-                    const rowData = [];  
-                    cells.forEach(cell => {  
-                        rowData.push(cell.textContent.replace(/,/g, '').trim());  
-                    });  
-                    csv += rowData.join(',') + '\n';  
-                }  
-            });  
-  
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });  
-            const link = document.createElement('a');  
-            link.href = URL.createObjectURL(blob);  
-            link.download = `ລາຍງານເດືອນ_${new Date().toLocaleDateString('fr-CA')}.csv`;  
-            link.click();  
-            showToast('✅ ດາວໂຫລດສຳເລັດ', 'success');  
-        }  
-  
-        // ============================================================  
-        //  SEND WHATSAPP  
-        // ============================================================  
-        function sendWhatsApp() {  
-            const message = encodeURIComponent(  
-                `📊 ລາຍງານການຂາຍ\nວັນທີ: ${new Date().toLocaleDateString('lo-LA')}\n\n` +  
-                `ຍອດຂາຍນ້ຳ: ${document.getElementById('sumWaterSales').textContent}\n` +  
-                `ຍອດຈຳຕຸກ: ${document.getElementById('sumDepositSales').textContent}\n` +  
-                `ລວມທັງໝົດ: ${document.getElementById('sumGrandTotal').textContent}\n` +  
-                `ລາຍການ: ${document.getElementById('sumOrdersCount').textContent}`  
-            );  
-            window.open(`https://wa.me/?text=${message}`, '_blank');  
+        function printRoute() {  
+            window.print();  
         }  
   
         // ============================================================  
@@ -3423,7 +3952,6 @@
         window.addEventListener('load', async function() {  
             loadThemePreference();  
   
-            // Set default date  
             const today = new Date().toLocaleDateString('fr-CA');  
             document.getElementById('orderDate').value = today;  
             document.getElementById('filterDate').value = today;  
@@ -3456,15 +3984,14 @@
             document.getElementById('appContainer').style.display = 'block';  
             document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;  
   
-            // Load provinces  
             loadProvinces();  
   
             const today = new Date().toLocaleDateString('fr-CA');  
             document.getElementById('orderDate').value = today;  
             document.getElementById('filterDate').value = today;  
             document.getElementById('stockDateDisplay').textContent = today;  
+            currentRouteDate = today;  
   
-            // Set default delivery time  
             const now = new Date();  
             const localStr = now.getFullYear() + '-' +  
                 String(now.getMonth() + 1).padStart(2, '0') + '-' +  
@@ -3473,7 +4000,6 @@
                 String(now.getMinutes()).padStart(2, '0');  
             document.getElementById('deliveryTime').value = localStr;  
   
-            // Set report year  
             const yearSelect = document.getElementById('reportYear');  
             const currentYear = new Date().getFullYear();  
             yearSelect.innerHTML = '';  
@@ -3485,7 +4011,6 @@
             }  
             yearSelect.value = currentYear;  
   
-            // Load all data  
             await Promise.all([  
                 loadStockLoad(),  
                 loadOrders(),  
@@ -3493,12 +4018,10 @@
                 loadAllCustomers(),  
                 loadDailySummary(today),  
                 loadCalendar(calendarYear, calendarMonth),  
-                loadMonthlyReport()  
+                loadDeliveryRoute()  
             ]);  
   
-            // Update product dropdowns  
             updateProductDropdowns();  
-  
             showToast('ເຂົ້າສູ່ລະບົບສຳເລັດ', 'success');  
         }  
     </script>  
