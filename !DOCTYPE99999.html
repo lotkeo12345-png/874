@@ -390,6 +390,9 @@
         }      
       
         /* ===== FORM ===== */      
+        /* ============================================================  
+           CUSTOMER SEARCH DROPDOWN  
+           ============================================================ */  
         .customer-picker {  
             position: relative;  
             width: 100%;  
@@ -1004,6 +1007,7 @@
             transform: scale(1.05);      
         }      
       
+        /* Customer photo in table */      
         .customer-photo {      
             width: 40px;      
             height: 40px;      
@@ -1027,6 +1031,7 @@
             flex-wrap: wrap;      
         }      
       
+        /* ===== CALL BUTTONS ===== */      
         .call-btn-group {      
             display: flex;      
             align-items: center;      
@@ -1995,6 +2000,7 @@
             }      
         }      
       
+        /* Scrollbar */      
         ::-webkit-scrollbar {      
             width: 5px;      
             height: 5px;      
@@ -2619,7 +2625,7 @@
             </div>      
             <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">      
                 <button onclick="exportExcel()" class="btn btn-primary btn-sm" style="width:auto;">📊 ດາວໂຫລດ Excel</button>      
-                <button onclick="sendWhatsApp()" class="btn btn-sm" style="width:auto; background:#25D366; color:white;">💬 ສົ່ງ WhatsApp</button>      
+                <button onclick="sendWhatsAppWithCustomerDetail()" class="btn btn-sm" style="width:auto; background:#25D366; color:white;">💬 ສົ່ງ WhatsApp (ລາຍລະອຽດ)</button>      
                 <button onclick="window.print()" class="btn btn-secondary btn-sm" style="width:auto;">🖨️ ພິມ</button>      
             </div>      
         </div>      
@@ -2804,7 +2810,6 @@
         // ============================================================      
         function showToast(msg, type = 'success') {      
             const toast = document.getElementById('toast');      
-            if (!toast) return;      
             toast.textContent = msg;      
             toast.className = 'toast';      
             if (type === 'error') toast.classList.add('error');      
@@ -2812,14 +2817,13 @@
             else if (type === 'info') toast.classList.add('info');      
             toast.style.display = 'block';      
             clearTimeout(toast._timeout);      
-            toast._timeout = setTimeout(() => { if (toast) toast.style.display = 'none'; }, 3500);      
+            toast._timeout = setTimeout(() => { toast.style.display = 'none'; }, 3500);      
         }      
       
         // ============================================================      
         //  LOADING      
         // ============================================================      
         function setLoading(btn, loading) {      
-            if (!btn) return;      
             if (loading) {      
                 btn._origText = btn.innerHTML;      
                 btn.innerHTML = '<span class="spinner"></span> ກຳລັງ...';      
@@ -2834,17 +2838,14 @@
         //  CONFIRM MODAL      
         // ============================================================      
         function openConfirmModal(message, targetId, targetType) {      
-            const msgEl = document.getElementById('confirmMessage');      
-            if (msgEl) msgEl.textContent = message;      
+            document.getElementById('confirmMessage').textContent = message;      
             deleteTargetId = targetId;      
             deleteTargetType = targetType;      
-            const modal = document.getElementById('confirmModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('confirmModal').classList.add('show');      
         }      
       
         function closeConfirmModal() {      
-            const modal = document.getElementById('confirmModal');      
-            if (modal) modal.classList.remove('show');      
+            document.getElementById('confirmModal').classList.remove('show');      
             deleteTargetId = null;      
             deleteTargetType = null;      
         }      
@@ -2862,13 +2863,11 @@
         //  HELP MODAL      
         // ============================================================      
         function openHelpModal() {      
-            const modal = document.getElementById('helpModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('helpModal').classList.add('show');      
         }      
       
         function closeHelpModal() {      
-            const modal = document.getElementById('helpModal');      
-            if (modal) modal.classList.remove('show');      
+            document.getElementById('helpModal').classList.remove('show');      
         }      
       
         // ============================================================      
@@ -2886,14 +2885,12 @@
         function updateThemeUI(theme) {      
             const icon = document.getElementById('themeIcon');      
             const label = document.getElementById('themeLabel');      
-            if (icon && label) {      
-                if (theme === 'dark') {      
-                    icon.textContent = '☀️';      
-                    label.textContent = 'ກາງເວັນ';      
-                } else {      
-                    icon.textContent = '🌙';      
-                    label.textContent = 'ກາງຄືນ';      
-                }      
+            if (theme === 'dark') {      
+                icon.textContent = '☀️';      
+                label.textContent = 'ກາງເວັນ';      
+            } else {      
+                icon.textContent = '🌙';      
+                label.textContent = 'ກາງຄືນ';      
             }      
         }      
       
@@ -2918,11 +2915,9 @@
         function switchTab(tabId, btn) {      
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));      
             document.querySelectorAll('.bottom-nav-btn').forEach(el => el.classList.remove('active'));      
-            const tab = document.getElementById(tabId);      
-            if (tab) tab.classList.add('active');      
+            document.getElementById(tabId).classList.add('active');      
             if (btn) btn.classList.add('active');      
-            const pageNameEl = document.getElementById('pageName');      
-            if (pageNameEl) pageNameEl.textContent = pageNames[tabId] || tabId;      
+            document.getElementById('pageName').textContent = pageNames[tabId] || tabId;      
       
             if (tabId === 'tab-route') {      
                 loadDeliveryRoute();      
@@ -2941,18 +2936,15 @@
         //  PAYMENT REMINDER      
         // ============================================================      
         function showPaymentReminder() {      
-            const method = document.getElementById('paymentMethod');      
-            if (!method) return;      
+            const method = document.getElementById('paymentMethod').value;      
             const reminder = document.getElementById('paymentReminder');      
             const display = document.getElementById('paymentTypeDisplay');      
-            if (display) display.textContent = method.value;      
-            if (reminder) {      
-                reminder.style.display = 'block';      
-                clearTimeout(window._reminderTimeout);      
-                window._reminderTimeout = setTimeout(() => {      
-                    if (reminder) reminder.style.display = 'none';      
-                }, 5000);      
-            }      
+            display.textContent = method;      
+            reminder.style.display = 'block';      
+            clearTimeout(window._reminderTimeout);      
+            window._reminderTimeout = setTimeout(() => {      
+                reminder.style.display = 'none';      
+            }, 5000);      
         }      
       
         // ============================================================      
@@ -2960,7 +2952,6 @@
         // ============================================================      
         function addOrderItem() {      
             const container = document.getElementById('orderItems');      
-            if (!container) return;      
             const item = document.createElement('div');      
             item.className = 'order-item';      
             item.innerHTML = `      
@@ -2976,7 +2967,6 @@
       
         function removeOrderItem(btn) {      
             const container = document.getElementById('orderItems');      
-            if (!container) return;      
             if (container.children.length > 1) {      
                 btn.parentElement.remove();      
                 calculateTotal();      
@@ -2995,33 +2985,24 @@
       
             items.forEach(item => {      
                 const select = item.querySelector('.product-select');      
-                if (!select) return;      
-                const qty = parseInt(item.querySelector('.qty-input')?.value) || 0;      
-                const price = parseInt(select.options[select.selectedIndex]?.dataset?.price) || 0;      
-                const type = select.options[select.selectedIndex]?.dataset?.type || 'pack';      
+                const qty = parseInt(item.querySelector('.qty-input').value) || 0;      
+                const price = parseInt(select.options[select.selectedIndex].dataset.price) || 0;      
+                const type = select.options[select.selectedIndex].dataset.type || 'pack';      
                 if (type === 'tank') hasTank = true;      
                 total += price * qty;      
             });      
       
-            const depositEl = document.getElementById('depositPrice');      
-            const deposit = parseFloat(depositEl?.value) || 0;      
+            const deposit = parseFloat(document.getElementById('depositPrice').value) || 0;      
             total += deposit;      
       
-            const totalPriceEl = document.getElementById('totalPrice');      
-            if (totalPriceEl) totalPriceEl.value = total.toLocaleString() + ' ກີບ';      
+            document.getElementById('totalPrice').value = total.toLocaleString() + ' ກີບ';      
       
-            const qtyReturnEl = document.getElementById('qtyReturn');      
-            if (qtyReturnEl) {      
-                qtyReturnEl.disabled = !hasTank;      
-                if (!hasTank) {      
-                    qtyReturnEl.value = 0;      
-                    const isNewEl = document.getElementById('isNewCustomer');      
-                    if (isNewEl) isNewEl.checked = false;      
-                    if (depositEl) {      
-                        depositEl.value = 0;      
-                        depositEl.disabled = true;      
-                    }      
-                }      
+            document.getElementById('qtyReturn').disabled = !hasTank;      
+            if (!hasTank) {      
+                document.getElementById('qtyReturn').value = 0;      
+                document.getElementById('isNewCustomer').checked = false;      
+                document.getElementById('depositPrice').value = 0;      
+                document.getElementById('depositPrice').disabled = true;      
             }      
       
             return total;      
@@ -3031,20 +3012,16 @@
         //  TOGGLE DEPOSIT      
         // ============================================================      
         function toggleDeposit() {      
-            const isNewEl = document.getElementById('isNewCustomer');      
-            if (!isNewEl) return;      
-            const checked = isNewEl.checked;      
+            const checked = document.getElementById('isNewCustomer').checked;      
             const input = document.getElementById('depositPrice');      
-            if (!input) return;      
             if (checked) {      
                 input.disabled = false;      
                 let totalTanks = 0;      
                 document.querySelectorAll('.order-item').forEach(item => {      
                     const select = item.querySelector('.product-select');      
-                    if (!select) return;      
-                    const type = select.options[select.selectedIndex]?.dataset?.type || 'pack';      
+                    const type = select.options[select.selectedIndex].dataset.type || 'pack';      
                     if (type === 'tank') {      
-                        totalTanks += parseInt(item.querySelector('.qty-input')?.value) || 0;      
+                        totalTanks += parseInt(item.querySelector('.qty-input').value) || 0;      
                     }      
                 });      
                 input.value = totalTanks * DEPOSIT_PRICE;      
@@ -3066,11 +3043,9 @@
             const reader = new FileReader();      
             reader.onload = (e) => {      
                 const img = document.getElementById('modalPhotoPreview');      
-                if (img) {      
-                    img.src = e.target.result;      
-                    img.classList.add('show');      
-                    showToast('✅ ເລືອກຮູບສຳເລັດ', 'success');      
-                }      
+                img.src = e.target.result;      
+                img.classList.add('show');      
+                showToast('✅ ເລືອກຮູບສຳເລັດ', 'success');      
             };      
             reader.readAsDataURL(file);      
         }      
@@ -3101,7 +3076,6 @@
         // ============================================================      
         function loadProvinces() {      
             const select = document.getElementById('modalCustProvince');      
-            if (!select) return;      
             select.innerHTML = '<option value="">-- ເລືອກແຂວງ --</option>';      
             PROVINCES.forEach(p => {      
                 const opt = document.createElement('option');      
@@ -3112,9 +3086,8 @@
         }      
       
         function onProvinceChange() {      
-            const province = document.getElementById('modalCustProvince')?.value;      
+            const province = document.getElementById('modalCustProvince').value;      
             const districtSelect = document.getElementById('modalCustDistrict');      
-            if (!districtSelect) return;      
             districtSelect.innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';      
       
             if (province && DISTRICTS_BY_PROVINCE[province]) {      
@@ -3131,29 +3104,18 @@
         //  CUSTOMER MODAL      
         // ============================================================      
         function openCustomerModalForAdd() {      
-            const idEl = document.getElementById('modalCustId');      
-            if (idEl) idEl.value = '';      
-            const nameEl = document.getElementById('modalCustName');      
-            if (nameEl) nameEl.value = '';      
-            const phoneEl = document.getElementById('modalCustPhone');      
-            if (phoneEl) phoneEl.value = '';      
-            const villageEl = document.getElementById('modalCustVillage');      
-            if (villageEl) villageEl.value = '';      
-            const provinceEl = document.getElementById('modalCustProvince');      
-            if (provinceEl) provinceEl.value = '';      
-            const districtEl = document.getElementById('modalCustDistrict');      
-            if (districtEl) districtEl.innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';      
-            const mapEl = document.getElementById('modalCustMapUrl');      
-            if (mapEl) mapEl.value = '';      
-            const photoPreview = document.getElementById('modalPhotoPreview');      
-            if (photoPreview) photoPreview.classList.remove('show');      
-            const mapContainer = document.getElementById('mapButtonContainer');      
-            if (mapContainer) mapContainer.innerHTML = '';      
+            document.getElementById('modalCustId').value = '';      
+            document.getElementById('modalCustName').value = '';      
+            document.getElementById('modalCustPhone').value = '';      
+            document.getElementById('modalCustVillage').value = '';      
+            document.getElementById('modalCustProvince').value = '';      
+            document.getElementById('modalCustDistrict').innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';      
+            document.getElementById('modalCustMapUrl').value = '';      
+            document.getElementById('modalPhotoPreview').classList.remove('show');      
+            document.getElementById('mapButtonContainer').innerHTML = '';      
             modalImageFile = null;      
-            const titleEl = document.getElementById('customerModalTitle');      
-            if (titleEl) titleEl.textContent = '➕ ເພີ່ມລູກຄ້າໃໝ່';      
-            const modal = document.getElementById('customerModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('customerModalTitle').textContent = '➕ ເພີ່ມລູກຄ້າໃໝ່';      
+            document.getElementById('customerModal').classList.add('show');      
         }      
       
         async function editCustomer(id) {      
@@ -3161,53 +3123,39 @@
             const { data } = await supabaseClient.from('customers').select('*').eq('id', id).single();      
             if (!data) { showToast('ບໍ່ພົບຂໍ້ມູນ', 'error'); return; }      
       
-            const idEl = document.getElementById('modalCustId');      
-            if (idEl) idEl.value = data.id;      
-            const nameEl = document.getElementById('modalCustName');      
-            if (nameEl) nameEl.value = data.name || '';      
-            const phoneEl = document.getElementById('modalCustPhone');      
-            if (phoneEl) phoneEl.value = data.phone || '';      
-            const villageEl = document.getElementById('modalCustVillage');      
-            if (villageEl) villageEl.value = data.village || '';      
-            const provinceEl = document.getElementById('modalCustProvince');      
-            if (provinceEl) provinceEl.value = data.province || '';      
-            const mapEl = document.getElementById('modalCustMapUrl');      
-            if (mapEl) mapEl.value = data.map_url || '';      
+            document.getElementById('modalCustId').value = data.id;      
+            document.getElementById('modalCustName').value = data.name || '';      
+            document.getElementById('modalCustPhone').value = data.phone || '';      
+            document.getElementById('modalCustVillage').value = data.village || '';      
+            document.getElementById('modalCustProvince').value = data.province || '';      
+            document.getElementById('modalCustMapUrl').value = data.map_url || '';      
       
             onProvinceChange();      
             setTimeout(() => {      
-                const districtEl = document.getElementById('modalCustDistrict');      
-                if (districtEl) districtEl.value = data.district || '';      
+                document.getElementById('modalCustDistrict').value = data.district || '';      
             }, 100);      
       
             if (data.image_url) {      
                 const img = document.getElementById('modalPhotoPreview');      
-                if (img) {      
-                    img.src = data.image_url;      
-                    img.classList.add('show');      
-                }      
+                img.src = data.image_url;      
+                img.classList.add('show');      
             }      
       
             if (data.map_url) {      
                 showMapButton(data.map_url);      
             }      
       
-            const titleEl = document.getElementById('customerModalTitle');      
-            if (titleEl) titleEl.textContent = '✏️ ແກ້ໄຂ: ' + data.name;      
-            const modal = document.getElementById('customerModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('customerModalTitle').textContent = '✏️ ແກ້ໄຂ: ' + data.name;      
+            document.getElementById('customerModal').classList.add('show');      
         }      
       
         function closeCustomerModal() {      
-            const modal = document.getElementById('customerModal');      
-            if (modal) modal.classList.remove('show');      
-            const mapContainer = document.getElementById('mapButtonContainer');      
-            if (mapContainer) mapContainer.innerHTML = '';      
+            document.getElementById('customerModal').classList.remove('show');      
+            document.getElementById('mapButtonContainer').innerHTML = '';      
         }      
       
         function showMapButton(url) {      
             const container = document.getElementById('mapButtonContainer');      
-            if (!container) return;      
             container.innerHTML = `      
                 <button onclick="window.open('${url}','_blank')" class="btn-map-open">      
                     🗺️ ເປີດເບິ່ງແຜນທີ່      
@@ -3226,8 +3174,7 @@
                 (position) => {      
                     const { latitude, longitude } = position.coords;      
                     const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;      
-                    const mapEl = document.getElementById('modalCustMapUrl');      
-                    if (mapEl) mapEl.value = mapUrl;      
+                    document.getElementById('modalCustMapUrl').value = mapUrl;      
                     showMapButton(mapUrl);      
                     showToast('✅ ໄດ້ຕຳແໜ່ງແລ້ວ', 'success');      
                 },      
@@ -3241,10 +3188,8 @@
             e.preventDefault();      
             if (!await requireSession()) return;      
       
-            const idEl = document.getElementById('modalCustId');      
-            const id = idEl ? idEl.value : '';      
-            const nameEl = document.getElementById('modalCustName');      
-            const name = nameEl ? nameEl.value.trim() : '';      
+            const id = document.getElementById('modalCustId').value;      
+            const name = document.getElementById('modalCustName').value.trim();      
             if (!name) { showToast('ກະລຸນາໃສ່ຊື່ລູກຄ້າ', 'error'); return; }      
       
             const btn = document.getElementById('saveCustModalBtn');      
@@ -3253,11 +3198,11 @@
             try {      
                 const customerData = {      
                     name,      
-                    phone: document.getElementById('modalCustPhone')?.value?.trim() || '',      
-                    village: document.getElementById('modalCustVillage')?.value?.trim() || '',      
-                    district: document.getElementById('modalCustDistrict')?.value || '',      
-                    province: document.getElementById('modalCustProvince')?.value || '',      
-                    map_url: document.getElementById('modalCustMapUrl')?.value?.trim() || '',      
+                    phone: document.getElementById('modalCustPhone').value.trim(),      
+                    village: document.getElementById('modalCustVillage').value.trim(),      
+                    district: document.getElementById('modalCustDistrict').value,      
+                    province: document.getElementById('modalCustProvince').value,      
+                    map_url: document.getElementById('modalCustMapUrl').value.trim(),      
                     updated_at: new Date().toISOString()      
                 };      
       
@@ -3280,7 +3225,7 @@
                 closeCustomerModal();      
                 await loadAllCustomers();      
                 await loadCustomersList();      
-                const currentName = document.getElementById('customerName')?.value?.trim() || '';      
+                const currentName = document.getElementById('customerName').value.trim();      
                 if (currentName === name) {      
                     await onCustomerNameInput();      
                 }      
@@ -3294,9 +3239,7 @@
         //  QUICK EDIT CUSTOMER      
         // ============================================================      
         async function quickEditCustomer() {      
-            const nameEl = document.getElementById('customerName');      
-            if (!nameEl) return;      
-            const name = nameEl.value.trim();      
+            const name = document.getElementById('customerName').value.trim();      
             if (!name) {      
                 showToast('⚠️ ກະລຸນາພິມຊື່ລູກຄ້າກ່ອນ', 'warning');      
                 return;      
@@ -3314,18 +3257,15 @@
         // ============================================================      
         function openProductModal() {      
             renderProductList();      
-            const modal = document.getElementById('productModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('productModal').classList.add('show');      
         }      
       
         function closeProductModal() {      
-            const modal = document.getElementById('productModal');      
-            if (modal) modal.classList.remove('show');      
+            document.getElementById('productModal').classList.remove('show');      
         }      
       
         function renderProductList() {      
             const container = document.getElementById('productList');      
-            if (!container) return;      
             container.innerHTML = products.map((p, i) => `      
                 <div style="display:flex; gap:6px; align-items:center; padding:8px; border-bottom:1px solid var(--border);">      
                     <span style="flex:2; font-weight:700; font-size:14px;">${p.name}</span>      
@@ -3407,11 +3347,9 @@
             const monthNames = ['ມັງກອນ', 'ກຸມພາ', 'ມີນາ', 'ເມສາ', 'ພຶດສະພາ', 'ມິຖຸນາ',      
                 'ກໍລະກົດ', 'ສິງຫາ', 'ກັນຍາ', 'ຕຸລາ', 'ພະຈິກ', 'ທັນວາ'      
             ];      
-            const titleEl = document.getElementById('calendarTitle');      
-            if (titleEl) titleEl.textContent = `${monthNames[month]} ${year}`;      
+            document.getElementById('calendarTitle').textContent = `${monthNames[month]} ${year}`;      
       
             const grid = document.getElementById('calendarGrid');      
-            if (!grid) return;      
             grid.innerHTML = '';      
       
             ['ອາ', 'ຈ', 'ອ', 'ພ', 'ພຫ', 'ສ', 'ສ'].forEach(day => {      
@@ -3442,8 +3380,7 @@
                 `;      
       
                 div.onclick = () => {      
-                    const filterDate = document.getElementById('filterDate');      
-                    if (filterDate) filterDate.value = dateStr;      
+                    document.getElementById('filterDate').value = dateStr;      
                     loadOrders();      
                     loadDailySummary(dateStr);      
                     switchTab('tab-history', document.querySelectorAll('.bottom-nav-btn')[2]);      
@@ -3477,12 +3414,9 @@
             const totalOrders = orders ? orders.length : 0;      
             const totalAmount = orders ? orders.reduce((sum, o) => sum + (o.price || 0), 0) : 0;      
       
-            const dateEl = document.getElementById('dailySummaryDate');      
-            if (dateEl) dateEl.textContent = date;      
-            const countEl = document.getElementById('dailySummaryCount');      
-            if (countEl) countEl.textContent = totalOrders + ' ລາຍການ';      
-            const totalEl = document.getElementById('dailySummaryTotal');      
-            if (totalEl) totalEl.textContent = totalAmount.toLocaleString() + ' ກີບ';      
+            document.getElementById('dailySummaryDate').textContent = date;      
+            document.getElementById('dailySummaryCount').textContent = totalOrders + ' ລາຍການ';      
+            document.getElementById('dailySummaryTotal').textContent = totalAmount.toLocaleString() + ' ກີບ';      
         }      
       
         // ============================================================      
@@ -3517,18 +3451,17 @@
         }      
       
         async function login() {      
-            const email = document.getElementById('loginEmail')?.value?.trim() || '';      
-            const password = document.getElementById('loginPassword')?.value?.trim() || '';      
+            const email = document.getElementById('loginEmail').value.trim();      
+            const password = document.getElementById('loginPassword').value.trim();      
             const btn = document.getElementById('loginBtn');      
             setLoading(btn, true);      
-            const errorEl = document.getElementById('loginError');      
-            if (errorEl) errorEl.textContent = '';      
+            document.getElementById('loginError').textContent = '';      
       
             const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });      
             setLoading(btn, false);      
       
             if (error) {      
-                if (errorEl) errorEl.textContent = '❌ ' + error.message;      
+                document.getElementById('loginError').textContent = '❌ ' + error.message;      
                 return;      
             }      
             currentUser = data.user;      
@@ -3539,10 +3472,8 @@
             await supabaseClient.auth.signOut();      
             localStorage.clear();      
             sessionStorage.clear();      
-            const loginOverlay = document.getElementById('loginOverlay');      
-            if (loginOverlay) loginOverlay.classList.remove('hidden');      
-            const appContainer = document.getElementById('appContainer');      
-            if (appContainer) appContainer.style.display = 'none';      
+            document.getElementById('loginOverlay').classList.remove('hidden');      
+            document.getElementById('appContainer').style.display = 'none';      
             showToast('ອອກຈາກລະບົບແລ້ວ', 'info');      
         }      
       
@@ -3575,9 +3506,7 @@
         // ============================================================      
         function onDateChange() {      
             loadStockLoad();      
-            const dateEl = document.getElementById('orderDate');      
-            const stockDateEl = document.getElementById('stockDateDisplay');      
-            if (stockDateEl && dateEl) stockDateEl.textContent = dateEl.value;      
+            document.getElementById('stockDateDisplay').textContent = document.getElementById('orderDate').value;      
             loadTodayDeliveryList();      
         }      
       
@@ -3585,12 +3514,12 @@
         //  ⭐ TODAY DELIVERY LIST IN ORDER TAB      
         // ============================================================      
         async function loadTodayDeliveryList() {      
-            const dateEl = document.getElementById('orderDate');      
-            if (!dateEl) {      
+            const dateInput = document.getElementById('orderDate');      
+            if (!dateInput) {      
                 console.warn('orderDate element not found');      
                 return;      
             }      
-            const today = dateEl.value || new Date().toLocaleDateString('fr-CA');      
+            const today = dateInput.value || new Date().toLocaleDateString('fr-CA');      
             const container = document.getElementById('todayDeliveryList');      
             const countEl = document.getElementById('deliveryCount');      
               
@@ -3665,14 +3594,10 @@
                 return;      
             }      
       
-            const nameEl = document.getElementById('customerName');      
-            if (nameEl) {      
-                nameEl.value = data.customer_name;      
-                await onCustomerNameInput();      
-            }      
+            document.getElementById('customerName').value = data.customer_name;      
+            await onCustomerNameInput();      
       
             const container = document.getElementById('orderItems');      
-            if (!container) return;      
             container.innerHTML = '';      
       
             const item = document.createElement('div');      
@@ -3693,13 +3618,11 @@
             `;      
             container.appendChild(item);      
       
-            const noteEl = document.getElementById('orderNote');      
-            if (noteEl) noteEl.value = data.address || data.village || '';      
+            document.getElementById('orderNote').value = data.address || data.village || '';      
       
             calculateTotal();      
       
-            const form = document.getElementById('waterForm');      
-            if (form) form.scrollIntoView({ behavior: 'smooth' });      
+            document.getElementById('waterForm').scrollIntoView({ behavior: 'smooth' });      
       
             selectedRouteId = routeId;      
       
@@ -3710,20 +3633,18 @@
         //  CUSTOMER DETAIL WITH CALL BUTTONS      
         // ============================================================      
         async function onCustomerNameInput() {      
-            const nameEl = document.getElementById('customerName');      
-            if (!nameEl) return;      
-            const name = nameEl.value.trim();      
+            const name = document.getElementById('customerName').value.trim();      
             const detailDiv = document.getElementById('customerDetail');      
       
             if (!name) {      
-                if (detailDiv) detailDiv.classList.remove('show');      
+                detailDiv.classList.remove('show');      
                 currentCustomerId = null;      
                 return;      
             }      
       
             const { data } = await supabaseClient.from('customers').select('*').ilike('name', name).maybeSingle();      
             if (!data) {      
-                if (detailDiv) detailDiv.classList.remove('show');      
+                detailDiv.classList.remove('show');      
                 currentCustomerId = null;      
                 return;      
             }      
@@ -3759,26 +3680,24 @@
                 `;      
             }      
       
-            if (detailDiv) {      
-                detailDiv.innerHTML = `      
-                    <div class="info-grid">      
-                        <span class="label">📞 ເບີໂທ:</span><span>${data.phone || '-'}</span>      
-                        <span class="label">🏠 ບ້ານ:</span><span>${data.village || '-'}</span>      
-                        <span class="label">🏛️ ເມືອງ:</span><span>${data.district || '-'}</span>      
-                        <span class="label">🗺️ ແຂວງ:</span><span>${data.province || '-'}</span>      
-                        <span class="label">📷 ຮູບ:</span><span>${photoHtml}</span>      
-                        <span class="label">📍 ແຜນທີ່:</span><span>${mapHtml}</span>      
-                        <span class="label">📞 ຕິດຕໍ່:</span><span>${callHtml}</span>      
-                        <span class="label">📦 ສັ່ງ:</span><span>${data.total_orders || 0}</span>      
-                        <span class="label">💰 ຍອດໃຊ້:</span><span style="color:var(--success); font-weight:700;">${(data.total_spent || 0).toLocaleString()} ກີບ</span>      
-                    </div>      
-                    <div class="customer-actions">      
-                        <button onclick="quickEditCustomer()" class="btn btn-info btn-sm">✏️ ແກ້ໄຂລູກຄ້ານີ້</button>      
-                        <button onclick="addToDeliveryRouteFromName()" class="btn btn-primary btn-sm">➕ ເພີ່ມເຂົ້າລາຍການສົ່ງ</button>      
-                    </div>      
-                `;      
-                detailDiv.classList.add('show');      
-            }      
+            detailDiv.innerHTML = `      
+                <div class="info-grid">      
+                    <span class="label">📞 ເບີໂທ:</span><span>${data.phone || '-'}</span>      
+                    <span class="label">🏠 ບ້ານ:</span><span>${data.village || '-'}</span>      
+                    <span class="label">🏛️ ເມືອງ:</span><span>${data.district || '-'}</span>      
+                    <span class="label">🗺️ ແຂວງ:</span><span>${data.province || '-'}</span>      
+                    <span class="label">📷 ຮູບ:</span><span>${photoHtml}</span>      
+                    <span class="label">📍 ແຜນທີ່:</span><span>${mapHtml}</span>      
+                    <span class="label">📞 ຕິດຕໍ່:</span><span>${callHtml}</span>      
+                    <span class="label">📦 ສັ່ງ:</span><span>${data.total_orders || 0}</span>      
+                    <span class="label">💰 ຍອດໃຊ້:</span><span style="color:var(--success); font-weight:700;">${(data.total_spent || 0).toLocaleString()} ກີບ</span>      
+                </div>      
+                <div class="customer-actions">      
+                    <button onclick="quickEditCustomer()" class="btn btn-info btn-sm">✏️ ແກ້ໄຂລູກຄ້ານີ້</button>      
+                    <button onclick="addToDeliveryRouteFromName()" class="btn btn-primary btn-sm">➕ ເພີ່ມເຂົ້າລາຍການສົ່ງ</button>      
+                </div>      
+            `;      
+            detailDiv.classList.add('show');      
         }      
       
         async function addToDeliveryRouteFromName() {      
@@ -3865,7 +3784,7 @@
             if (dropdown) dropdown.classList.remove('show');  
         }  
   
-        function showCustomerDropdownMessage(html, className) {  
+        function showCustomerDropdownMessage(html) {  
             const dropdown = document.getElementById('customerDropdown');  
             if (!dropdown) return;  
             dropdown.innerHTML = html;  
@@ -3895,7 +3814,10 @@
   
         async function searchCustomersForOrder(keyword) {  
             const dropdown = document.getElementById('customerDropdown');  
-            if (!dropdown) return;  
+            if (!dropdown) {  
+                console.warn('Dropdown element not found');  
+                return;  
+            }  
   
             const requestId = ++customerSearchRequest;  
             keyword = (keyword || '').trim();  
@@ -3970,6 +3892,9 @@
   
         async function selectCustomerForOrder(customerId) {  
             try {  
+                const input = document.getElementById('customerName');  
+                if (!input) return;  
+                  
                 const { data, error } = await supabaseClient  
                     .from('customers')  
                     .select('*')  
@@ -3981,9 +3906,6 @@
                     return;  
                 }  
   
-                const input = document.getElementById('customerName');  
-                if (!input) return;  
-                  
                 currentCustomerId = data.id;  
                 input.value = data.name || '';  
   
@@ -4062,13 +3984,13 @@
             if (input) {  
                 input.value = '';  
                 input.focus();  
-                currentCustomerId = null;  
-                const detailDiv = document.getElementById('customerDetail');  
-                if (detailDiv) detailDiv.classList.remove('show');  
-                const clearBtn = document.getElementById('clearCustomerBtn');  
-                if (clearBtn) clearBtn.style.display = 'none';  
-                searchCustomersForOrder('');  
             }  
+            currentCustomerId = null;  
+            const detailDiv = document.getElementById('customerDetail');  
+            if (detailDiv) detailDiv.classList.remove('show');  
+            const clearBtn = document.getElementById('clearCustomerBtn');  
+            if (clearBtn) clearBtn.style.display = 'none';  
+            searchCustomersForOrder('');  
         }  
   
         async function loadCustomersList() {  
@@ -4090,47 +4012,36 @@
         let routeSearchTimer = null;      
       
         function openAddRouteModal() {      
-            const modal = document.getElementById('addRouteModal');      
-            if (modal) modal.classList.add('show');      
-            const searchEl = document.getElementById('routeCustomerSearch');      
-            if (searchEl) searchEl.value = '';      
-            const resultsDiv = document.getElementById('routeSearchResults');      
-            if (resultsDiv) resultsDiv.classList.remove('show');      
-            const phoneEl = document.getElementById('routePhone');      
-            if (phoneEl) phoneEl.value = '';      
-            const villageEl = document.getElementById('routeVillage');      
-            if (villageEl) villageEl.value = '';      
+            document.getElementById('addRouteModal').classList.add('show');      
+            document.getElementById('routeCustomerSearch').value = '';      
+            document.getElementById('routeSearchResults').classList.remove('show');      
+            document.getElementById('routePhone').value = '';      
+            document.getElementById('routeVillage').value = '';      
             populateRouteProvinceSelect();      
-            const provinceEl = document.getElementById('routeProvince');      
-            if (provinceEl) provinceEl.value = '';      
+            document.getElementById('routeProvince').value = '';      
             onRouteProvinceChange();      
-            const actionsEl = document.getElementById('routeContactActions');      
-            if (actionsEl) actionsEl.style.display = 'none';      
+            document.getElementById('routeContactActions').style.display = 'none';      
             selectedCustomerForRoute = null;      
             selectedCustomerIdForRoute = null;      
-            const addressEl = document.getElementById('routeAddress');      
-            if (addressEl) addressEl.value = '';      
+            document.getElementById('routeAddress').value = '';      
     
             const itemsContainer = document.getElementById('routeItems');      
-            if (itemsContainer) {      
-                itemsContainer.innerHTML = `      
-                    <div class="order-item">      
-                        <select class="route-product-select" onchange="onRouteProductChange(this); calculateRouteTotal();"></select>      
-                        <input type="number" class="route-qty-input" value="1" min="1" onchange="calculateRouteTotal()" title="ຈຳນວນ" />      
-                        <input type="number" class="route-price-input" value="28000" min="0" step="1000" onchange="calculateRouteTotal()" title="ລາຄາຕໍ່ໜ່ວຍ (ກີບ)" />      
-                        <button type="button" onclick="removeRouteItem(this)" class="btn btn-danger btn-sm" title="ລຶບລາຍການນີ້">✕</button>      
-                    </div>      
-                `;      
-            }      
+            itemsContainer.innerHTML = `      
+                <div class="order-item">      
+                    <select class="route-product-select" onchange="onRouteProductChange(this); calculateRouteTotal();"></select>      
+                    <input type="number" class="route-qty-input" value="1" min="1" onchange="calculateRouteTotal()" title="ຈຳນວນ" />      
+                    <input type="number" class="route-price-input" value="28000" min="0" step="1000" onchange="calculateRouteTotal()" title="ລາຄາຕໍ່ໜ່ວຍ (ກີບ)" />      
+                    <button type="button" onclick="removeRouteItem(this)" class="btn btn-danger btn-sm" title="ລຶບລາຍການນີ້">✕</button>      
+                </div>      
+            `;      
             populateRouteProductSelects();      
             calculateRouteTotal();      
     
-            if (searchEl) searchEl.focus();      
+            document.getElementById('routeCustomerSearch').focus();      
         }      
       
         function closeAddRouteModal() {      
-            const modal = document.getElementById('addRouteModal');      
-            if (modal) modal.classList.remove('show');      
+            document.getElementById('addRouteModal').classList.remove('show');      
         }      
       
         function onRouteCustomerNameTyped(value) {      
@@ -4143,7 +4054,6 @@
       
         async function searchCustomersForRoute(keyword) {      
             const resultsDiv = document.getElementById('routeSearchResults');      
-            if (!resultsDiv) return;      
             keyword = (keyword || '').trim();    
       
             if (keyword.length < 1) {      
@@ -4214,21 +4124,15 @@
             selectedCustomerForRoute = data;      
             selectedCustomerIdForRoute = data.id;      
       
-            const resultsDiv = document.getElementById('routeSearchResults');      
-            if (resultsDiv) resultsDiv.classList.remove('show');      
-            const searchEl = document.getElementById('routeCustomerSearch');      
-            if (searchEl) searchEl.value = data.name;      
-            const phoneEl = document.getElementById('routePhone');      
-            if (phoneEl) phoneEl.value = data.phone || '';      
-            const villageEl = document.getElementById('routeVillage');      
-            if (villageEl) villageEl.value = data.village || '';      
+            document.getElementById('routeSearchResults').classList.remove('show');      
+            document.getElementById('routeCustomerSearch').value = data.name;      
+            document.getElementById('routePhone').value = data.phone || '';      
+            document.getElementById('routeVillage').value = data.village || '';      
       
             populateRouteProvinceSelect();      
-            const provinceEl = document.getElementById('routeProvince');      
-            if (provinceEl) provinceEl.value = data.province || '';      
+            document.getElementById('routeProvince').value = data.province || '';      
             onRouteProvinceChange();      
-            const districtEl = document.getElementById('routeDistrict');      
-            if (districtEl) districtEl.value = data.district || '';      
+            document.getElementById('routeDistrict').value = data.district || '';      
       
             const contactActions = document.getElementById('routeContactActions');      
             const callBtn = document.getElementById('previewCallBtn');      
@@ -4238,55 +4142,42 @@
             let anyAction = false;      
             if (data.phone) {      
                 const phoneRaw = data.phone.replace(/[\s\-]/g, '');      
-                if (callBtn) {      
-                    callBtn.href = `tel:${phoneRaw}`;      
-                    callBtn.style.display = 'inline-flex';      
-                }      
-                if (waBtn) {      
-                    waBtn.href = `https://wa.me/${formatPhoneForWhatsApp(data.phone)}`;      
-                    waBtn.style.display = 'inline-flex';      
-                }      
+                callBtn.href = `tel:${phoneRaw}`;      
+                callBtn.style.display = 'inline-flex';      
+                waBtn.href = `https://wa.me/${formatPhoneForWhatsApp(data.phone)}`;      
+                waBtn.style.display = 'inline-flex';      
                 anyAction = true;      
             } else {      
-                if (callBtn) callBtn.style.display = 'none';      
-                if (waBtn) waBtn.style.display = 'none';      
+                callBtn.style.display = 'none';      
+                waBtn.style.display = 'none';      
             }      
       
             if (data.map_url) {      
-                if (mapBtn) {      
-                    mapBtn.href = data.map_url;      
-                    mapBtn.style.display = 'inline-flex';      
-                }      
+                mapBtn.href = data.map_url;      
+                mapBtn.style.display = 'inline-flex';      
                 anyAction = true;      
             } else {      
-                if (mapBtn) mapBtn.style.display = 'none';      
+                mapBtn.style.display = 'none';      
             }      
-            if (contactActions) contactActions.style.display = anyAction ? 'flex' : 'none';      
+            contactActions.style.display = anyAction ? 'flex' : 'none';      
       
             if (data.village) {      
-                const addressEl = document.getElementById('routeAddress');      
-                if (addressEl) addressEl.value = data.village;      
+                document.getElementById('routeAddress').value = data.village;      
             }      
         }      
       
         function clearRouteCustomerSearch() {      
-            const searchEl = document.getElementById('routeCustomerSearch');      
-            if (searchEl) searchEl.value = '';      
-            const resultsDiv = document.getElementById('routeSearchResults');      
-            if (resultsDiv) resultsDiv.classList.remove('show');      
-            const phoneEl = document.getElementById('routePhone');      
-            if (phoneEl) phoneEl.value = '';      
-            const villageEl = document.getElementById('routeVillage');      
-            if (villageEl) villageEl.value = '';      
+            document.getElementById('routeCustomerSearch').value = '';      
+            document.getElementById('routeSearchResults').classList.remove('show');      
+            document.getElementById('routePhone').value = '';      
+            document.getElementById('routeVillage').value = '';      
             populateRouteProvinceSelect();      
-            const provinceEl = document.getElementById('routeProvince');      
-            if (provinceEl) provinceEl.value = '';      
+            document.getElementById('routeProvince').value = '';      
             onRouteProvinceChange();      
-            const actionsEl = document.getElementById('routeContactActions');      
-            if (actionsEl) actionsEl.style.display = 'none';      
+            document.getElementById('routeContactActions').style.display = 'none';      
             selectedCustomerForRoute = null;      
             selectedCustomerIdForRoute = null;      
-            if (searchEl) searchEl.focus();      
+            document.getElementById('routeCustomerSearch').focus();      
         }      
       
         // ============================================================      
@@ -4307,9 +4198,8 @@
         }      
       
         function onRouteProvinceChange() {      
-            const province = document.getElementById('routeProvince')?.value;      
+            const province = document.getElementById('routeProvince').value;      
             const districtSelect = document.getElementById('routeDistrict');      
-            if (!districtSelect) return;      
             districtSelect.innerHTML = '<option value="">-- ເລືອກເມືອງ --</option>';      
       
             if (province && DISTRICTS_BY_PROVINCE[province]) {      
@@ -4336,17 +4226,13 @@
         }      
     
         function onRouteProductChange(select) {      
-            const price = parseInt(select.options[select.selectedIndex]?.dataset?.price) || 0;      
+            const price = parseInt(select.options[select.selectedIndex]?.dataset.price) || 0;      
             const row = select.closest('.order-item');      
-            if (row) {      
-                const priceInput = row.querySelector('.route-price-input');      
-                if (priceInput) priceInput.value = price;      
-            }      
+            row.querySelector('.route-price-input').value = price;      
         }      
     
         function addRouteItem() {      
             const container = document.getElementById('routeItems');      
-            if (!container) return;      
             const item = document.createElement('div');      
             item.className = 'order-item';      
             item.innerHTML = `      
@@ -4363,7 +4249,6 @@
     
         function removeRouteItem(btn) {      
             const container = document.getElementById('routeItems');      
-            if (!container) return;      
             if (container.children.length > 1) {      
                 btn.parentElement.remove();      
                 calculateRouteTotal();      
@@ -4376,12 +4261,11 @@
             const rows = document.querySelectorAll('#routeItems .order-item');      
             let total = 0;      
             rows.forEach(row => {      
-                const qty = parseInt(row.querySelector('.route-qty-input')?.value) || 0;      
-                const price = parseInt(row.querySelector('.route-price-input')?.value) || 0;      
+                const qty = parseInt(row.querySelector('.route-qty-input').value) || 0;      
+                const price = parseInt(row.querySelector('.route-price-input').value) || 0;      
                 total += qty * price;      
             });      
-            const totalEl = document.getElementById('routeTotalPrice');      
-            if (totalEl) totalEl.value = total.toLocaleString() + ' ກີບ';      
+            document.getElementById('routeTotalPrice').value = total.toLocaleString() + ' ກີບ';      
             return total;      
         }      
     
@@ -4390,10 +4274,9 @@
             const items = [];      
             rows.forEach(row => {      
                 const select = row.querySelector('.route-product-select');      
-                if (!select) return;      
                 const name = select.options[select.selectedIndex]?.value || select.value;      
-                const qty = parseInt(row.querySelector('.route-qty-input')?.value) || 0;      
-                const price = parseInt(row.querySelector('.route-price-input')?.value) || 0;      
+                const qty = parseInt(row.querySelector('.route-qty-input').value) || 0;      
+                const price = parseInt(row.querySelector('.route-price-input').value) || 0;      
                 if (qty > 0) {      
                     items.push({ name, qty, price, lineTotal: qty * price });      
                 }      
@@ -4441,25 +4324,19 @@
             e.preventDefault();      
             if (!await requireSession()) return;      
     
-            const searchEl = document.getElementById('routeCustomerSearch');      
-            const customerName = searchEl ? searchEl.value.trim() : '';      
+            const customerName = document.getElementById('routeCustomerSearch').value.trim();      
             if (!customerName) {      
                 showToast('⚠️ ກະລຸນາພິມຊື່ລູກຄ້າ', 'warning');      
-                if (searchEl) searchEl.focus();      
+                document.getElementById('routeCustomerSearch').focus();      
                 return;      
             }      
     
             const items = getRouteItemsData();      
-            const addressEl = document.getElementById('routeAddress');      
-            const address = addressEl ? addressEl.value.trim() : '';      
-            const phoneEl = document.getElementById('routePhone');      
-            const phone = phoneEl ? phoneEl.value.trim() : '';      
-            const villageEl = document.getElementById('routeVillage');      
-            const village = villageEl ? villageEl.value.trim() : '';      
-            const districtEl = document.getElementById('routeDistrict');      
-            const district = districtEl ? districtEl.value : '';      
-            const provinceEl = document.getElementById('routeProvince');      
-            const province = provinceEl ? provinceEl.value : '';      
+            const address = document.getElementById('routeAddress').value.trim();      
+            const phone = document.getElementById('routePhone').value.trim();      
+            const village = document.getElementById('routeVillage').value.trim();      
+            const district = document.getElementById('routeDistrict').value;      
+            const province = document.getElementById('routeProvince').value;      
     
             if (items.length === 0) {      
                 showToast('⚠️ ກະລຸນາເພີ່ມສິນຄ້າຢ່າງນ້ອຍ 1 ລາຍການ', 'warning');      
@@ -4535,7 +4412,6 @@
       
         function renderDeliveryRoute() {      
             const container = document.getElementById('routeContainer');      
-            if (!container) return;      
       
             if (routeOrders.length === 0) {      
                 container.innerHTML = '<div class="no-data">📭 ບໍ່ມີລາຍການຈັດສົ່ງມື້ນີ້</div>';      
@@ -4620,22 +4496,21 @@
             const totalEl = document.getElementById('routeTotal');      
             const deliveredEl = document.getElementById('routeDelivered');      
             const pendingEl = document.getElementById('routePending');      
-            const distanceEl = document.getElementById('routeDistance');      
       
             if (total !== undefined) {      
-                if (totalEl) totalEl.textContent = total;      
-                if (deliveredEl) deliveredEl.textContent = delivered || 0;      
-                if (pendingEl) pendingEl.textContent = pending || 0;      
+                totalEl.textContent = total;      
+                deliveredEl.textContent = delivered || 0;      
+                pendingEl.textContent = pending || 0;      
             } else {      
                 const t = routeOrders.length;      
                 const d = routeOrders.filter(o => o.status === 'delivered').length;      
-                if (totalEl) totalEl.textContent = t;      
-                if (deliveredEl) deliveredEl.textContent = d;      
-                if (pendingEl) pendingEl.textContent = t - d;      
+                totalEl.textContent = t;      
+                deliveredEl.textContent = d;      
+                pendingEl.textContent = t - d;      
             }      
       
             const dist = routeOrders.length * 1.5;      
-            if (distanceEl) distanceEl.textContent = dist.toFixed(1) + ' km';      
+            document.getElementById('routeDistance').textContent = dist.toFixed(1) + ' km';      
         }      
       
         async function processDelivered(order, actualItems = null) {      
@@ -4846,7 +4721,6 @@
         function openDeliveryDetail(routeId) {      
             currentDetailRouteId = routeId;      
             const detailContent = document.getElementById('deliveryDetailContent');      
-            if (!detailContent) return;      
               
             let order = routeOrders.find(o => o.id === routeId);      
               
@@ -4871,7 +4745,6 @@
       
         function renderDeliveryDetail(order) {      
             const detailContent = document.getElementById('deliveryDetailContent');      
-            if (!detailContent) return;      
               
             let items = [];      
             if (order.product) {      
@@ -4999,13 +4872,11 @@
                 ` : ''}      
             `;      
               
-            const modal = document.getElementById('deliveryDetailModal');      
-            if (modal) modal.classList.add('show');      
+            document.getElementById('deliveryDetailModal').classList.add('show');      
         }      
       
         function closeDeliveryDetailModal() {      
-            const modal = document.getElementById('deliveryDetailModal');      
-            if (modal) modal.classList.remove('show');      
+            document.getElementById('deliveryDetailModal').classList.remove('show');      
             currentDetailRouteId = null;      
         }      
       
@@ -5075,7 +4946,6 @@
               
             items.forEach((item, index) => {      
                 const qtyInput = document.getElementById(`partial_qty_${index}`);      
-                if (!qtyInput) return;      
                 const qty = parseInt(qtyInput.value) || 0;      
                 const match = item.match(/(.+?)\s*x\s*(\d+)/);      
                 const name = match ? match[1].trim() : item;      
@@ -5098,26 +4968,193 @@
         }      
       
         // ============================================================      
+        //  SEND WHATSAPP WITH CUSTOMER DETAIL      
+        // ============================================================      
+        function sendWhatsAppWithCustomerDetail() {      
+            const table = document.getElementById('orderTableBody');      
+            const rows = table.querySelectorAll('tr');      
+            const paymentTable = document.getElementById('customerPaymentBody');      
+            const paymentRows = paymentTable.querySelectorAll('tr');      
+              
+            let totalCash = 0;      
+            let totalTransfer = 0;      
+            let totalCredit = 0;      
+            let totalOrders = 0;      
+            let totalWaterSales = 0;      
+            let totalGrand = 0;      
+            let totalBottles = 0;      
+            let customerPayments = [];      
+            let orderDetails = [];      
+              
+            // ອ່ານຂໍ້ມູນການຊຳລະຕາມລູກຄ້າ      
+            paymentRows.forEach(row => {      
+                const cells = row.querySelectorAll('td');      
+                if (cells.length >= 5) {      
+                    const name = cells[0]?.textContent?.trim() || '';      
+                    const cash = parseFloat(cells[1]?.textContent?.replace(/,/g, '').replace(' ກີບ', '').trim()) || 0;      
+                    const transfer = parseFloat(cells[2]?.textContent?.replace(/,/g, '').replace(' ກີບ', '').trim()) || 0;      
+                    const credit = parseFloat(cells[3]?.textContent?.replace(/,/g, '').replace(' ກີບ', '').trim()) || 0;      
+                    const total = parseFloat(cells[4]?.textContent?.replace(/,/g, '').replace(' ກີບ', '').trim()) || 0;      
+                      
+                    if (name && name !== 'ບໍ່ລະບຸ' && total > 0) {      
+                        customerPayments.push({ name, cash, transfer, credit, total });      
+                    }      
+                }      
+            });      
+              
+            // ອ່ານຂໍ້ມູນຈາກຕາຕະລາງຫຼັກ      
+            rows.forEach(row => {      
+                const cells = row.querySelectorAll('td');      
+                if (cells.length >= 9) {      
+                    const customer = cells[2]?.textContent?.trim() || '';      
+                    const product = cells[3]?.textContent?.trim() || '';      
+                    const sent = parseInt(cells[4]?.textContent?.trim()) || 0;      
+                    const returned = parseInt(cells[5]?.textContent?.trim()) || 0;      
+                    const waterPrice = parseFloat(cells[6]?.textContent?.replace(/,/g, '').replace(' ກີບ', '').trim()) || 0;      
+                    const payment = cells[7]?.textContent?.trim() || '';      
+                    const status = cells[8]?.textContent?.trim() || '';      
+                      
+                    totalOrders++;      
+                    totalWaterSales += waterPrice;      
+                    totalGrand += waterPrice;      
+                      
+                    if (payment === 'ເງິນສົດ') {      
+                        totalCash += waterPrice;      
+                    } else if (payment === 'ເງິນໂອນ') {      
+                        totalTransfer += waterPrice;      
+                    } else if (payment === 'ຕິດໜີ້') {      
+                        totalCredit += waterPrice;      
+                    }      
+                      
+                    if (product && product.includes('ຖັງ')) {      
+                        totalBottles += sent;      
+                    }      
+                      
+                    if (orderDetails.length < 10) {      
+                        orderDetails.push({      
+                            customer,      
+                            product: product.substring(0, 30),      
+                            sent,      
+                            returned,      
+                            waterPrice,      
+                            payment,      
+                            status      
+                        });      
+                    }      
+                }      
+            });      
+              
+            // ຈັດລຽງລູກຄ້າຕາມຍອດລວມຫຼາຍທີ່ສຸດ      
+            customerPayments.sort((a, b) => b.total - a.total);      
+              
+            const now = new Date();      
+            const dateStr = now.toLocaleDateString('lo-LA', {       
+                year: 'numeric',       
+                month: 'long',       
+                day: 'numeric'       
+            });      
+            const timeStr = now.toLocaleTimeString('lo-LA', {       
+                hour: '2-digit',       
+                minute: '2-digit'       
+            });      
+              
+            let message = `📊 *ລາຍງານການຂາຍນ້ຳປະຈຳວັນ*\n`;      
+            message += `📅 ວັນທີ: ${dateStr}\n`;      
+            message += `⏰ ເວລາ: ${timeStr}\n`;      
+            message += `**━━━━━━━━━━━━━━━━━━━━━**\n\n`;      
+              
+            message += `📦 *ສະຫຼຸບຍອດຂາຍ*\n`;      
+            message += `**├** ລາຍການທັງໝົດ: ${totalOrders} ລາຍການ\n`;      
+            message += `**├** ຍອດຂາຍນ້ຳ: ${totalWaterSales.toLocaleString()} ກີບ\n`;      
+            message += `**├** ຈຳນວນຖັງທີ່ຂາຍ: ${totalBottles} ຖັງ\n`;      
+            message += `**└** ຍອດລວມທັງໝົດ: ${totalGrand.toLocaleString()} ກີບ\n\n`;      
+              
+            message += `💳 *ສະຫຼຸບຕາມການຊຳລະ*\n`;      
+            message += `**├** 💵 ເງິນສົດ: ${totalCash.toLocaleString()} ກີບ\n`;      
+            message += `**├** 🏦 ເງິນໂອນ: ${totalTransfer.toLocaleString()} ກີບ\n`;      
+            message += `**└** 📝 ເງິນຕິດໜີ້: ${totalCredit.toLocaleString()} ກີບ\n\n`;      
+              
+            if (totalGrand > 0) {      
+                const cashPercent = ((totalCash / totalGrand) * 100).toFixed(1);      
+                const transferPercent = ((totalTransfer / totalGrand) * 100).toFixed(1);      
+                const creditPercent = ((totalCredit / totalGrand) * 100).toFixed(1);      
+                message += `📊 *ສັດສ່ວນການຊຳລະ*\n`;      
+                message += `**├** ເງິນສົດ: ${cashPercent}%\n`;      
+                message += `**├** ເງິນໂອນ: ${transferPercent}%\n`;      
+                message += `**└** ຕິດໜີ້: ${creditPercent}%\n\n`;      
+            }      
+              
+            if (customerPayments.length > 0) {      
+                message += `👥 *ສະຫຼຸບຕາມລູກຄ້າ*\n`;      
+                message += `**━━━━━━━━━━━━━━━━━━━━━**\n`;      
+                customerPayments.forEach((item, index) => {      
+                    if (item.total > 0) {      
+                        message += `${index + 1}. ${item.name}\n`;      
+                        message += `   💵 ເງິນສົດ: ${item.cash.toLocaleString()} ກີບ\n`;      
+                        if (item.transfer > 0) {      
+                            message += `   🏦 ເງິນໂອນ: ${item.transfer.toLocaleString()} ກີບ\n`;      
+                        }      
+                        if (item.credit > 0) {      
+                            message += `   📝 ຕິດໜີ້: ${item.credit.toLocaleString()} ກີບ\n`;      
+                        }      
+                        message += `   📊 ລວມ: ${item.total.toLocaleString()} ກີບ\n`;      
+                    }      
+                });      
+                message += `**━━━━━━━━━━━━━━━━━━━━━**\n\n`;      
+            }      
+              
+            if (orderDetails.length > 0) {      
+                message += `📋 *ລາຍການສັ່ງຫຼ້າສຸດ ${orderDetails.length} ລາຍການ*\n`;      
+                message += `**━━━━━━━━━━━━━━━━━━━━━**\n`;      
+                orderDetails.forEach((item, index) => {      
+                    const statusEmoji = item.status === 'ສົ່ງສຳເລັດ' ? '✅' :       
+                                       item.status === 'ບໍ່ຢູ່ບ້ານ' ? '🏠' : '❌';      
+                    const paymentEmoji = item.payment === 'ເງິນສົດ' ? '💵' :       
+                                        item.payment === 'ເງິນໂອນ' ? '🏦' : '📝';      
+                    message += `${index + 1}. ${item.customer}\n`;      
+                    message += `   📦 ${item.product}\n`;      
+                    message += `   📦 ຈຳນວນ: ${item.sent} | ຄືນ: ${item.returned}\n`;      
+                    message += `   💰 ${item.waterPrice.toLocaleString()} ກີບ ${paymentEmoji} ${statusEmoji}\n`;      
+                });      
+                message += `**━━━━━━━━━━━━━━━━━━━━━**\n\n`;      
+            }      
+              
+            message += `📈 *ສະຫຼຸບສັງລວມ*\n`;      
+            message += `**├** ຍອດລວມທັງໝົດ: ${totalGrand.toLocaleString()} ກີບ\n`;      
+            message += `**├** ເງິນສົດ: ${totalCash.toLocaleString()} ກີບ (${totalCash > 0 ? ((totalCash/totalGrand)*100).toFixed(1) : 0}%)\n`;      
+            message += `**├** ເງິນໂອນ: ${totalTransfer.toLocaleString()} ກີບ (${totalTransfer > 0 ? ((totalTransfer/totalGrand)*100).toFixed(1) : 0}%)\n`;      
+            message += `**├** ຕິດໜີ້: ${totalCredit.toLocaleString()} ກີບ (${totalCredit > 0 ? ((totalCredit/totalGrand)*100).toFixed(1) : 0}%)\n`;      
+            message += `**└** ຈຳນວນຖັງ: ${totalBottles} ຖັງ\n\n`;      
+              
+            message += `**━━━━━━━━━━━━━━━━━━━━━**\n`;      
+            message += `💧 *ສົ່ງນ້ຳ 3.6*\n`;      
+            message += `🔄 ຂໍ້ມູນອັບເດດລ່າສຸດ`;      
+              
+            const encodedMessage = encodeURIComponent(message);      
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');      
+        }      
+      
+        // ============================================================      
         //  MAIN SUBMIT with Route Update      
         // ============================================================      
         document.getElementById('waterForm').addEventListener('submit', async function(e) {      
             e.preventDefault();      
             if (!await requireSession()) return;      
       
-            const nameEl = document.getElementById('customerName');      
-            if (!nameEl) {      
+            const nameInput = document.getElementById('customerName');      
+            if (!nameInput) {      
                 showToast('⚠️ ບໍ່ພົບຊ່ອງປ້ອນຊື່ລູກຄ້າ', 'error');      
                 return;      
             }      
-            const name = nameEl.value.trim();      
+              
+            const name = nameInput.value.trim();      
             if (!name) {      
                 showToast('⚠️ ກະລຸນາໃສ່ຊື່ລູກຄ້າ', 'warning');      
-                nameEl.focus();      
+                nameInput.focus();      
                 return;      
             }      
       
-            const dateEl = document.getElementById('orderDate');      
-            const currentDate = dateEl ? dateEl.value : new Date().toLocaleDateString('fr-CA');      
+            const currentDate = document.getElementById('orderDate').value;      
       
             if (!confirm('ທ່ານຕ້ອງການບັນທຶກຄຳສັ່ງນີ້ແທ້ບໍ?')) {      
                 return;      
@@ -5170,28 +5207,24 @@
       
                 items.forEach(item => {      
                     const select = item.querySelector('.product-select');      
-                    if (!select) return;      
-                    const qty = parseInt(item.querySelector('.qty-input')?.value) || 0;      
-                    const price = parseInt(select.options[select.selectedIndex]?.dataset?.price) || 0;      
+                    const qty = parseInt(item.querySelector('.qty-input').value) || 0;      
+                    const price = parseInt(select.options[select.selectedIndex].dataset.price) || 0;      
                     const name2 = select.value;      
-                    const type = select.options[select.selectedIndex]?.dataset?.type || 'pack';      
+                    const type = select.options[select.selectedIndex].dataset.type || 'pack';      
                     if (type === 'tank') isTank = true;      
                     totalWaterSales += price * qty;      
                     totalSent += qty;      
                     productNames.push(`${name2} x${qty}`);      
                 });      
       
-                const qtyReturnEl = document.getElementById('qtyReturn');      
-                const returnQty = isTank ? (parseInt(qtyReturnEl?.value) || 0) : 0;      
-                const isNewEl = document.getElementById('isNewCustomer');      
-                const isNew = isNewEl ? isNewEl.checked : false;      
-                const depositEl = document.getElementById('depositPrice');      
-                const deposit = isNew ? (parseFloat(depositEl?.value) || 0) : 0;      
+                const returnQty = isTank ? (parseInt(document.getElementById('qtyReturn').value) || 0) : 0;      
+                const isNew = document.getElementById('isNewCustomer').checked;      
+                const deposit = isNew ? (parseFloat(document.getElementById('depositPrice').value) || 0) : 0;      
                 const total = totalWaterSales + deposit;      
       
                 const orderData = {      
                     date: currentDate,      
-                    delivery_time: document.getElementById('deliveryTime')?.value || new Date().toISOString(),      
+                    delivery_time: document.getElementById('deliveryTime').value || new Date().toISOString(),      
                     customer_id: customerId,      
                     customer_name: name,      
                     product: productNames.join(' | '),      
@@ -5203,19 +5236,20 @@
                     water_sales: totalWaterSales,      
                     deposit: deposit,      
                     price: total,      
-                    payment: document.getElementById('paymentMethod')?.value || 'ເງິນສົດ',      
-                    delivery_status: document.getElementById('deliveryStatus')?.value || 'ສົ່ງສຳເລັດ',      
-                    note: document.getElementById('orderNote')?.value?.trim() || ''      
+                    payment: document.getElementById('paymentMethod').value,      
+                    delivery_status: document.getElementById('deliveryStatus').value,      
+                    note: document.getElementById('orderNote').value.trim()      
                 };      
       
+                let result;      
                 if (editingOrderId) {      
-                    const result = await supabaseClient.from('orders').update(orderData).eq('id', editingOrderId);      
+                    result = await supabaseClient.from('orders').update(orderData).eq('id', editingOrderId);      
                     if (result.error) throw result.error;      
                     showToast('✅ ແກ້ໄຂສຳເລັດ', 'success');      
                     editingOrderId = null;      
-                    if (btn) btn.innerHTML = '💾 ບັນທຶກ';      
+                    document.getElementById('submitOrderBtn').innerHTML = '💾 ບັນທຶກ';      
                 } else {      
-                    const result = await supabaseClient.from('orders').insert([orderData]);      
+                    result = await supabaseClient.from('orders').insert([orderData]);      
                     if (result.error) throw result.error;      
                     showToast('✅ ບັນທຶກສຳເລັດ', 'success');      
                 }      
@@ -5257,45 +5291,32 @@
                     console.warn('⚠️ ອັບເດດຍອດລູກຄ້າບໍ່ສຳເລັດ:', updateErr);      
                 }      
       
-                if (nameEl) nameEl.value = '';      
-                const clearBtn = document.getElementById('clearCustomerBtn');      
-                if (clearBtn) clearBtn.style.display = 'none';      
-                closeCustomerDropdown();      
-                const qtyReturnEl2 = document.getElementById('qtyReturn');      
-                if (qtyReturnEl2) qtyReturnEl2.value = '0';      
-                const isNewEl2 = document.getElementById('isNewCustomer');      
-                if (isNewEl2) isNewEl2.checked = false;      
-                const depositEl2 = document.getElementById('depositPrice');      
-                if (depositEl2) {      
-                    depositEl2.value = '0';      
-                    depositEl2.disabled = true;      
-                }      
-                const noteEl = document.getElementById('orderNote');      
-                if (noteEl) noteEl.value = '';      
-                const totalPriceEl = document.getElementById('totalPrice');      
-                if (totalPriceEl) totalPriceEl.value = '0 ກີບ';      
-                const detailDiv = document.getElementById('customerDetail');      
-                if (detailDiv) detailDiv.classList.remove('show');      
-                const reminderEl = document.getElementById('paymentReminder');      
-                if (reminderEl) reminderEl.style.display = 'none';      
+                document.getElementById('customerName').value = '';  
+                document.getElementById('clearCustomerBtn')?.style.setProperty('display', 'none');  
+                closeCustomerDropdown();  
+                document.getElementById('qtyReturn').value = '0';      
+                document.getElementById('isNewCustomer').checked = false;      
+                document.getElementById('depositPrice').value = '0';      
+                document.getElementById('depositPrice').disabled = true;      
+                document.getElementById('orderNote').value = '';      
+                document.getElementById('totalPrice').value = '0 ກີບ';      
+                document.getElementById('customerDetail').classList.remove('show');      
+                document.getElementById('paymentReminder').style.display = 'none';      
                 currentCustomerId = null;      
       
                 const container = document.getElementById('orderItems');      
-                if (container) {      
-                    container.innerHTML = `      
-                        <div class="order-item">      
-                            <select class="product-select" onchange="calculateTotal()">      
-                                ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}      
-                            </select>      
-                            <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />      
-                            <button type="button" onclick="removeOrderItem(this)" class="btn btn-danger btn-sm">✕</button>      
-                        </div>      
-                    `;      
-                }      
+                container.innerHTML = `      
+                    <div class="order-item">      
+                        <select class="product-select" onchange="calculateTotal()">      
+                            ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}      
+                        </select>      
+                        <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />      
+                        <button type="button" onclick="removeOrderItem(this)" class="btn btn-danger btn-sm">✕</button>      
+                    </div>      
+                `;      
                 calculateTotal();      
       
-                const filterDateEl = document.getElementById('filterDate');      
-                if (filterDateEl) filterDateEl.value = currentDate;      
+                document.getElementById('filterDate').value = currentDate;      
                 await Promise.all([      
                     loadStockLoad(),      
                     loadOrders(),      
@@ -5322,59 +5343,47 @@
             if (!data) { showToast('ບໍ່ພົບຂໍ້ມູນ', 'error'); return; }      
       
             editingOrderId = data.id;      
-            const dateEl = document.getElementById('orderDate');      
-            if (dateEl) dateEl.value = data.date;      
-            const nameEl = document.getElementById('customerName');      
-            if (nameEl) nameEl.value = data.customer_name;      
-            const paymentEl = document.getElementById('paymentMethod');      
-            if (paymentEl) paymentEl.value = data.payment;      
-            const qtyReturnEl = document.getElementById('qtyReturn');      
-            if (qtyReturnEl) qtyReturnEl.value = data.return_qty || 0;      
-            const isNewEl = document.getElementById('isNewCustomer');      
-            if (isNewEl) isNewEl.checked = data.is_new_customer || false;      
-            const depositEl = document.getElementById('depositPrice');      
-            if (depositEl) depositEl.value = data.deposit || 0;      
-            const noteEl = document.getElementById('orderNote');      
-            if (noteEl) noteEl.value = data.note || '';      
-            const statusEl = document.getElementById('deliveryStatus');      
-            if (statusEl) statusEl.value = data.delivery_status || 'ສົ່ງສຳເລັດ';      
-            const timeEl = document.getElementById('deliveryTime');      
-            if (timeEl) timeEl.value = data.delivery_time || '';      
+            document.getElementById('orderDate').value = data.date;      
+            document.getElementById('customerName').value = data.customer_name;      
+            document.getElementById('paymentMethod').value = data.payment;      
+            document.getElementById('qtyReturn').value = data.return_qty || 0;      
+            document.getElementById('isNewCustomer').checked = data.is_new_customer || false;      
+            document.getElementById('depositPrice').value = data.deposit || 0;      
+            document.getElementById('orderNote').value = data.note || '';      
+            document.getElementById('deliveryStatus').value = data.delivery_status || 'ສົ່ງສຳເລັດ';      
+            document.getElementById('deliveryTime').value = data.delivery_time || '';      
       
             const container = document.getElementById('orderItems');      
-            if (container) {      
-                container.innerHTML = '';      
-                const products2 = data.product ? data.product.split(' | ') : [];      
-                if (products2.length === 0) {      
-                    addOrderItem();      
-                } else {      
-                    products2.forEach(p => {      
-                        const match = p.match(/(.+?) x(\d+)/);      
-                        if (match) {      
-                            const [_, name2, qty] = match;      
-                            const item = document.createElement('div');      
-                            item.className = 'order-item';      
-                            item.innerHTML = `      
-                                <select class="product-select" onchange="calculateTotal()">      
-                                    ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}      
-                                </select>      
-                                <input type="number" class="qty-input" value="${qty}" min="1" onchange="calculateTotal()" />      
-                                <button type="button" onclick="removeOrderItem(this)" class="btn btn-danger btn-sm">✕</button>      
-                            `;      
-                            const select = item.querySelector('.product-select');      
-                            if (select) select.value = name2.trim();      
-                            container.appendChild(item);      
-                        }      
-                    });      
-                }      
+            container.innerHTML = '';      
+            const products2 = data.product ? data.product.split(' | ') : [];      
+            if (products2.length === 0) {      
+                addOrderItem();      
+            } else {      
+                products2.forEach(p => {      
+                    const match = p.match(/(.+?) x(\d+)/);      
+                    if (match) {      
+                        const [_, name2, qty] = match;      
+                        const item = document.createElement('div');      
+                        item.className = 'order-item';      
+                        item.innerHTML = `      
+                            <select class="product-select" onchange="calculateTotal()">      
+                                ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}      
+                            </select>      
+                            <input type="number" class="qty-input" value="${qty}" min="1" onchange="calculateTotal()" />      
+                            <button type="button" onclick="removeOrderItem(this)" class="btn btn-danger btn-sm">✕</button>      
+                        `;      
+                        const select = item.querySelector('.product-select');      
+                        select.value = name2.trim();      
+                        container.appendChild(item);      
+                    }      
+                });      
             }      
       
             toggleDeposit();      
             calculateTotal();      
             await onCustomerNameInput();      
       
-            const submitBtn = document.getElementById('submitOrderBtn');      
-            if (submitBtn) submitBtn.innerHTML = '💾 ບັນທຶກການແກ້ໄຂ';      
+            document.getElementById('submitOrderBtn').innerHTML = '💾 ບັນທຶກການແກ້ໄຂ';      
             switchTab('tab-order', document.querySelectorAll('.bottom-nav-btn')[0]);      
             showToast('🔄 ກຳລັງແກ້ໄຂ ID: ' + id, 'warning');      
         }      
@@ -5384,9 +5393,9 @@
         // ============================================================      
         async function loadOrders() {      
             if (!await requireSession()) return;      
-            const filterDate = document.getElementById('filterDate')?.value;      
-            const search = document.getElementById('searchInput')?.value?.trim() || '';      
-            const period = document.getElementById('periodFilter')?.value || 'all';      
+            const filterDate = document.getElementById('filterDate').value;      
+            const search = document.getElementById('searchInput').value.trim();      
+            const period = document.getElementById('periodFilter').value;      
       
             let query = supabaseClient.from('orders').select('*').order('date', { ascending: false });      
             const todayStr = new Date().toLocaleDateString('fr-CA');      
@@ -5408,7 +5417,6 @@
       
             const { data: orders } = await query;      
             const tbody = document.getElementById('orderTableBody');      
-            if (!tbody) return;      
             tbody.innerHTML = '';      
             let totalWater = 0,      
                 totalDeposit = 0,      
@@ -5453,20 +5461,15 @@
                 });      
             }      
       
-            const waterEl = document.getElementById('sumWaterSales');      
-            if (waterEl) waterEl.textContent = totalWater.toLocaleString() + ' ກີບ';      
-            const depositEl2 = document.getElementById('sumDepositSales');      
-            if (depositEl2) depositEl2.textContent = totalDeposit.toLocaleString() + ' ກີບ';      
-            const grandEl = document.getElementById('sumGrandTotal');      
-            if (grandEl) grandEl.textContent = grandTotal.toLocaleString() + ' ກີບ';      
-            const balanceEl = document.getElementById('sumBottleBalance');      
-            if (balanceEl) balanceEl.textContent = totalBalance.toLocaleString() + ' ໜ່ວຍ';      
-            const countEl = document.getElementById('sumOrdersCount');      
-            if (countEl) countEl.textContent = orders ? orders.length : 0;      
+            document.getElementById('sumWaterSales').textContent = totalWater.toLocaleString() + ' ກີບ';      
+            document.getElementById('sumDepositSales').textContent = totalDeposit.toLocaleString() + ' ກີບ';      
+            document.getElementById('sumGrandTotal').textContent = grandTotal.toLocaleString() + ' ກີບ';      
+            document.getElementById('sumBottleBalance').textContent = totalBalance.toLocaleString() + ' ໜ່ວຍ';      
+            document.getElementById('sumOrdersCount').textContent = orders ? orders.length : 0;      
     
             renderPaymentSummary(orders || []);      
     
-            const activeDate = document.getElementById('filterDate')?.value || todayStr;      
+            const activeDate = document.getElementById('filterDate').value || todayStr;      
             await loadDailySummary(activeDate);      
         }      
     
@@ -5499,17 +5502,12 @@
     
             const grand = cash + transfer + credit;      
     
-            const cashEl = document.getElementById('totalCash');      
-            if (cashEl) cashEl.textContent = cash.toLocaleString() + ' ກີບ';      
-            const transferEl = document.getElementById('totalTransfer');      
-            if (transferEl) transferEl.textContent = transfer.toLocaleString() + ' ກີບ';      
-            const creditEl = document.getElementById('totalCredit');      
-            if (creditEl) creditEl.textContent = credit.toLocaleString() + ' ກີບ';      
-            const grandEl = document.getElementById('grandTotalPayment');      
-            if (grandEl) grandEl.textContent = grand.toLocaleString() + ' ກີບ';      
+            document.getElementById('totalCash').textContent = cash.toLocaleString() + ' ກີບ';      
+            document.getElementById('totalTransfer').textContent = transfer.toLocaleString() + ' ກີບ';      
+            document.getElementById('totalCredit').textContent = credit.toLocaleString() + ' ກີບ';      
+            document.getElementById('grandTotalPayment').textContent = grand.toLocaleString() + ' ກີບ';      
     
             const tbody = document.getElementById('customerPaymentBody');      
-            if (!tbody) return;      
             const names = Object.keys(byCustomer).sort((a, b) =>      
                 (byCustomer[b].cash + byCustomer[b].transfer + byCustomer[b].credit) -      
                 (byCustomer[a].cash + byCustomer[a].transfer + byCustomer[a].credit)      
@@ -5573,13 +5571,12 @@
         // ============================================================      
         async function loadAllCustomers() {      
             if (!await requireSession()) return;      
-            const search = document.getElementById('customerSearchInput')?.value?.trim() || '';      
+            const search = document.getElementById('customerSearchInput').value.trim();      
             let query = supabaseClient.from('customers').select('*').order('name');      
             if (search) query = query.ilike('name', `%${search}%`);      
       
             const { data } = await query;      
             const tbody = document.getElementById('customerTableBody');      
-            if (!tbody) return;      
             tbody.innerHTML = '';      
             if (!data || data.length === 0) {      
                 tbody.innerHTML = '<tr><td colspan="11" class="no-data">📭 ບໍ່ມີລູກຄ້າ</td></tr>';      
@@ -5642,9 +5639,7 @@
         // ============================================================      
         async function loadStockLoad() {      
             if (!await requireSession()) return;      
-            const dateEl = document.getElementById('orderDate');      
-            if (!dateEl) return;      
-            const date = dateEl.value;      
+            const date = document.getElementById('orderDate').value;      
             if (!date) return;      
       
             const { data, error } = await supabaseClient      
@@ -5658,24 +5653,18 @@
                 return;      
             }      
       
-            const tankEl = document.getElementById('loadTank');      
-            const p250El = document.getElementById('loadPack250');      
-            const p600El = document.getElementById('loadPack600');      
-            const p2000El = document.getElementById('loadPack2000');      
-            const alkalineEl = document.getElementById('loadAlkaline');      
-      
             if (data) {      
-                if (tankEl) tankEl.value = data.tank || 0;      
-                if (p250El) p250El.value = data.pack250 || 0;      
-                if (p600El) p600El.value = data.pack600 || 0;      
-                if (p2000El) p2000El.value = data.pack2000 || 0;      
-                if (alkalineEl) alkalineEl.value = data.alkaline || 0;      
+                document.getElementById('loadTank').value = data.tank || 0;      
+                document.getElementById('loadPack250').value = data.pack250 || 0;      
+                document.getElementById('loadPack600').value = data.pack600 || 0;      
+                document.getElementById('loadPack2000').value = data.pack2000 || 0;      
+                document.getElementById('loadAlkaline').value = data.alkaline || 0;      
             } else {      
-                if (tankEl) tankEl.value = 0;      
-                if (p250El) p250El.value = 0;      
-                if (p600El) p600El.value = 0;      
-                if (p2000El) p2000El.value = 0;      
-                if (alkalineEl) alkalineEl.value = 0;      
+                document.getElementById('loadTank').value = 0;      
+                document.getElementById('loadPack250').value = 0;      
+                document.getElementById('loadPack600').value = 0;      
+                document.getElementById('loadPack2000').value = 0;      
+                document.getElementById('loadAlkaline').value = 0;      
                 await saveStockLoad();      
             }      
       
@@ -5687,17 +5676,15 @@
             clearTimeout(window._stockTimeout);      
             window._stockTimeout = setTimeout(async () => {      
                 if (!await requireSession()) return;      
-                const dateEl = document.getElementById('orderDate');      
-                if (!dateEl) return;      
-                const date = dateEl.value;      
+                const date = document.getElementById('orderDate').value;      
                 if (!date) return;      
                 const stockData = {      
                     date,      
-                    tank: parseInt(document.getElementById('loadTank')?.value) || 0,      
-                    pack250: parseInt(document.getElementById('loadPack250')?.value) || 0,      
-                    pack600: parseInt(document.getElementById('loadPack600')?.value) || 0,      
-                    pack2000: parseInt(document.getElementById('loadPack2000')?.value) || 0,      
-                    alkaline: parseInt(document.getElementById('loadAlkaline')?.value) || 0,      
+                    tank: parseInt(document.getElementById('loadTank').value) || 0,      
+                    pack250: parseInt(document.getElementById('loadPack250').value) || 0,      
+                    pack600: parseInt(document.getElementById('loadPack600').value) || 0,      
+                    pack2000: parseInt(document.getElementById('loadPack2000').value) || 0,      
+                    alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0,      
                     updated_at: new Date().toISOString()      
                 };      
                 await supabaseClient.from('daily_stocks').upsert(stockData, { onConflict: 'date' });      
@@ -5705,17 +5692,15 @@
         }      
       
         async function calculateStockRemaining() {      
-            const dateEl = document.getElementById('orderDate');      
-            if (!dateEl) return;      
-            const date = dateEl.value;      
+            const date = document.getElementById('orderDate').value;      
             if (!date) return;      
       
             const load = {      
-                tank: parseInt(document.getElementById('loadTank')?.value) || 0,      
-                p250: parseInt(document.getElementById('loadPack250')?.value) || 0,      
-                p600: parseInt(document.getElementById('loadPack600')?.value) || 0,      
-                p2000: parseInt(document.getElementById('loadPack2000')?.value) || 0,      
-                alkaline: parseInt(document.getElementById('loadAlkaline')?.value) || 0      
+                tank: parseInt(document.getElementById('loadTank').value) || 0,      
+                p250: parseInt(document.getElementById('loadPack250').value) || 0,      
+                p600: parseInt(document.getElementById('loadPack600').value) || 0,      
+                p2000: parseInt(document.getElementById('loadPack2000').value) || 0,      
+                alkaline: parseInt(document.getElementById('loadAlkaline').value) || 0      
             };      
       
             const { data: orders } = await supabaseClient.from('orders').select('*').eq('date', date);      
@@ -5742,16 +5727,13 @@
       
             const getClass = (val) => val <= 0 ? 'low-stock' : 'success-stock';      
       
-            const stockRemainingEl = document.getElementById('stockRemaining');      
-            if (stockRemainingEl) {      
-                stockRemainingEl.innerHTML = `      
-                    <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p class="${getClass(remain.tank)}">${remain.tank}</p></div>      
-                    <div class="stock-card"><h5>250ml</h5><p class="${getClass(remain.p250)}">${remain.p250}</p></div>      
-                    <div class="stock-card"><h5>600ml</h5><p class="${getClass(remain.p600)}">${remain.p600}</p></div>      
-                    <div class="stock-card"><h5>2000ml</h5><p class="${getClass(remain.p2000)}">${remain.p2000}</p></div>      
-                    <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p class="${getClass(remain.alkaline)}">${remain.alkaline}</p></div>      
-                `;      
-            }      
+            document.getElementById('stockRemaining').innerHTML = `      
+                <div class="stock-card"><h5>ຖັງນ້ຳ</h5><p class="${getClass(remain.tank)}">${remain.tank}</p></div>      
+                <div class="stock-card"><h5>250ml</h5><p class="${getClass(remain.p250)}">${remain.p250}</p></div>      
+                <div class="stock-card"><h5>600ml</h5><p class="${getClass(remain.p600)}">${remain.p600}</p></div>      
+                <div class="stock-card"><h5>2000ml</h5><p class="${getClass(remain.p2000)}">${remain.p2000}</p></div>      
+                <div class="stock-card"><h5>ນ້ຳດ່າງ</h5><p class="${getClass(remain.alkaline)}">${remain.alkaline}</p></div>      
+            `;      
         }      
       
         // ============================================================      
@@ -5759,7 +5741,6 @@
         // ============================================================      
         function exportExcel() {      
             const table = document.getElementById('orderTableBody');      
-            if (!table) return;      
             if (table.children.length === 0 || table.children[0].classList.contains('no-data')) {      
                 showToast('ບໍ່ມີຂໍ້ມູນສຳລັບດາວໂຫລດ', 'warning');      
                 return;      
@@ -5791,66 +5772,6 @@
             showToast('✅ ດາວໂຫລດສຳເລັດ', 'success');      
         }      
       
-        function sendWhatsApp() {      
-            const waterEl = document.getElementById('sumWaterSales');      
-            const depositEl = document.getElementById('sumDepositSales');      
-            const grandEl = document.getElementById('sumGrandTotal');      
-            const countEl = document.getElementById('sumOrdersCount');      
-            const message = encodeURIComponent(      
-                `📊 ລາຍງານການຂາຍ\nວັນທີ: ${new Date().toLocaleDateString('lo-LA')}\n\n` +      
-                `ຍອດຂາຍນ້ຳ: ${waterEl ? waterEl.textContent : '0 ກີບ'}\n` +      
-                `ຍອດຈຳຕຸກ: ${depositEl ? depositEl.textContent : '0 ກີບ'}\n` +      
-                `ລວມທັງໝົດ: ${grandEl ? grandEl.textContent : '0 ກີບ'}\n` +      
-                `ລາຍການ: ${countEl ? countEl.textContent : '0'}`      
-            );      
-            window.open(`https://wa.me/?text=${message}`, '_blank');      
-        }      
-      
-        // ============================================================      
-        //  RESET BUTTON HANDLER      
-        // ============================================================      
-        document.querySelector('#waterForm button[type="reset"]')?.addEventListener('click', function(e) {      
-            e.preventDefault();      
-            const nameEl = document.getElementById('customerName');      
-            if (nameEl) {      
-                nameEl.value = '';      
-                const clearBtn = document.getElementById('clearCustomerBtn');      
-                if (clearBtn) clearBtn.style.display = 'none';      
-            }      
-            currentCustomerId = null;      
-            const detailDiv = document.getElementById('customerDetail');      
-            if (detailDiv) detailDiv.classList.remove('show');      
-            const container = document.getElementById('orderItems');      
-            if (container) {      
-                container.innerHTML = `      
-                    <div class="order-item">      
-                        <select class="product-select" onchange="calculateTotal()">      
-                            ${products.map(p => `<option value="${p.name}" data-price="${p.price}" data-type="${p.type}">${p.name} ${p.price.toLocaleString()} ກີບ</option>`).join('')}      
-                        </select>      
-                        <input type="number" class="qty-input" value="1" min="1" onchange="calculateTotal()" />      
-                        <button type="button" onclick="removeOrderItem(this)" class="btn btn-danger btn-sm">✕</button>      
-                    </div>      
-                `;      
-            }      
-            const qtyReturnEl = document.getElementById('qtyReturn');      
-            if (qtyReturnEl) qtyReturnEl.value = '0';      
-            const isNewEl = document.getElementById('isNewCustomer');      
-            if (isNewEl) isNewEl.checked = false;      
-            const depositEl = document.getElementById('depositPrice');      
-            if (depositEl) {      
-                depositEl.value = '0';      
-                depositEl.disabled = true;      
-            }      
-            const noteEl = document.getElementById('orderNote');      
-            if (noteEl) noteEl.value = '';      
-            const totalPriceEl = document.getElementById('totalPrice');      
-            if (totalPriceEl) totalPriceEl.value = '0 ກີບ';      
-            const reminderEl = document.getElementById('paymentReminder');      
-            if (reminderEl) reminderEl.style.display = 'none';      
-            calculateTotal();      
-            showToast('🔄 ຣີເຊັດສຳເລັດ', 'info');      
-        });      
-      
         // ============================================================      
         //  INIT      
         // ============================================================      
@@ -5858,31 +5779,22 @@
             loadThemePreference();      
       
             const today = new Date().toLocaleDateString('fr-CA');      
-            const dateEl = document.getElementById('orderDate');      
-            if (dateEl) dateEl.value = today;      
-            const filterEl = document.getElementById('filterDate');      
-            if (filterEl) filterEl.value = today;      
+            document.getElementById('orderDate').value = today;      
+            document.getElementById('filterDate').value = today;      
       
             const { data: { session } } = await supabaseClient.auth.getSession();      
             if (session) {      
                 await initApp();      
             } else {      
-                const loginOverlay = document.getElementById('loginOverlay');      
-                if (loginOverlay) loginOverlay.classList.remove('hidden');      
+                document.getElementById('loginOverlay').classList.remove('hidden');      
             }      
       
-            const passwordEl = document.getElementById('loginPassword');      
-            if (passwordEl) {      
-                passwordEl.addEventListener('keypress', function(e) {      
-                    if (e.key === 'Enter') login();      
-                });      
-            }      
-            const emailEl = document.getElementById('loginEmail');      
-            if (emailEl) {      
-                emailEl.addEventListener('keypress', function(e) {      
-                    if (e.key === 'Enter') login();      
-                });      
-            }      
+            document.getElementById('loginPassword').addEventListener('keypress', function(e) {      
+                if (e.key === 'Enter') login();      
+            });      
+            document.getElementById('loginEmail').addEventListener('keypress', function(e) {      
+                if (e.key === 'Enter') login();      
+            });      
         });      
       
         // ============================================================      
@@ -5890,27 +5802,20 @@
         // ============================================================      
         async function initApp() {      
             if (!await checkSession()) {      
-                const loginOverlay = document.getElementById('loginOverlay');      
-                if (loginOverlay) loginOverlay.classList.remove('hidden');      
+                document.getElementById('loginOverlay').classList.remove('hidden');      
                 return;      
             }      
       
-            const loginOverlay = document.getElementById('loginOverlay');      
-            if (loginOverlay) loginOverlay.classList.add('hidden');      
-            const appContainer = document.getElementById('appContainer');      
-            if (appContainer) appContainer.style.display = 'block';      
-            const userEl = document.getElementById('userDisplay');      
-            if (userEl && currentUser) userEl.textContent = '👤 ' + currentUser.email;      
+            document.getElementById('loginOverlay').classList.add('hidden');      
+            document.getElementById('appContainer').style.display = 'block';      
+            document.getElementById('userDisplay').textContent = '👤 ' + currentUser.email;      
       
             loadProvinces();      
       
             const today = new Date().toLocaleDateString('fr-CA');      
-            const dateEl = document.getElementById('orderDate');      
-            if (dateEl) dateEl.value = today;      
-            const filterEl = document.getElementById('filterDate');      
-            if (filterEl) filterEl.value = today;      
-            const stockDateEl = document.getElementById('stockDateDisplay');      
-            if (stockDateEl) stockDateEl.textContent = today;      
+            document.getElementById('orderDate').value = today;      
+            document.getElementById('filterDate').value = today;      
+            document.getElementById('stockDateDisplay').textContent = today;      
             currentRouteDate = today;      
       
             const now = new Date();      
@@ -5919,8 +5824,7 @@
                 String(now.getDate()).padStart(2, '0') + 'T' +      
                 String(now.getHours()).padStart(2, '0') + ':' +      
                 String(now.getMinutes()).padStart(2, '0');      
-            const timeEl = document.getElementById('deliveryTime');      
-            if (timeEl) timeEl.value = localStr;      
+            document.getElementById('deliveryTime').value = localStr;      
       
             await Promise.all([      
                 loadStockLoad(),      
